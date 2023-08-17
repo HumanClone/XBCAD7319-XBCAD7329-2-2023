@@ -1,14 +1,38 @@
-name: Deploy ASP.Net Core app to Azure Web App 
+name: Build and deploy ASP.Net Core app to Azure Web App - SupportSystem
 
 on:
   pull_request:
-    types:
-      - closed
     branches:
       - main
   workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+  
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+        working-directory: MVC-APP
+
+      - name: dotnet publish #not here
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        working-directory: MVC-APP
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
