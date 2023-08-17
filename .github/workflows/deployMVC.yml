@@ -1,4 +1,4 @@
-name:  deploy ASP.Net Core app to Azure Web App - SupportSystem
+name: Deploy ASP.Net Core app to Azure Web App 
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - SupportSystem
+name: Build  ASP.Net Core app - SupportSystem
 
 on:
   pull_request:
