@@ -23,7 +23,7 @@ jobs:
       - name: Change directory 
         run: cd mvc-app
 
-        - name: Path
+      - name: Path
         run: pwd
 
         
