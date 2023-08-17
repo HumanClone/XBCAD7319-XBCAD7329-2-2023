@@ -26,6 +26,7 @@ jobs:
 
       - name: dotnet publish #not here
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        working-directory: MVC-APP
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
