@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Change directory 
-        run: cd mvc-
+        run: cd mvc-app
         
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
