@@ -7,9 +7,7 @@ env:
   AZURE_WEBAPP_NAME: SupportSystem   # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'
 
-defaults:
-  run:
-  working-directory: ./MVC-APP
+
 
 on:
   push:
