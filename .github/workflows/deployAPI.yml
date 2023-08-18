@@ -1,4 +1,4 @@
-name: Build and deploy  Azure Web App - SupportSystem
+name: Build and deploy - SupportSystemAPI
 
 on:
   push:
@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-  
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -22,11 +21,11 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-        working-directory: MVC-APP
+        working-directory: API
 
-      - name: dotnet publish #not here
+      - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-        working-directory: MVC-APP
+        working-directory: API
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -38,7 +37,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'API'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -51,7 +50,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'SupportSystem'
+          app-name: 'SupportSystemAPI'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_64A9E252DBAC40D0A33C80083378997C }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3022A794C051430981BAE54215D5E007 }}
           package: .
