@@ -1,10 +1,10 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - SupportSystem
+name: Build and deploy  Azure Web App - SupportSystem
 
 on:
-    push:
-      branches:
-        - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
