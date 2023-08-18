@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Configuration;
-using api.models;
+using api.email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +23,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IMailService, MailService>();
 
 
 

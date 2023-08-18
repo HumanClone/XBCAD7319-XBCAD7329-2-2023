@@ -1,4 +1,4 @@
-namespace api.models;
+namespace api.email;
 
 public class MailSettings
 {
