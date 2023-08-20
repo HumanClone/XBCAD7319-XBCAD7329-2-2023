@@ -40,12 +40,7 @@ namespace api.Controllers
 
 
         [HttpPost("res")]
-        public async Task<IActionResult> ReceiveEmailWithAttachments(
-        [FromForm] string FromEmail,
-        [FromForm] string Subject,
-        [FromForm] string Body,
-        [FromForm] string ReceivedDate,
-        [FromForm(Name = "Attachment")] List<IFormFile> attachments)
+        public async Task<IActionResult> ReceiveEmailWithAttachments([FromBody] MailReceive mailReceive)
         {
             try
             {
@@ -53,13 +48,13 @@ namespace api.Controllers
                 // Handle attachments (List<IFormFile> attachments)
 
                 // Create the MailReceive object
-                var req = new MailReceive
+                var tempObject = new MailReceive
                 {
-                    FromEmail = FromEmail,
-                    Body = Body,
-                    Subject = Subject,
-                    ReceivedDate = DateTime.Parse(ReceivedDate),
-                    Attachments = attachments
+                    FromEmail = mailReceive.FromEmail,
+                    Subject = mailReceive.Subject,
+                    Body = mailReceive.Body,
+                    ReceivedDate = mailReceive.ReceivedDate,
+                    Attachments = mailReceive.Attachments
                 };
 
                 // Now you can use 'req' to add contents to the database
