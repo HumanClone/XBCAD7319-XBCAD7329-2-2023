@@ -1,11 +1,4 @@
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
 using api.email;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -54,7 +47,7 @@ namespace api.Controllers
                     Subject = mailReceive.Subject,
                     Body = mailReceive.Body,
                     ReceivedDate = mailReceive.ReceivedDate,
-                    Attachments = mailReceive.Attachments
+                    //Attachments = mailReceive.Attachments
                 };
 
                 // Now you can use 'req' to add contents to the database
