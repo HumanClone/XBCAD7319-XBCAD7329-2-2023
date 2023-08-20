@@ -39,7 +39,7 @@ namespace api.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("res")]
         public async Task<IActionResult> ReceiveEmailWithAttachments(
         [FromForm] string FromEmail,
         [FromForm] string Subject,
