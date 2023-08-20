@@ -31,6 +31,21 @@ namespace api.Controllers
                 
         }
 
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                // Replace this with your logic to fetch data or perform any operation
+                var data = new { Message = "Hello from API!" };
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
 
         [HttpPost("res")]
         public async Task<IActionResult> ReceiveEmailWithAttachments([FromBody] MailReceive mailReceive)
