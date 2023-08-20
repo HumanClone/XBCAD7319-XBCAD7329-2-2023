@@ -1,5 +1,6 @@
 using api.email;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
@@ -14,6 +15,7 @@ namespace api.Controllers
             this.mailService = mailService;
         }
 
+        //calls the send method to send the email 
         [HttpPost("send")]
         public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
@@ -30,7 +32,8 @@ namespace api.Controllers
             }
                 
         }
-
+        
+        //simple get to make sure the endpoint was correct 
         [HttpGet]
         public IActionResult Get()
         {
@@ -47,6 +50,7 @@ namespace api.Controllers
         }
 
 
+        // gets the information from teh json this will most likely be used by the logic app 
         [HttpPost("res")]
         public async Task<IActionResult> ReceiveEmailWithAttachments([FromBody] MailReceive mailReceive)
         {
@@ -54,13 +58,16 @@ namespace api.Controllers
             {
                 // Process form fields (ToEmail, Subject, Body)
                 // Handle attachments (List<IFormFile> attachments)
+                string updatedBody = Regex.Replace(mailReceive.Body, "<.*?>", string.Empty);
+                updatedBody = updatedBody.Replace("\\r\\n", " ");
+                updatedBody = updatedBody.Replace(@"&nbsp;", " ");
 
                 // Create the MailReceive object
                 var tempObject = new MailReceive
                 {
                     FromEmail = mailReceive.FromEmail,
                     Subject = mailReceive.Subject,
-                    Body = mailReceive.Body,
+                    Body =updatedBody,
                     ReceivedDate = mailReceive.ReceivedDate,
                     //Attachments = mailReceive.Attachments
                 };
