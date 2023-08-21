@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Configuration;
+using api.email;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +17,16 @@ builder.Services.ConfigureSwaggerGen(setup =>
         Version = "v1"
     });
 });
+
+builder.Configuration.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
+
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IMailService, MailService>();
+
+
+
 
 var app = builder.Build();
 
