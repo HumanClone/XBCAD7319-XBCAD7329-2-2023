@@ -1,0 +1,179 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Get_email_details": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['gmail']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/Mail/@{encodeURIComponent(triggerBody()?['Id'])}",
+                    "queries": {
+                        "includeAttachments": false
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            },
+            "If_not_from_system_": {
+                "actions": {
+                    "Compose_2": {
+                        "inputs": {
+                            "Body": "@string(triggerBody()?['Body'])",
+                            "FromEmail": "@{body('Get_email_details')?['From']}",
+                            "ReceivedDate": "@{body('Get_email_details')?['DateTimeReceived']}",
+                            "Subject": "@{body('Get_email_details')?['Subject']}"
+                        },
+                        "runAfter": {},
+                        "type": "Compose"
+                    },
+                    "HTTP": {
+                        "inputs": {
+                            "body": "@outputs('Compose_2')",
+                            "method": "POST",
+                            "uri": "https://supportsystemapi.azurewebsites.net/api/mail/res"
+                        },
+                        "runAfter": {
+                            "Compose_2": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Http"
+                    },
+                    "ifSuccessful_": {
+                        "actions": {
+                            "Send_email_(V2)": {
+                                "inputs": {
+                                    "body": {
+                                        "Body": "<p>it worked</p>",
+                                        "To": "pranhav1507@gmail.com"
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['gmail']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/Mail"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "else": {
+                            "actions": {
+                                "Send_email_(V2)_2": {
+                                    "inputs": {
+                                        "body": {
+                                            "Body": "<p>task failed</p>",
+                                            "To": "pranhav1507@gmail.com"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['gmail']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/v2/Mail"
+                                    },
+                                    "runAfter": {},
+                                    "type": "ApiConnection"
+                                }
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "equals": [
+                                        "@outputs('HTTP')['statusCode']",
+                                        200
+                                    ]
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "HTTP": [
+                                "Succeeded",
+                                "Skipped"
+                            ]
+                        },
+                        "type": "If"
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "not": {
+                                "equals": [
+                                    "@body('Get_email_details')?['From']",
+                                    "@parameters('tester')"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Get_email_details": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            },
+            "tester": {
+                "defaultValue": "ticketsendertester@gmail.com",
+                "type": "String"
+            }
+        },
+        "triggers": {
+            "When_a_new_email_arrives": {
+                "evaluatedRecurrence": {
+                    "frequency": "Minute",
+                    "interval": 3
+                },
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['gmail']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/Mail/OnNewEmail",
+                    "queries": {
+                        "fetchOnlyWithAttachments": false,
+                        "importance": "All",
+                        "includeAttachments": true,
+                        "label": "INBOX",
+                        "starred": "All"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 3
+                },
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "gmail": {
+                    "connectionId": "/subscriptions/8e645fa0-124f-421c-9941-638fd6900baf/resourceGroups/WIl-Project/providers/Microsoft.Web/connections/gmail-19",
+                    "connectionName": "gmail-19",
+                    "id": "/subscriptions/8e645fa0-124f-421c-9941-638fd6900baf/providers/Microsoft.Web/locations/southafricanorth/managedApis/gmail"
+                }
+            }
+        }
+    }
+}
