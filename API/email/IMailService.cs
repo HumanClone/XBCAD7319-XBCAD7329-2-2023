@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 namespace api.email;
 public interface IMailService
 {
-    Task SendEmailAsync(MailRequest mailRequest);
+    Task SendEmailUser(MailRequest mailRequest);
+
+    Task SendEmailAdmin(MailRequest mailRequest);
+
+    
 //    Task SendWelcomeEmailAsync(WelcomeRequest request);
 }
