@@ -17,11 +17,28 @@ namespace api.Controllers
 
         //calls the send method to send the email 
         [HttpPost("send")]
-        public async Task<IActionResult> SendMail([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)
         {
             try
             {
-                await mailService.SendEmailAsync(request);
+                await mailService.SendEmailUser(request);
+                //method to add it to the database
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+                
+        }
+
+        [HttpPost("adminSend")]
+        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
+        {
+            try
+            {
+                await mailService.SendEmailAdmin(request);
                 //method to add it to the database
                 return Ok();
             }
