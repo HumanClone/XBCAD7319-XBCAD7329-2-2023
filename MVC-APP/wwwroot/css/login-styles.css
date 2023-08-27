@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url("../images/backgroundImg.jpg");
+    background-size: cover;
+}
+
+.headings {
+    color: #000;
+    text-align: center;
+    font-style: normal;
+    line-height: normal;
+}
+
+.title { 
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;  
+    font-weight: 500; 
+}
+
+.subtitle {    
+    font-family: 'DM Sans', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom:40px;
+}
+
+.labels {
+    color: #000;
+    font-family: DM Sans;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+
+form input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #000 !important;
+    background: #ffffff !important;
+}
+
+.card{
+background-color: transparent;
+    border: none;
+}
+
+.btn {
+    border-radius: 0px;
+    font-family: Poppins;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding:10px;
+    width: 50%;
+}
+
