@@ -1,0 +1,34 @@
+@model MVCAPP.Models.TicketDetail
+@{
+     ViewData["Title"] = "Create Ticket";
+    var errorMessage = TempData["erroMessage"]?.ToString();
+}
+<h3>@ViewData["Title"]</h3>
+<hr />
+<form action="Create" method="post">
+ 
+    <div class="mb-3">
+        <label class="form-label">CategoryId</label>
+        <input type="text" class="form-conrol" asp-for="CategoryId" size="24" />
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">TeamDev</label>
+        <label class="form-label" style="color:white">.........  </label>
+        <input type="text" class="form-conrol" asp-for="DevId" size="24" />
+        <span asp-validation-for="DevId" class="text-danger"></span>
+    </div>
+     <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input type="text" class="form-conrol" asp-for="DateIssued" size="24" />
+        <span asp-validation-for="DateIssued" class="text-danger"></span>
+    </div>
+     <div class="mb-3">
+        <label class="form-label">MessageContent</label>
+        <input type="text" class="form-conrol" asp-for="MessageContent" size="24" />
+        <span asp-validation-for="MessageContent" class="text-danger"></span>
+    </div>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
