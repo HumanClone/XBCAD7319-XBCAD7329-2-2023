@@ -1,0 +1,48 @@
+@model List<MVCAPP.Models.Category>
+@{
+
+}
+<h3>Ticket Categories</h3>
+<h4>Choose the category related to your Query Ticket</h4>
+
+<form>
+
+    <table class="table table-responsive table-hover table-bordered">
+        <thead>
+            <tr class="table-active">
+                <th>Category Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>@category.CategoryName</span>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-controller="Ticket" asp-action="Create" asp-route-categoryName="@category.CategoryName" class="btn btn-primary">Log</a>
+                                </div>
+                                
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">
+                        <div>
+                            No data available at this moment!
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</form>
