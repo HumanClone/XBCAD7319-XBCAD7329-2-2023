@@ -16,7 +16,6 @@ namespace mvcapp.Migrations
                 type: "int",
                 nullable: true);
         }
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {

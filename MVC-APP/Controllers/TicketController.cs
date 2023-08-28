@@ -15,7 +15,6 @@ public class TicketController : Controller
     {
        this._context = context;
     }
-
     [HttpGet]
         public IActionResult Create(string categoryName)
         {

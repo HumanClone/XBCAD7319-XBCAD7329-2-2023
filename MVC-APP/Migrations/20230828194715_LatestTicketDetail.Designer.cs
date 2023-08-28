@@ -15,7 +15,7 @@ namespace mvcapp.Migrations
     [Migration("20230828194715_LatestTicketDetail")]
     partial class LatestTicketDetail
     {
-        /// <inheritdoc />
+       /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

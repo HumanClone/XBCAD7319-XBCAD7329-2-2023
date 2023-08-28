@@ -17,7 +17,7 @@ namespace mvcapp.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
-
+                
             migrationBuilder.AlterColumn<string>(
                 name: "DevId",
                 table: "TicketDetails",

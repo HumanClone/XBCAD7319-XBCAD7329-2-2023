@@ -26,5 +26,4 @@ public class CategoryController : Controller
         return View(listCategories);
     }  
 }
-
 //  HttpContext.Session.SetString("SelectedCategoryName", )
