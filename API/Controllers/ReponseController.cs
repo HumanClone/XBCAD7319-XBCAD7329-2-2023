@@ -56,6 +56,7 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
                 tr.Date=DateTime.Now;
+
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -82,6 +83,7 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.Sender=request.UserId;
                 tr.Date=DateTime.Now;
+
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
