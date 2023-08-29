@@ -1,28 +1,40 @@
 using api.email;
+using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
+
+    //api/mail/method
     [ApiController]
     [Route("api/[controller]")]
     public class MailController : ControllerBase
     {
         private readonly IMailService mailService;
+        private readonly StudentSupportXbcadContext _context;
 
-        public MailController(IMailService mailService)
+        public MailController(IMailService mailService,StudentSupportXbcadContext context)
         {
             this.mailService = mailService;
+            _context = context;
         }
 
         //calls the send method to send the email 
         [HttpPost("send")]
-        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)// might need to be from body 
         {
             try
             {
                 await mailService.SendEmailUser(request);
-                //method to add it to the database
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                //tr.DevId=request.sender;
+                //tr.date=DateTime.Now();
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
                 return Ok();
             }
             catch (Exception ex)
@@ -33,13 +45,20 @@ namespace api.Controllers
                 
         }
 
+
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
         {
             try
             {
                 await mailService.SendEmailAdmin(request);
-                //method to add it to the database
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.DevId=request.DevId;
+                //tr.date=DateTime.Now();
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -89,8 +108,15 @@ namespace api.Controllers
                     //Attachments = mailReceive.Attachments
                 };
 
-                // Now you can use 'req' to add contents to the database
-                // Store attachments in the database or other appropriate storage
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=mailReceive.Body;
+                tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                //tr.sender=mailReceive.FromEmail;
+                //tr.name=DateTime.Now();
+
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
 
                 // Return a success response
                 return Ok("Email received and processed successfully.");
