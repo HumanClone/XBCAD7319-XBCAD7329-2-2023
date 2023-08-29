@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
+
     // api/Response/method
+
     [ApiController]
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
@@ -20,6 +22,7 @@ namespace api.Controllers
             this.mailService = mailService;
             
         }
+
 
         //endpoint to get all responses from everyticket 
         [HttpGet("all")]
@@ -41,28 +44,33 @@ namespace api.Controllers
 
 
         //calls the send method to send the email 
+
         [HttpPost("sendAdmin")]
         public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
             try
             {
                 await mailService.SendEmailAdmin(request);
-                TicketResponse tr= new TicketResponse();
+               TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
                 //tr.name=DateTime.Now();
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
+
                 return Ok();
             }
             catch (Exception ex)
             {
 
+
                 return BadRequest();
+
             }
                 
         }
+
 
 
         //endpoint to get all responses by a dev
@@ -72,6 +80,7 @@ namespace api.Controllers
             var data=_context.TicketResponses.ToList();
             data=data.Select(s=>s).Where(s=>s.DevId.Equals(DevID)).ToList();
             return data;
+
         }
 
 

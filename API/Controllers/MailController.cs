@@ -27,6 +27,25 @@ namespace api.Controllers
             try
             {
                 await mailService.SendEmailUser(request);
+
+                //method to add it to the database
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+                
+        }
+
+        [HttpPost("adminSend")]
+        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
+        {
+            try
+            {
+                await mailService.SendEmailAdmin(request);
+
                 //method to add it to the database
                 return Ok();
             }
