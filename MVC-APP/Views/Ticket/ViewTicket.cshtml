@@ -1,0 +1,47 @@
+@model List<MVCAPP.Models.TicketDetail>
+
+<hr/>
+<form>
+    <button asp-action="Create" asp-controller="Ticket" class="btn btn-primary mb-3">Log Ticket</button>
+    <table class="table table-responsive table-hover table-bordered">
+        <thead>
+            <tr class="table-active">
+                <th>TicketId</th>
+                <th>Category Name</th>
+                <th>Query Message</th>
+                <th>Date Issued</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var ticketDetail in Model)
+                {
+                    <tr>
+                        <td>@ticketDetail.TicketId</td>
+                        <td>@ticketDetail.CategoryName</td>
+                        <td>@ticketDetail.MessageContent</td>
+                        <td>@ticketDetail.DateIssued</td>
+                        <td>@ticketDetail.Status</td>
+                        
+                    </tr>
+
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">
+                        <div>
+                            No Product availble at this moment!
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</form>

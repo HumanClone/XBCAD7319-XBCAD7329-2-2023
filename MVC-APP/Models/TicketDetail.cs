@@ -6,17 +6,20 @@ namespace MVCAPP.Models
     {
         [Key]
         public int TicketId {get; set;}
-        [Required]
+        
         [ForeignKey("Category")]
         public string? CategoryId {get; set;}
-        [ForeignKey("Category")]
-        public string? CategoryName {get; set;}
-        [Required]
+        
         [ForeignKey("TeamDev")]
         public string? DevId {get; set;}
+
+        [ForeignKey("UserInfo")]
+        public int? UserId {get; set;}
+        public string? CategoryName {get; set;}
+
         public DateTime DateIssued {get; set;}
         public string? MessageContent {get; set;}
-        public string? Status {get; set;}
+        public string? Status {get; set;} = "Pending";
         
     }
 }

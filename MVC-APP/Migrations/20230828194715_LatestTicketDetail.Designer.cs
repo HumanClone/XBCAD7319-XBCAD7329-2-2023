@@ -12,10 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace mvcapp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230827120414_UpdatedTicketResponseTicketDetail")]
-    partial class UpdatedTicketResponseTicketDetail
+    [Migration("20230828194715_LatestTicketDetail")]
+    partial class LatestTicketDetail
     {
-        /// <inheritdoc />
+       /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -70,7 +70,6 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
 
                     b.Property<string>("CategoryId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")
@@ -80,7 +79,6 @@ namespace mvcapp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DevId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageContent")
@@ -88,6 +86,9 @@ namespace mvcapp.Migrations
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("TicketId");
 
@@ -103,7 +104,6 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
 
                     b.Property<string>("DevId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")
@@ -163,6 +163,4 @@ namespace mvcapp.Migrations
 #pragma warning restore 612, 618
         }
     }
-
 }
-

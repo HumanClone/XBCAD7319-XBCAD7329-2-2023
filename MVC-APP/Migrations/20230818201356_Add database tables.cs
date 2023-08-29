@@ -37,7 +37,7 @@ namespace mvcapp.Migrations
                 {
                     table.PrimaryKey("PK_TeamDevs", x => x.DevId);
                 });
-
+                
             migrationBuilder.CreateTable(
                 name: "TicketDetails",
                 columns: table => new
