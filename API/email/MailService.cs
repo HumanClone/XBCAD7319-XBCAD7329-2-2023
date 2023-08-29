@@ -16,11 +16,12 @@ public class MailService :IMailService
         _mailSettings1 = mailSettings1.Value;//user
         _mailSettings2 = mailSettings2.Value;//admin
     }
+
     public async Task SendEmailUser(MailRequest mailRequest)
     {
         var email = new MimeMessage();
         email.Sender = MailboxAddress.Parse(_mailSettings1.Mail);
-        email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+        email.To.Add(MailboxAddress.Parse(_mailSettings1.Mail));
         email.Subject = mailRequest.Subject;
         var builder = new BodyBuilder();
         if (mailRequest.Attachments != null)
