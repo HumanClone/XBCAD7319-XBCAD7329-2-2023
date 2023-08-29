@@ -72,6 +72,9 @@ namespace mvcapp.Migrations
                     b.Property<string>("CategoryName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateIssued")
                         .HasColumnType("datetime2");
 
@@ -101,6 +104,7 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
 
                     b.Property<string>("DevId")
+
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")
