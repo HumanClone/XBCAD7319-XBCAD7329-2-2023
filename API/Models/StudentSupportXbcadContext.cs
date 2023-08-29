@@ -33,32 +33,22 @@ public partial class StudentSupportXbcadContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Category>(entity =>
-        {
-            entity.Property(e => e.CategoryName).IsRequired();
-        });
-
         modelBuilder.Entity<TeamDev>(entity =>
         {
             entity.HasKey(e => e.DevId);
-
-            entity.Property(e => e.Name).IsRequired();
         });
 
         modelBuilder.Entity<TicketDetail>(entity =>
         {
             entity.HasKey(e => e.TicketId);
-
-            entity.Property(e => e.CategoryId).IsRequired();
-            entity.Property(e => e.DevId).IsRequired();
         });
 
         modelBuilder.Entity<TicketResponse>(entity =>
         {
             entity.HasKey(e => e.ResponseId);
 
-            entity.Property(e => e.DevId).IsRequired();
-            entity.Property(e => e.Email).IsRequired();
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Sender).HasColumnName("sender");
             entity.Property(e => e.TicketId).IsRequired();
         });
 

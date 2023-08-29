@@ -16,4 +16,8 @@ public partial class TicketDetail
     public string MessageContent { get; set; }
 
     public string Status { get; set; }
+
+    public string CategoryName { get; set; }
+
+    public int? UserId { get; set; }
 }

@@ -11,7 +11,9 @@ public partial class TicketResponse
 
     public string DevId { get; set; }
 
-    public string Email { get; set; }
-
     public string ResponseMessage { get; set; }
+
+    public DateTime? Date { get; set; }
+
+    public string Sender { get; set; }
 }
