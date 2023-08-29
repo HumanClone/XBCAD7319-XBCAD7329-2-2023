@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace api.Controllers
 {
 
-    // api/Response/method
+   
 
     [ApiController]
     [Route("api/[controller]")]
@@ -56,6 +56,34 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
                 tr.Date=DateTime.Now;
+
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+
+                return BadRequest();
+
+            }
+                
+        }
+
+        [HttpPost("sendUser")]
+        public async Task<IActionResult> SendMailuser([FromForm]MailRequest request)
+        {
+            try
+            {
+                await mailService.SendEmailUser(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.Sender=request.UserId;
+                tr.Date=DateTime.Now;
+
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
