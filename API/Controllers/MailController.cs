@@ -22,7 +22,7 @@ namespace api.Controllers
 
         //calls the send method to send the email 
         [HttpPost("send")]
-        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)// might need to be from body 
         {
             try
             {
@@ -32,8 +32,9 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 //tr.DevId=request.sender;
                 //tr.date=DateTime.Now();
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
 
-                //method to add it to the database
                 return Ok();
             }
             catch (Exception ex)
@@ -46,7 +47,7 @@ namespace api.Controllers
 
 
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
         {
             try
             {
