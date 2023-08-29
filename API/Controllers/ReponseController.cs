@@ -55,7 +55,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.date=DateTime.Now;
+                tr.Date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
