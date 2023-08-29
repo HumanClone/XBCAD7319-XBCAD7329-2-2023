@@ -47,8 +47,8 @@ public partial class StudentSupportXbcadContext : DbContext
         {
             entity.HasKey(e => e.ResponseId);
 
-            entity.Property(e => e.date).HasColumnName("date");
-            entity.Property(e => e.sender).HasColumnName("sender");
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Sender).HasColumnName("sender");
             entity.Property(e => e.TicketId).IsRequired();
         });
 

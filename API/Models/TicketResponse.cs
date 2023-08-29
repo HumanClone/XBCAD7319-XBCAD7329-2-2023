@@ -10,7 +10,7 @@ public partial class TicketResponse
     public string TicketId { get; set; }
     
     public string? DevId {get; set;}
-    public string? sender {get; set;}
-    public DateTime? date {get;set;}
+    public string? Sender {get; set;}
+    public DateTime? Date {get;set;}
     public string? ResponseMessage {get; set;}
 }
