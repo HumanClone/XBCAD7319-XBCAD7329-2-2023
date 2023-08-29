@@ -69,6 +69,11 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
 
                     b.Property<string>("CategoryId")
+
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")

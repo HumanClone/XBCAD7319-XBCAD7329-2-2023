@@ -39,7 +39,6 @@ public class TicketController : Controller
                 {
                     var Ticket = new TicketDetail()
                     {
-
                         
                         TicketId = ticketDetail.TicketId,
                         CategoryId = ticketDetail.CategoryId,
@@ -103,5 +102,4 @@ public class TicketController : Controller
 
             return View(ticketList);
         }
-
 }
