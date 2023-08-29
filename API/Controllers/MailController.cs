@@ -27,6 +27,11 @@ namespace api.Controllers
             try
             {
                 await mailService.SendEmailUser(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                //tr.DevId=request.sender;
+                //tr.date=DateTime.Now();
 
                 //method to add it to the database
                 return Ok();
@@ -39,23 +44,6 @@ namespace api.Controllers
                 
         }
 
-        [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
-        {
-            try
-            {
-                await mailService.SendEmailAdmin(request);
-
-                //method to add it to the database
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-                
-        }
 
         [HttpPost("adminSend")]
         public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)
@@ -67,7 +55,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                //tr.name=DateTime.Now();
+                //tr.date=DateTime.Now();
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 return Ok();
