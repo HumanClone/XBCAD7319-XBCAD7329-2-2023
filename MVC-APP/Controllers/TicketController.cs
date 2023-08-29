@@ -1,8 +1,10 @@
+
 using System.Net;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Data;
 using MVCAPP.Models;
+
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace mvc_app.Controllers;
@@ -15,6 +17,7 @@ public class TicketController : Controller
     {
        this._context = context;
     }
+
     [HttpGet]
         public IActionResult Create(string categoryName)
         {
@@ -31,6 +34,7 @@ public class TicketController : Controller
                 string selectedCategory = categoryName;
               //string selectedCategory = HttpContext.Session.GetString("SelectedCategory");
            //HttpContext.Session
+
                 if (ModelState.IsValid)
                 {
                     var Ticket = new TicketDetail()
@@ -63,6 +67,7 @@ public class TicketController : Controller
                                 Console.WriteLine($"Model Error: {error.ErrorMessage}");
                             }
                         }
+
                     return View();
                 }
             }
@@ -73,7 +78,7 @@ public class TicketController : Controller
 
             }
         }
-        
+
 
         [HttpGet]
         public IActionResult ViewTicket()
