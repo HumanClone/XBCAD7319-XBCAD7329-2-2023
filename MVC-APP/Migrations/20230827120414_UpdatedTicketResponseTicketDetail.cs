@@ -14,6 +14,7 @@ namespace mvcapp.Migrations
             migrationBuilder.DropColumn(
                 name: "Email",
                 table: "TicketResponses");
+
             migrationBuilder.AddColumn<DateTime>(
                 name: "date",
                 table: "TicketResponses",

@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
+
+    // api/Response/method
+
     [ApiController]
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
@@ -20,46 +23,64 @@ namespace api.Controllers
             
         }
 
-        //TODO:endpoint to get all responses from everyticket 
+
+        //endpoint to get all responses from everyticket 
         [HttpGet("all")]
-        public async Task<IActionResult> getResponses()
+        public async Task<List<TicketResponse>> getResponses()
         {
-            return null;
+            var data=_context.TicketResponses.ToList();
+            return data;
         }
 
 
-        //TODO:endpoint to get all responses for a ticket 
+        //endpoint to get all responses for a ticket 
         [HttpGet("ticket")]
-        public async Task<IActionResult> getResponsesTicket(string? ticketID)
+        public async Task<List<TicketResponse>> getResponsesTicket(string? ticketID)
         {
-            return null;
+            var data=_context.TicketResponses.ToList();
+            data=data.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).ToList();
+            return data;
         }
 
 
-        //TODO:calls the send method to send the email 
+        //calls the send method to send the email 
+
         [HttpPost("sendAdmin")]
         public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
             try
             {
                 await mailService.SendEmailAdmin(request);
-                //method to add it to the database
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.DevId=request.DevId;
+                //tr.name=DateTime.Now();
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
                 return Ok();
             }
             catch (Exception ex)
             {
 
-                throw;
+
+                return BadRequest();
+
             }
                 
         }
 
 
-        //TODO:endpoint to get all responses by a dev
+
+        //endpoint to get all responses by a dev
         [HttpGet("dev")]
-        public async Task<IActionResult> getResponsesDev(string? DevID)
+        public async Task<List<TicketResponse>> getResponsesDev(string? DevID)
         {
-            return null;
+            var data=_context.TicketResponses.ToList();
+            data=data.Select(s=>s).Where(s=>s.DevId.Equals(DevID)).ToList();
+            return data;
+
         }
 
 

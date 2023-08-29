@@ -19,7 +19,7 @@ namespace mvcapp.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
+                
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MVCAPP.Models.Category", b =>
@@ -72,7 +72,7 @@ namespace mvcapp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")
-                        .HasColumnType("nvarchar(max)");
+            .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateIssued")
                         .HasColumnType("datetime2");
@@ -103,6 +103,7 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
 
                     b.Property<string>("DevId")
+
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")
