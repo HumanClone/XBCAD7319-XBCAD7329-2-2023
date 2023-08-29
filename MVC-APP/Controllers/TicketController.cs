@@ -3,6 +3,7 @@ using System.Net;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Data;
+using MVCAPP.Models;
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
