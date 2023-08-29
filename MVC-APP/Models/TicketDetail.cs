@@ -16,7 +16,6 @@ namespace MVCAPP.Models
         [ForeignKey("UserInfo")]
         public int? UserId {get; set;}
         public string? CategoryName {get; set;}
-
         public DateTime DateIssued {get; set;}
         public string? MessageContent {get; set;}
         public string? Status {get; set;} = "Pending";

@@ -7,7 +7,6 @@ using MVCAPP.Models;
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-
 namespace mvc_app.Controllers;
 
 public class TicketController : Controller
