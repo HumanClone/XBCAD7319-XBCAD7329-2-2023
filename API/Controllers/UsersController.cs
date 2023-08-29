@@ -1,5 +1,6 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -19,21 +20,21 @@ namespace api.Controllers
         }
 
 
-        //TODO:end point that adds a user when given the details
+        //TODO:end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables
         [HttpPost("add")]
-        public async Task<IActionResult> addUser([FromBody]UserInfo user)
+        public async Task<IActionResult> addUser([FromBody]UserInfo user,[FromBody]UserLogin login)
         {
             return Ok("User added");
         }
 
-         //TODO:login:end point that will get the email and encrypted pasword and if successfull      return the user object from db 
+         //TODO:login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
         [HttpGet("Login")]
-        public async Task<IActionResult> login(string? email,string?password)
+        public async  Task<IActionResult> login(string? email,string?password)
         {
             return null;
         }
 
-        //TODO:delete user when given the user object
+        //TODO:delete user when given the user object and delete thier object from the userlogin table by using the email
         [HttpDelete("remove")]
         public async Task<IActionResult> removeUser([FromBody]UserInfo user)
         {

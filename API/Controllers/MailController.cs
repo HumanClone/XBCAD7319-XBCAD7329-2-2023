@@ -112,14 +112,20 @@ namespace api.Controllers
                 tr.ResponseMessage=mailReceive.Body;
                 tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
                 //tr.sender=mailReceive.FromEmail;
-                //tr.name=DateTime.Now();
+                //tr.name=DateTime.Now;
+                TicketDetail td=new TicketDetail();
+                td.DateIssued=DateTime.Now;
+                td.MessageContent=updatedBody;
+                td.Status="Needs attention";
 
                 _context.Add(tr);
+                await _context.SaveChangesAsync();
+                _context.Add(td);
                 await _context.SaveChangesAsync();
 
 
                 // Return a success response
-                return Ok("Email received and processed successfully.");
+                return Ok("Email received and processed successfully adb ticket created.");
             }
             catch (Exception ex)
             {

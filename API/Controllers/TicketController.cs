@@ -10,10 +10,12 @@ namespace api.Controllers
     public class TicketController:ControllerBase
     {
         private readonly StudentSupportXbcadContext _context;
+        private readonly IMailService mailService;
 
-        public TicketController(StudentSupportXbcadContext context)
+        public TicketController(StudentSupportXbcadContext context,IMailService mailService)
         {
             _context = context;
+            this.mailService = mailService;
             
         }
 
@@ -58,8 +60,29 @@ namespace api.Controllers
 
         //TODO:endpoint to close a ticket
         [HttpPost("closeTicket")]
-        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] TicketDetail ticket)
+        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] TicketResponse request)
         {
+            //TODO: code below is to send the email to the person that closed the ticket 
+            // try
+            // {
+            //     await mailService.SendEmailAdmin(request);
+            //     TicketResponse tr= new TicketResponse();
+            //     tr.ResponseMessage=request.Body;
+            //     tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+            //     tr.DevId=request.DevId;
+            //     //tr.name=DateTime.Now();
+            //     _context.Add(tr);
+            //     await _context.SaveChangesAsync();
+
+            //     return Ok();
+            // }
+            // catch (Exception ex)
+            // {
+
+
+            //     return BadRequest();
+
+            // }
             return null;
         }
         
