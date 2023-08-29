@@ -31,9 +31,11 @@ public class TicketController : Controller
         {
             try
             {
-                string selectedCategory = categoryName;
-              //string selectedCategory = HttpContext.Session.GetString("SelectedCategory");
-           //HttpContext.Session
+             //finds the selected category's id 
+               int categoryId = _context.Categories
+               .Where(c => c.CategoryName == categoryName)
+               .Select(c=> c.CategoryId)
+               .FirstOrDefault();
 
                 if (ModelState.IsValid)
                 {
@@ -41,13 +43,14 @@ public class TicketController : Controller
                     {
                         
                         TicketId = ticketDetail.TicketId,
-                        CategoryId = ticketDetail.CategoryId,
+                        CategoryId = categoryId.ToString(),
                         UserId = ticketDetail.UserId,
                         DevId = ticketDetail.DevId,
                         DateIssued = ticketDetail.DateIssued,
                         MessageContent = ticketDetail.MessageContent,
                         Status = ticketDetail.Status,
-                        CategoryName = selectedCategory 
+                        CategoryName = categoryName,
+                       
                         
                     };//send this object to api
                         
