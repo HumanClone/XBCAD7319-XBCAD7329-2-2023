@@ -19,7 +19,7 @@ namespace mvcapp.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
+                
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MVCAPP.Models.Category", b =>
@@ -46,8 +46,10 @@ namespace mvcapp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DevId"));
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
@@ -67,17 +69,15 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
 
                     b.Property<string>("CategoryId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")
-                        .HasColumnType("nvarchar(max)");
+            .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateIssued")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DevId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageContent")
@@ -85,6 +85,9 @@ namespace mvcapp.Migrations
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("TicketId");
 
@@ -100,7 +103,7 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
 
                     b.Property<string>("DevId")
-                        .IsRequired()
+
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")

@@ -34,9 +34,9 @@ namespace api.Controllers
             return null;
         }
 
-        //TODO:delete user when given the user object and delete thier object from the userlogin table by using the email
+        //TODO: delete user when given the user object and delete thier object from the userlogin table by using the email
         [HttpDelete("remove")]
-        public async Task<IActionResult> removeUser([FromBody]UserInfo user)
+        public async Task<IActionResult> removeUser(string? userID)
         {
             return null;
         }

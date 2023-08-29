@@ -30,8 +30,8 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                //tr.DevId=request.sender;
-                //tr.date=DateTime.Now();
+                tr.sender=request.UserId;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -56,7 +56,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                //tr.date=DateTime.Now();
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -111,8 +111,8 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=mailReceive.Body;
                 tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
-                //tr.sender=mailReceive.FromEmail;
-                //tr.name=DateTime.Now;
+                tr.sender=mailReceive.FromEmail;
+                tr.date=DateTime.Now;
                 TicketDetail td=new TicketDetail();
                 td.DateIssued=DateTime.Now;
                 td.MessageContent=updatedBody;
@@ -122,6 +122,8 @@ namespace api.Controllers
                 await _context.SaveChangesAsync();
                 _context.Add(td);
                 await _context.SaveChangesAsync();
+
+
 
 
                 // Return a success response

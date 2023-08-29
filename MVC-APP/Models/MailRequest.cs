@@ -1,4 +1,4 @@
-namespace api.email;
+namespace MVCAPP.Models;
 
 public class MailRequest
 {
