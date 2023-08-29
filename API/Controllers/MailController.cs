@@ -29,7 +29,7 @@ namespace api.Controllers
                 await mailService.SendEmailUser(request);
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
-                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3,request.Subject.Length):request.Subject;
                 tr.sender=request.UserId;
                 tr.date=DateTime.Now;
                 _context.Add(tr);
