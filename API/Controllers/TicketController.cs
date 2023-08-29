@@ -47,7 +47,7 @@ namespace api.Controllers
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                return Ok("It worked");
             }
             catch (Exception ex)
             {
