@@ -23,6 +23,7 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
+
             return null;
         }
 
@@ -68,6 +69,7 @@ namespace api.Controllers
         public async Task<List<TicketDetail>> getTickets()
         {
             List<TicketDetail> td=_context.TicketDetails.ToList();
+
             return td;
         }
 
