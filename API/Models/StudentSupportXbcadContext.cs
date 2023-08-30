@@ -28,7 +28,7 @@ public partial class StudentSupportXbcadContext : DbContext
     public virtual DbSet<UserLogin> UserLogins { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=tcp:xbcad-server.database.windows.net,1433;Initial Catalog=StudentSupport_XBCAD;Persist Security Info=False;User ID=admin@st10083751@xbcad-server;Password=yusra@24;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,8 +47,8 @@ public partial class StudentSupportXbcadContext : DbContext
         {
             entity.HasKey(e => e.ResponseId);
 
-            entity.Property(e => e.date).HasColumnName("date");
-            entity.Property(e => e.sender).HasColumnName("sender");
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Sender).HasColumnName("sender");
             entity.Property(e => e.TicketId).IsRequired();
         });
 
