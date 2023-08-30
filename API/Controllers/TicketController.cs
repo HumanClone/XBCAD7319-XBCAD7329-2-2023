@@ -23,6 +23,7 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
+
             return null;
         }
 
@@ -65,9 +66,11 @@ namespace api.Controllers
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<IActionResult> getTickets()
+        public async Task<List<TicketDetail>> getTickets()
         {
-            return null;
+            List<TicketDetail> td=_context.TicketDetails.ToList();
+
+            return td;
         }
 
         [HttpGet("ticket")]
