@@ -65,9 +65,10 @@ namespace api.Controllers
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<IActionResult> getTickets()
+        public async Task<List<TicketDetail>> getTickets()
         {
-            return null;
+            List<TicketDetail> td=_context.TicketDetails.ToList();
+            return td;
         }
 
         [HttpGet("ticket")]
