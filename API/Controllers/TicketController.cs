@@ -1,5 +1,6 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -66,11 +67,18 @@ namespace api.Controllers
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<List<TicketDetail>> getTickets()
+        public async Task<IActionResult> getTickets()
         {
             List<TicketDetail> td=_context.TicketDetails.ToList();
+            if (td.Count>1)
+            {
+                return Ok();
+            }
+            else{
+                return BadRequest();
+            }
 
-            return td;
+            //return td;
         }
 
         [HttpGet("ticket")]
