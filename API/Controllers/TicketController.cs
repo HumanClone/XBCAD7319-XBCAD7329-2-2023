@@ -1,5 +1,6 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -24,8 +25,17 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
-
-            return null;
+            try
+            {
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
         }
 
 
@@ -35,7 +45,7 @@ namespace api.Controllers
         {
             _context.Add(ticket);
             await _context.SaveChangesAsync();
-            var tic=_context.TicketDetails.Find(ticket);
+            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
             MailRequest req= new MailRequest();
             req.Body=tic.MessageContent;
             req.Subject=tic.TicketId.ToString();
@@ -44,41 +54,29 @@ namespace api.Controllers
                 await mailService.SendEmailUser(req);
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=req.Body;
+                tr.sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
-                return Ok("It worked");
+                return Ok(tr);
             }
             catch (Exception ex)
             {
-
-
                 return BadRequest();
 
-            }
-                
-
-            
+            }    
         }
 
 
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<IActionResult> getTickets()
+        public async Task<List<TicketDetail>> getTickets()
         {
-            List<TicketDetail> td=_context.TicketDetails.ToList();
-            if (td.Count>1)
-            {
-                return Ok();
-            }
-            else{
-                return BadRequest();
-            }
-
-            //return td;
+            List<TicketDetail> td= _context.TicketDetails.ToList();
+            return td;
         }
 
         [HttpGet("ticket")]
@@ -126,7 +124,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 

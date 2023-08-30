@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace api.Models;
-
-public partial class UserLogin
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace api.Models
 {
-    public string Email { get; set; }
-
-    public string Password { get; set; }
+    public class UserLogin{
+        [Key]
+        public string Email {get; set;}
+        [Required]
+        public string Password {get; set;}
+    }
 }
