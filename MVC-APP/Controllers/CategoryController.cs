@@ -22,7 +22,7 @@ public class CategoryController : Controller
     public IActionResult ReadCategory()
     { 
         listCategories = _context.Categories.ToList();
-         ViewBag.SelectedCategory =  HttpContext.Session.GetString("SelectedCategory");
+        // ViewBag.SelectedCategory =  HttpContext.Session.GetString("SelectedCategory");
         return View(listCategories);
     }  
 }
