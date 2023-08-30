@@ -22,7 +22,7 @@ namespace api.Controllers
 
         //TODO:end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables
         [HttpPost("add")]
-        public async Task<IActionResult> addUser([FromBody]UserInfo user,[FromBody]UserLogin login)
+        public async Task<IActionResult> addUser([FromBody]UserInfo user)
         {
             return Ok("User added");
         }

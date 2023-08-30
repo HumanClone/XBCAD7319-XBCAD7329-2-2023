@@ -26,9 +26,52 @@ namespace api.Controllers
             return null;
         }
 
+
+        //endpoint the creates a ticket from the user side and sends emai 
+        [HttpPost("createuserticket")]
+        public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        {
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+            var tic=_context.TicketDetails.Find(ticket);
+            MailRequest req= new MailRequest();
+            req.Body=tic.MessageContent;
+            req.Subject=tic.TicketId.ToString();
+            try
+            {
+                await mailService.SendEmailUser(req);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=req.Body;
+                tr.TicketId=req.Subject;
+                tr.Date=DateTime.Now;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
+                return Ok("It worked");
+            }
+            catch (Exception ex)
+            {
+
+
+                return BadRequest();
+
+            }
+                
+
+            
+        }
+
+
+
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
         public async Task<IActionResult> getTickets()
+        {
+            return null;
+        }
+
+        [HttpGet("ticket")]
+        public async Task<IActionResult> getTickets(string? ticketID)
         {
             return null;
         }
@@ -48,7 +91,6 @@ namespace api.Controllers
 
         //TODO:return a list of tickets that are closed 
 
-        //TODO:^^ above ones with date fields for criteria
 
 
         //TODO:end point to edit a ticket
@@ -58,32 +100,35 @@ namespace api.Controllers
             return null;
         }
 
-        //TODO:endpoint to close a ticket
+        //endpoint to close a ticket
         [HttpPost("closeTicket")]
-        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] TicketResponse request)
+        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
         {
-            //TODO: code below is to send the email to the person that closed the ticket 
-            // try
-            // {
-            //     await mailService.SendEmailAdmin(request);
-            //     TicketResponse tr= new TicketResponse();
-            //     tr.ResponseMessage=request.Body;
-            //     tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-            //     tr.DevId=request.DevId;
-            //     //tr.name=DateTime.Now();
-            //     _context.Add(tr);
-            //     await _context.SaveChangesAsync();
+            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).Single();
+            ticket.Status="closed";
+            _context.Update(ticket);
+            try
+            {
 
-            //     return Ok();
-            // }
-            // catch (Exception ex)
-            // {
+                await mailService.SendEmailAdmin(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=ticket.TicketId.ToString();
+                tr.DevId=request.DevId;
+                tr.Date=DateTime.Now;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+                
+                return Ok();
+            }
+            catch (Exception ex)
+            {
 
 
-            //     return BadRequest();
+                return BadRequest();
 
-            // }
-            return null;
+            }
+            
         }
         
 
