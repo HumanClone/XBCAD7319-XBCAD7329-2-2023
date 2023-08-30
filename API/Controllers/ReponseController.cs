@@ -6,8 +6,6 @@ using System.Text.RegularExpressions;
 namespace api.Controllers
 {
 
-   
-
     [ApiController]
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
@@ -55,7 +53,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
@@ -81,8 +79,8 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                tr.Sender=request.UserId;
-                tr.Date=DateTime.Now;
+                tr.sender=request.UserId;
+                tr.date=DateTime.Now;
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
