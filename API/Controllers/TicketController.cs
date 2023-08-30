@@ -44,7 +44,7 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=req.Body;
                 tr.TicketId=req.Subject;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -52,14 +52,9 @@ namespace api.Controllers
             }
             catch (Exception ex)
             {
-
-
                 return BadRequest();
 
-            }
-                
-
-            
+            }    
         }
 
 
@@ -118,7 +113,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
