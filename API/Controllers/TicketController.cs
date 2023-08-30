@@ -113,9 +113,11 @@ namespace api.Controllers
         [HttpPost("closeTicket")]
         public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
         {
-            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).Single();
+            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId==45).Single();
+            Console.WriteLine("here");
             ticket.Status="closed";
             _context.Update(ticket);
+            await _context.SaveChangesAsync();
             try
             {
 
@@ -128,7 +130,7 @@ namespace api.Controllers
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
-                return Ok();
+                return Ok(tr);
             }
             catch (Exception ex)
             {
