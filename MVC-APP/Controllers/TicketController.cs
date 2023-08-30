@@ -4,8 +4,10 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Data;
 using MVCAPP.Models;
+using System.Text;
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
 
 namespace mvc_app.Controllers;
 
@@ -29,6 +31,7 @@ public class TicketController : Controller
      [HttpPost]
      public IActionResult Create(TicketDetail ticketDetail, string categoryName) 
         {
+            var httpClient = new HttpClient();
             try
             {
              //finds the selected category's id 
@@ -53,11 +56,19 @@ public class TicketController : Controller
                        
                         
                     };//send this object to api
-                        
-                
-                    _context.TicketDetails.Add(Ticket);
-                    _context.SaveChanges();
+
+            /*HttpResponseMessage response = httpClient.PostAsJsonAsync(
+                            "API/Ticket/createUserTicket", Ticket);
+                            response.EnsureSuccessStatusCode();*/
+
+                    HttpContent content = new StringContent(Ticket.ToString(), Encoding.UTF8,"application/json");
+
+                    var response = httpClient.PostAsJsonAsync("API/Ticket/createTicket", Ticket).Result;
+                            
+                    //_context.TicketDetails.Add(Ticket);
+                    //_context.SaveChanges();
                   
+                  Console.WriteLine(response);
                     Console.WriteLine("Added to database");
                     return RedirectToAction("ViewTicket");
                 }
@@ -82,7 +93,17 @@ public class TicketController : Controller
             }
         }
 
+    // check when able to, not sure if correct but cannot test yet
+    /*static async Task<Uri> CreateTicketDetailAsync(TicketDetail ticketDetail)
+    {
+        HttpResponseMessage response = await client.PostAsJsonAsync(
+            "API/Ticket/createTicket", ticketDetail);
+        response.EnsureSuccessStatusCode();
 
+        // return URI of the created resource.
+        return response.Headers.Location;
+    }
+*/
         [HttpGet]
         public IActionResult ViewTicket()
         {

@@ -2,6 +2,7 @@ using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace api.Controllers
 {
@@ -23,7 +24,22 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
-            return null;
+            if (ticket == null)
+            {
+                return BadRequest("Invalid ticket data.");
+            }
+            try
+            {
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+
+                return Ok("Ticket created successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and errors
+                return StatusCode(500, "An error occurred: " + ex.Message);
+            }
         }
 
 
