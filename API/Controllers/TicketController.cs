@@ -3,6 +3,7 @@ using api.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
@@ -133,9 +134,22 @@ namespace api.Controllers
 
         //TODO:end point to edit a ticket
         [HttpPost("editTicket")]
-        public async Task<IActionResult> editTicket(string? ticketID,[FromBody] TicketDetail ticket)
+        public async Task<IActionResult> editTicket([FromBody] TicketDetail ticket)
         {
-           return null;
+
+            try
+            {
+                _context.Update(ticket);
+                 await _context.SaveChangesAsync();
+                 return Ok(ticket);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
+            
+
         }
 
         //endpoint to close a ticket
@@ -147,6 +161,11 @@ namespace api.Controllers
             ticket.Status="closed";
             _context.Update(ticket);
             await _context.SaveChangesAsync();
+            if(!ticket.UserId.HasValue)
+            {
+                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.sender.IsNullOrEmpty()).FirstOrDefault().sender;
+                request.ToEmail=sender;
+            }
             try
             {
 
