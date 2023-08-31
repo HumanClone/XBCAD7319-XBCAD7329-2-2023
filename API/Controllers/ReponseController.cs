@@ -103,8 +103,7 @@ namespace api.Controllers
         [HttpGet("dev")]
         public async Task<List<TicketResponse>> getResponsesDev(string? DevID)
         {
-            var data=_context.TicketResponses.ToList();
-            data=data.Select(s=>s).Where(s=>s.DevId.Equals(DevID)).ToList();
+            var data=_context.TicketResponses.Select(s=>s).Where(s=>s.DevId.Equals(DevID)).ToList();
             return data;
 
         }
