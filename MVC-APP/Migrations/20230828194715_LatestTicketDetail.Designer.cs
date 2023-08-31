@@ -4,6 +4,7 @@ using MVCAPP.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,15 +12,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace mvcapp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230828194715_LatestTicketDetail")]
+    partial class LatestTicketDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+       /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
-                
+
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MVCAPP.Models.Category", b =>
@@ -46,10 +49,8 @@ namespace mvcapp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DevId"));
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
@@ -69,15 +70,10 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
 
                     b.Property<string>("CategoryId")
-
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")
-
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CategoryName")
-            .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateIssued")
                         .HasColumnType("datetime2");
@@ -108,7 +104,6 @@ namespace mvcapp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
 
                     b.Property<string>("DevId")
-
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")

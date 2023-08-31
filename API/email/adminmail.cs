@@ -1,6 +1,6 @@
 namespace api.email;
 
-public class MailSettings
+public class adminmail
 {
     public string Mail { get; set; }
     public string DisplayName { get; set; }

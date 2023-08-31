@@ -1,5 +1,7 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -10,10 +12,12 @@ namespace api.Controllers
     public class TicketController:ControllerBase
     {
         private readonly StudentSupportXbcadContext _context;
+        private readonly IMailService mailService;
 
-        public TicketController(StudentSupportXbcadContext context)
+        public TicketController(StudentSupportXbcadContext context,IMailService mailService)
         {
             _context = context;
+            this.mailService = mailService;
             
         }
 
@@ -21,12 +25,62 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
-            return null;
+            try
+            {
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
         }
+
+
+        //endpoint the creates a ticket from the user side and sends emai 
+        [HttpPost("createuserticket")]
+        public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        {
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+            MailRequest req= new MailRequest();
+            req.Body=tic.MessageContent;
+            req.Subject=tic.TicketId.ToString();
+            try
+            {
+                await mailService.SendEmailUser(req);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=req.Body;
+                tr.sender=tic.UserId.ToString();
+                tr.TicketId=req.Subject;
+                tr.date=DateTime.Now;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
+                return Ok(tr);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+
+            }    
+        }
+
+
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<IActionResult> getTickets()
+        public async Task<List<TicketDetail>> getTickets()
+        {
+            List<TicketDetail> td= _context.TicketDetails.ToList();
+            return td;
+        }
+
+        [HttpGet("ticket")]
+        public async Task<IActionResult> getTickets(string? ticketID)
         {
             return null;
         }
@@ -46,7 +100,6 @@ namespace api.Controllers
 
         //TODO:return a list of tickets that are closed 
 
-        //TODO:^^ above ones with date fields for criteria
 
 
         //TODO:end point to edit a ticket
@@ -56,11 +109,37 @@ namespace api.Controllers
             return null;
         }
 
-        //TODO:endpoint to close a ticket
+        //endpoint to close a ticket
         [HttpPost("closeTicket")]
-        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] TicketDetail ticket)
+        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
         {
-            return null;
+            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            Console.WriteLine("here");
+            ticket.Status="closed";
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
+            try
+            {
+
+                await mailService.SendEmailAdmin(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=ticket.TicketId.ToString();
+                tr.DevId=request.DevId;
+                tr.date=DateTime.Now;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+                
+                return Ok(tr);
+            }
+            catch (Exception ex)
+            {
+
+
+                return BadRequest();
+
+            }
+            
         }
         
 

@@ -1,4 +1,4 @@
-name: Build  ASP.Net Core app - SupportSystem
+name: Build  ASP.Net Core API - SupportSystemAPI
 
 on:
   pull_request:

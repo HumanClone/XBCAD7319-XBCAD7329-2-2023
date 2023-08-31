@@ -1,0 +1,35 @@
+
+@model MVCAPP.Models.TicketDetail;
+
+<h3>Log your ticket for @ViewBag.SelectedCategoryName</h3>
+<hr/>
+<form action="Create" method="post">
+
+     <div class="row">
+    <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">User_ID</label>
+            <input type="text" class="form-control" asp-for="UserId" size="24" />
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">CategoryName</label>
+            <input type="text" class="form-control" asp-for="CategoryName" size="24" />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">MessageContent</label>
+            <textarea class="form-control" asp-for="MessageContent" rows="4" cols="50"></textarea>
+            <span asp-validation-for="MessageContent" class="text-danger"></span>
+        </div>
+    </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>
+
+</form>
+

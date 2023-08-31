@@ -9,6 +9,4 @@ public interface IMailService
 
     Task SendEmailAdmin(MailRequest mailRequest);
 
-    
-//    Task SendWelcomeEmailAsync(WelcomeRequest request);
 }

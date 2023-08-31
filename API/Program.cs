@@ -28,8 +28,8 @@ builder.Configuration.AddJsonFile("appsettings.Development.json", optional: fals
 builder.Configuration.AddEnvironmentVariables();
 
 
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings1"));
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings2"));
+builder.Services.Configure<adminmail>(builder.Configuration.GetSection("adminmail"));
+builder.Services.Configure<usermail>(builder.Configuration.GetSection("usermail"));
 builder.Services.AddTransient<IMailService, MailService>();
 
 
