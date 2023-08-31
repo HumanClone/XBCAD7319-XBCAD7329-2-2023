@@ -60,7 +60,7 @@ namespace api.Controllers
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
-                return Ok(tr);
+                return Ok(tic);
             }
             catch (Exception ex)
             {
