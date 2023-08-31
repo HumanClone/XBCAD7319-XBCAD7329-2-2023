@@ -73,14 +73,14 @@ namespace api.Controllers
         [HttpGet("tickets")]
         public async Task<List<TicketDetail>> getTickets()
         {
-            List<TicketDetail> td= _context.TicketDetails.ToList();
+            List<TicketDetail> td= await _context.TicketDetails.ToList();
             return td;
         }
 
         [HttpGet("ticket")]
         public async Task<TicketDetail> getTickets(string? ticketID)
         {
-            TicketDetail ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            TicketDetail ticket= await _context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
             return ticket;
         }
 
@@ -116,14 +116,14 @@ namespace api.Controllers
         [HttpGet("openTickets")]
         public async Task<List<TicketDetail>> getOpenTickets()
         {
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("open")).ToList();
+            List<TicketDetail> td = await _context.TicketDetails.Where(s => s.Status.Equals("open")).ToList();
             return td;
         }
 
         [HttpGet("closedTickets")]
         public async Task<List<TicketDetail>> getClosedTickets()
         {
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("closed")).ToList();
+            List<TicketDetail> td = await _context.TicketDetails.Where(s => s.Status.Equals("closed")).ToList();
             return td;
         }
 
