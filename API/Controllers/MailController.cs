@@ -22,7 +22,7 @@ namespace api.Controllers
 
         //calls the send method to send the email 
         [HttpPost("send")]
-        public async Task<IActionResult> SendMailUser([FromForm]MailRequest request)// might need to be from body 
+        public async Task<IActionResult> SendMailUser([FromBody]MailRequest request)// might need to be from body 
         {
             try
             {
@@ -47,7 +47,7 @@ namespace api.Controllers
 
 
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
+        public async Task<IActionResult> SendMailAdmin([FromBody]MailRequest request)//might need to be from Body
         {
             try
             {

@@ -1,5 +1,7 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -23,8 +25,17 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
-
-            return null;
+            try
+            {
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
         }
 
 
@@ -34,7 +45,7 @@ namespace api.Controllers
         {
             _context.Add(ticket);
             await _context.SaveChangesAsync();
-            var tic=_context.TicketDetails.Find(ticket);
+            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
             MailRequest req= new MailRequest();
             req.Body=tic.MessageContent;
             req.Subject=tic.TicketId.ToString();
@@ -43,12 +54,13 @@ namespace api.Controllers
                 await mailService.SendEmailUser(req);
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=req.Body;
+                tr.sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
                 tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
-                return Ok("It worked");
+                return Ok(tr);
             }
             catch (Exception ex)
             {
@@ -63,8 +75,7 @@ namespace api.Controllers
         [HttpGet("tickets")]
         public async Task<List<TicketDetail>> getTickets()
         {
-            List<TicketDetail> td=_context.TicketDetails.ToList();
-
+            List<TicketDetail> td= _context.TicketDetails.ToList();
             return td;
         }
 
@@ -102,9 +113,11 @@ namespace api.Controllers
         [HttpPost("closeTicket")]
         public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
         {
-            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).Single();
+            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            Console.WriteLine("here");
             ticket.Status="closed";
             _context.Update(ticket);
+            await _context.SaveChangesAsync();
             try
             {
 
@@ -117,7 +130,7 @@ namespace api.Controllers
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
-                return Ok();
+                return Ok(tr);
             }
             catch (Exception ex)
             {
