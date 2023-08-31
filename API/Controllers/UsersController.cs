@@ -2,6 +2,7 @@ using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Resources;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
@@ -25,6 +26,14 @@ namespace api.Controllers
         public async Task<IActionResult> addUser([FromBody]UserInfo user)
         {
             return Ok("User added");
+        }
+
+
+        //TODO:to add a login to the 
+        [HttpPost("addlogin")]
+        public async Task<IActionResult> addCredentials([FromBody]UserLogin user)
+        {
+            return null;
         }
 
          //TODO:login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object

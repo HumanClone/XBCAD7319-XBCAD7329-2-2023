@@ -22,7 +22,7 @@ namespace api.Controllers
             
         }
 
-        //TODO:endpoint to add a ticket to the db 
+        //endpoint to add a ticket to the db 
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
@@ -72,7 +72,7 @@ namespace api.Controllers
             }    
         }
 
-        //TODO:endpoint to return a list of tickets 
+        //endpoint to return a list of tickets 
         [HttpGet("tickets")]
         public async Task<List<TicketDetail>> getTickets()
         {
@@ -88,7 +88,7 @@ namespace api.Controllers
         }
 
 
-        //TODO:endpoint to get tickets of a dev
+        //:endpoint to get tickets of a dev
         [HttpGet("devTickets")]
         public async Task<List<TicketDetail>> getDevTickets(string? DevId)
         {     
@@ -97,7 +97,7 @@ namespace api.Controllers
         }
 
 
-        //TODO:end point to return tickets within a date range
+        //end point to return tickets within a date range
         [HttpGet("dateRangeTickets")]
         public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate)
         {
@@ -132,7 +132,7 @@ namespace api.Controllers
 
 
 
-        //TODO:end point to edit a ticket
+        //end point to edit a ticket
         [HttpPost("editTicket")]
         public async Task<IActionResult> editTicket([FromBody] TicketDetail ticket)
         {
