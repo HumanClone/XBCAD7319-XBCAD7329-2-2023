@@ -125,7 +125,7 @@ namespace api.Controllers
                 await _context.SaveChangesAsync();
                 
                 // Return a success response
-                return Ok("Email received and processed successfully adb ticket created.");
+                return Ok("Email received and processed successfully and ticket created.");
             }
             catch (Exception ex)
             {
