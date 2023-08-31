@@ -69,8 +69,6 @@ namespace api.Controllers
             }    
         }
 
-
-
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
         public async Task<List<TicketDetail>> getTickets()
@@ -80,25 +78,54 @@ namespace api.Controllers
         }
 
         [HttpGet("ticket")]
-        public async Task<IActionResult> getTickets(string? ticketID)
+        public async Task<TicketDetail> getTickets(string? ticketID)
         {
-            return null;
+            TicketDetail ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            return ticket;
         }
 
 
         //TODO:endpoint to get tickets of a dev
         [HttpGet("devTickets")]
-        public async Task<IActionResult> getDevTickets(string? DevId)
-        {
-            return null;
+        public async Task<List<TicketDetail>> getDevTickets(string? DevId)
+        {     
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DevId.Equals(DevId)).ToList();
+            return td;
         }
 
 
         //TODO:end point to return tickets within a date range
+        [HttpGet("dateRangeTickets")]
+        public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate)
+        {
+            DateTime today = DateTime.Now;
 
-        //TODO:return a list of tickets that are open 
+            //default date range is 1 month
+            DateTime defaultStartDate = today.AddMonths(-1).Date;
+            DateTime defaultEndDate = today.Date;
 
-        //TODO:return a list of tickets that are closed 
+            DateTime parsedStartDate = DateTime.Parse(startDate ?? defaultStartDate.Date.ToString("yyyy-MM-dd"));
+
+            DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
+
+            //only compare the date, not the time
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
+            return td;
+        }
+
+        [HttpGet("openTickets")]
+        public async Task<List<TicketDetail>> getOpenTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("open")).ToList();
+            return td;
+        }
+
+        [HttpGet("closedTickets")]
+        public async Task<List<TicketDetail>> getClosedTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("closed")).ToList();
+            return td;
+        }
 
 
 
@@ -106,7 +133,7 @@ namespace api.Controllers
         [HttpPost("editTicket")]
         public async Task<IActionResult> editTicket(string? ticketID,[FromBody] TicketDetail ticket)
         {
-            return null;
+           return null;
         }
 
         //endpoint to close a ticket
