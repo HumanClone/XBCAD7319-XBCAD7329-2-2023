@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace api.Models;
-
-public partial class TicketDetail
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace api.Models
 {
-    public int TicketId { get; set; }
+    public class TicketDetail
+    {
+        [Key]
+        public int TicketId {get; set;}
+        
+        [ForeignKey("Category")]
+        public string? CategoryId {get; set;}
+        
+        [ForeignKey("TeamDev")]
+        public string? DevId {get; set;}
 
-    public string CategoryId { get; set; }
-
-    public string DevId { get; set; }
-
-    public DateTime DateIssued { get; set; }
-
-    public string MessageContent { get; set; }
-
-    public string Status { get; set; }
-
-    public string CategoryName { get; set; }
-
-    public int? UserId { get; set; }
+        [ForeignKey("UserInfo")]
+        public int? UserId {get; set;}
+        public string? CategoryName {get; set;}
+        public DateTime DateIssued {get; set;}
+        public string? MessageContent {get; set;}
+        public string? Status {get; set;} = "Pending";
+        
+    }
 }

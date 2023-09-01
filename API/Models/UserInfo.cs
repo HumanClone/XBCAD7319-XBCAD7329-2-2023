@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace api.Models;
-
-public partial class UserInfo
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace api.Models
 {
-    public int UserId { get; set; }
-
-    public string Email { get; set; }
-
-    public string Name { get; set; }
-
-    public string PhoneNumber { get; set; }
+    public class UserInfo{
+        [Key]
+        public int UserId {get; set;}
+        [Required]
+        [ForeignKey("UserLogin")]
+        public string Email {get; set;}
+        public string? Name {get; set;} 
+        public string? PhoneNumber {get; set;}
+    }
 }

@@ -8,20 +8,22 @@ namespace api.email;
 
 public class MailService :IMailService
 {
-    private readonly MailSettings _mailSettings1;
-    private readonly MailSettings _mailSettings2;
+    private readonly adminmail _adminmail;
+    private readonly usermail _usermail;
 
-    public MailService(IOptions<MailSettings> mailSettings1, IOptions<MailSettings> mailSettings2)
+    public MailService(IOptions<adminmail> mailSettings1, IOptions<usermail> mailSettings2)
     {
-        _mailSettings1 = mailSettings1.Value;//user
-        _mailSettings2 = mailSettings2.Value;//admin
+        _adminmail = mailSettings1.Value;
+        _usermail = mailSettings2.Value;
     }
 
     public async Task SendEmailUser(MailRequest mailRequest)
     {
         var email = new MimeMessage();
-        email.Sender = MailboxAddress.Parse(_mailSettings1.Mail);
-        email.To.Add(MailboxAddress.Parse(_mailSettings1.Mail));
+        email.Sender = MailboxAddress.Parse(_usermail.Mail);
+        Console.WriteLine(_usermail.Mail);
+        email.To.Add(MailboxAddress.Parse(_adminmail.Mail));
+        Console.WriteLine(_adminmail.Mail);
         email.Subject = mailRequest.Subject;
         var builder = new BodyBuilder();
         if (mailRequest.Attachments != null)
@@ -43,8 +45,8 @@ public class MailService :IMailService
         builder.HtmlBody = mailRequest.Body;
         email.Body = builder.ToMessageBody();
         using var smtp = new SmtpClient();
-        smtp.Connect(_mailSettings1.Host, _mailSettings1.Port, SecureSocketOptions.StartTls);
-        smtp.Authenticate(_mailSettings1.Mail, _mailSettings1.Password);
+        smtp.Connect(_usermail.Host, _usermail.Port, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_usermail.Mail, _usermail.Password);
         await smtp.SendAsync(email);
         smtp.Disconnect(true);
 
@@ -55,8 +57,16 @@ public class MailService :IMailService
     public async Task SendEmailAdmin(MailRequest mailRequest)
     {
         var email = new MimeMessage();
-        email.Sender = MailboxAddress.Parse(_mailSettings2.Mail);
-        email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+        email.Sender = MailboxAddress.Parse(_adminmail.Mail);
+        if (String.IsNullOrEmpty(mailRequest.ToEmail))
+        {
+            email.To.Add(MailboxAddress.Parse(_usermail.Mail));
+        }
+        else
+        {
+            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+        }
+        
         email.Subject = mailRequest.Subject;
         var builder = new BodyBuilder();
         if (mailRequest.Attachments != null)
@@ -78,8 +88,8 @@ public class MailService :IMailService
         builder.HtmlBody = mailRequest.Body;
         email.Body = builder.ToMessageBody();
         using var smtp = new SmtpClient();
-        smtp.Connect(_mailSettings2.Host, _mailSettings2.Port, SecureSocketOptions.StartTls);
-        smtp.Authenticate(_mailSettings2.Mail, _mailSettings2.Password);
+        smtp.Connect(_adminmail.Host, _adminmail.Port, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_adminmail.Mail, _adminmail.Password);
         await smtp.SendAsync(email);
         smtp.Disconnect(true);
 

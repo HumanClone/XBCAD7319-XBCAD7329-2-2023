@@ -1,6 +1,9 @@
 using api.email;
 using api.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -24,22 +27,17 @@ namespace api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> createTicket([FromBody]TicketDetail ticket)
         {
-            if (ticket == null)
-            {
-                return BadRequest("Invalid ticket data.");
-            }
             try
             {
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-
-                return Ok("Ticket created successfully.");
+                return Ok();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // Handle exceptions and errors
-                return StatusCode(500, "An error occurred: " + ex.Message);
+                return BadRequest();
             }
+            
         }
 
 
@@ -49,7 +47,7 @@ namespace api.Controllers
         {
             _context.Add(ticket);
             await _context.SaveChangesAsync();
-            var tic=_context.TicketDetails.Find(ticket);
+            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
             MailRequest req= new MailRequest();
             req.Body=tic.MessageContent;
             req.Subject=tic.TicketId.ToString();
@@ -58,71 +56,117 @@ namespace api.Controllers
                 await mailService.SendEmailUser(req);
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=req.Body;
+                tr.sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
-                return Ok("It worked");
+
+                return Ok(tic);
+
             }
             catch (Exception ex)
             {
-
-
                 return BadRequest();
 
-            }
-                
-
-            
+            }    
         }
-
-
 
         //TODO:endpoint to return a list of tickets 
         [HttpGet("tickets")]
-        public async Task<IActionResult> getTickets()
+        public async Task<List<TicketDetail>> getTickets()
         {
-            return null;
+            List<TicketDetail> td= _context.TicketDetails.ToList();
+            return td;
         }
 
         [HttpGet("ticket")]
-        public async Task<IActionResult> getTickets(string? ticketID)
+        public async Task<TicketDetail> getTickets(string? ticketID)
         {
-            return null;
+            TicketDetail ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            return ticket;
         }
 
 
         //TODO:endpoint to get tickets of a dev
         [HttpGet("devTickets")]
-        public async Task<IActionResult> getDevTickets(string? DevId)
-        {
-            return null;
+        public async Task<List<TicketDetail>> getDevTickets(string? DevId)
+        {     
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DevId.Equals(DevId)).ToList();
+            return td;
         }
 
 
         //TODO:end point to return tickets within a date range
+        [HttpGet("dateRangeTickets")]
+        public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate)
+        {
+            DateTime today = DateTime.Now;
 
-        //TODO:return a list of tickets that are open 
+            //default date range is 1 month
+            DateTime defaultStartDate = today.AddMonths(-1).Date;
+            DateTime defaultEndDate = today.Date;
 
-        //TODO:return a list of tickets that are closed 
+            DateTime parsedStartDate = DateTime.Parse(startDate ?? defaultStartDate.Date.ToString("yyyy-MM-dd"));
+
+            DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
+
+            //only compare the date, not the time
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
+            return td;
+        }
+
+        [HttpGet("openTickets")]
+        public async Task<List<TicketDetail>> getOpenTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("open")).ToList();
+            return td;
+        }
+
+        [HttpGet("closedTickets")]
+        public async Task<List<TicketDetail>> getClosedTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("closed")).ToList();
+            return td;
+        }
 
 
 
         //TODO:end point to edit a ticket
         [HttpPost("editTicket")]
-        public async Task<IActionResult> editTicket(string? ticketID,[FromBody] TicketDetail ticket)
+        public async Task<IActionResult> editTicket([FromBody] TicketDetail ticket)
         {
-            return null;
+
+            try
+            {
+                _context.Update(ticket);
+                 await _context.SaveChangesAsync();
+                 return Ok(ticket);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
+            
+
         }
 
         //endpoint to close a ticket
         [HttpPost("closeTicket")]
         public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
         {
-            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).Single();
+            var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            Console.WriteLine("here");
             ticket.Status="closed";
             _context.Update(ticket);
+            await _context.SaveChangesAsync();
+            if(!ticket.UserId.HasValue)
+            {
+                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.sender.IsNullOrEmpty()).FirstOrDefault().sender;
+                request.ToEmail=sender;
+            }
             try
             {
 
@@ -131,11 +175,11 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.Date=DateTime.Now;
+                tr.date=DateTime.Now;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
-                return Ok();
+                return Ok(tr);
             }
             catch (Exception ex)
             {
