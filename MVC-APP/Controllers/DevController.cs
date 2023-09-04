@@ -33,6 +33,7 @@ public class DevController:ControllerBase
     
 
 //returns a list of all tickets 
+    [HttpGet]
     public async Task<IActionResult> allTickets()
     {
         try
@@ -64,6 +65,7 @@ public class DevController:ControllerBase
     }           
 
 // this will return a list of the tickets that the current dev has assigned to them 
+[HttpGet]
     public async Task<IActionResult> mytickets()
     {
         try
@@ -94,6 +96,7 @@ public class DevController:ControllerBase
 
 
     //option for a button when they want to close a ticket 
+    [HttpPost]
     public async Task<IActionResult> CloseTicket(IFormCollection form)
     {
         try
@@ -124,6 +127,7 @@ public class DevController:ControllerBase
     }
 
     //TODO: based on view either use iformcollection or bind
+    [HttpPost]
     public async Task<IActionResult> EditTicket(TicketDetail ticketDetail)
     {
         try
@@ -155,6 +159,7 @@ public class DevController:ControllerBase
 
 
     //takes the object of depending on how the view is created ,closes a ticket
+    [HttpPost]
     public async Task<IActionResult> CreateTicket(TicketDetail ticketDetail, string categoryName)
     {
         ticketDetail.DevId=HttpContext.Session.GetString("DevId");
@@ -190,6 +195,7 @@ public class DevController:ControllerBase
     }
 
     //gets a ticket based on the id and will return it or the view depending on use case 
+    [HttpPost]
     public async Task<IActionResult> getTicket(string ticketID)
     {
         try
@@ -222,6 +228,7 @@ public class DevController:ControllerBase
 
 
     //this method will get all the responses of a dev to a paticular ticket
+    [HttpGet]
     public async Task<IActionResult> getMyResponses(string ticketID)
     {
         try
@@ -254,6 +261,7 @@ public class DevController:ControllerBase
 
 
     //to get all the responses of a ticket 
+    [HttpGet]
     public async Task<IActionResult> getTicketResponses(string ticketID)
     {
         try
@@ -287,6 +295,7 @@ public class DevController:ControllerBase
 
 //method to send a response
 //TODO: should have a field for email if they want to send it to another email 
+[HttpPost]
     public async Task<IActionResult> SendResponse(string ticketID,string message)
     {
         MailRequest mr=new MailRequest();
