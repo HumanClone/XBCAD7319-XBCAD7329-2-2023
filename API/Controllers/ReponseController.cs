@@ -108,6 +108,14 @@ namespace api.Controllers
 
         }
 
+        [HttpGet("devTicket")]
+        public async Task<List<TicketResponse>> getResponsesDev(string? DevID,string? ticketID)
+        {
+            var data=_context.TicketResponses.Select(s=>s).Where(s=>s.DevId.Equals(DevID)&& s.TicketId.Equals(ticketID)).ToList();
+            return data;
+
+        }
+
 
     }
 }
