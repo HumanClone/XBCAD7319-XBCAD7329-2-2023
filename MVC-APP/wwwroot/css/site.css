@@ -122,3 +122,41 @@ body {
 #categories-card-body{
   padding: 1rem 0!important;
 }
+
+/* Log a Ticket Page */
+
+.ticket-headings{
+  font-weight: 700;
+}
+
+.ticket-form{
+  background-color: #5D7894;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 5rem;
+  padding: 2rem;
+}
+
+.ticket-student-num{
+ margin-bottom: 2rem;
+}
+
+.ticket-category{
+  margin-bottom: 2rem;
+}
+
+.ticket-submit-btn{
+  background-color: white;
+  border: none;
+  color: #5D7894;
+  font-weight: 500;
+  margin-top: 2rem;
+  padding: 5px 0;
+  width: 20%;
+}
+
+.ticket-submit-btn:hover{
+  background-color: #5D7894;
+  border: 1px solid white;
+  color: white;
+}
