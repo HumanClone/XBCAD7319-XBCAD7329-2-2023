@@ -21,7 +21,14 @@ namespace api.Controllers
         }
 
 
-        //TODO:end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables
+
+         /// How to Secure Passwords with BCrypt.NET
+        /// [
+        ///  var passwordHash = BCrypt.HashPassword("Password123!");
+        /// ]
+        /// https://code-maze.com/dotnet-secure-passwords-bcrypt/
+        /// Acccessed[1 September 2023]
+        //TODO:end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables, use bcrypt to check the hashes 
         [HttpPost("add")]
         public async Task<IActionResult> addUser([FromBody]UserInfo user)
         {

@@ -140,8 +140,8 @@ namespace api.Controllers
             try
             {
                 _context.Update(ticket);
-                 await _context.SaveChangesAsync();
-                 return Ok(ticket);
+                await _context.SaveChangesAsync();
+                return Ok(ticket);
             }
             catch(Exception ex)
             {
