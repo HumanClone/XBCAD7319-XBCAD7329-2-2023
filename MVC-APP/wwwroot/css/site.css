@@ -69,7 +69,7 @@ body {
   font-weight: 600;
   margin-top: 2rem;
   padding: 5px;
-  width: 90%;
+  width: 70%;
 }
 
 .card-btn:hover{
@@ -79,7 +79,46 @@ body {
 
 .card-img-top {
   margin-top: 3rem;
-  width: 50%;
-  height: 50%;
+  width: 40%;
+  height: 40%;
   align-self: center;
+}
+
+/* Ticket Categories Grid */
+.category-btn{
+  background-color: #5D7894;
+  border-radius: 0px;
+  border: 1px solid white;
+  color: white;
+  font-weight: 500;
+  margin-top: 10px;
+  width: 30%;
+}
+
+.category-btn:hover{
+  background-color: white;
+  color:#5D7894;
+}
+
+.category-headings{ 
+  color: #5D7894;
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.category-grid{
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 2rem;
+}
+
+#category-cards{
+  background-color: #5D7894;
+  color: white;
+  padding: 2rem;
+}
+
+#categories-card-body{
+  padding: 1rem 0!important;
 }

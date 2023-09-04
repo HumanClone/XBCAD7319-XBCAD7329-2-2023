@@ -10,7 +10,9 @@
     <div class="card h-100">
       <img src="~/images/study.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <button type="button" class="card-btn">STUDENT</button>
+      <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="STUDENT" class="card-btn"/>
+      </a>
       </div>
     </div>
   </div>
@@ -18,7 +20,9 @@
     <div class="card h-100">
       <img src="~/images/maintenance.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <button type="button" class="card-btn">STAFF</button>
+        <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="STAFF" class="card-btn"/>
+      </a>
       </div>
     </div>
   </div>
@@ -26,7 +30,9 @@
     <div class="card h-100">
       <img src="~/images/key.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <button type="button" class="card-btn">ADMIN</button>
+        <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="ADMIN" class="card-btn"/>
+      </a>
       </div>
     </div>
   </div>
