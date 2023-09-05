@@ -6,7 +6,7 @@ using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Newton;
+using Newtonsoft;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -24,6 +24,11 @@ public class TicketController : Controller
     {
        this._context = context;
     }
+
+      private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    };
 
     [HttpGet]
         public IActionResult Create(string categoryName)
@@ -54,7 +59,7 @@ public class TicketController : Controller
                         CategoryId = categoryId.ToString(),
                         UserId = ticketDetail.UserId,
                         DevId = ticketDetail.DevId,
-                        DateIssued = ticketDetail.DateIssued,
+                        DateIssued = DateTime.Now,
                         MessageContent = ticketDetail.MessageContent,
                         Status = ticketDetail.Status,
                         CategoryName = categoryName,
@@ -79,29 +84,34 @@ public class TicketController : Controller
                     Console.WriteLine(serializedTicket);
 
                     // API endpoint URL
-                    var apiUrl = "http://localhost:5173/API/Ticket/createuserTicket";
+                    
 
                     
                         // Create the HTTP content with the serialized JSON
                         var content = new StringContent(serializedTicket, Encoding.UTF8, "application/json");
 
-                        // Send the POST request
-                        var response = await httpClient.PostAsync(apiUrl, ticket);
+                    try{
+                        var response = await sharedClient.PostAsync("Ticket/createuserTicket", content);
 
                         // Handle the response as needed
                         if (response.IsSuccessStatusCode)
                         {
                             Console.WriteLine("Ticket sent successfully.");
+                            return RedirectToAction("ViewTicket");
                         }
                         else
                         {
                             Console.WriteLine("Failed to send ticket. Status code: " + response.StatusCode);
+                            return View();
                         }
-                    
-                  
-                    Console.WriteLine(response);
+                    }
+                    catch(Exception ex)
+                    {
+                        TempData["errorMessage"] = ex.Message;
+                        return View();
+                    }
+                        // Send the POST request
                     Console.WriteLine("Added to database");
-                    return RedirectToAction("ViewTicket");
                 }
                 else
                 {
@@ -123,6 +133,7 @@ public class TicketController : Controller
 
             }
         }
+
 
     // check when able to, not sure if correct but cannot test yet
     /*static async Task<Uri> CreateTicketDetailAsync(TicketDetail ticketDetail)
