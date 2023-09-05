@@ -2,14 +2,14 @@
 using System.Net;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
+using System.Net.Http.Json;
 using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
+
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
@@ -19,133 +19,107 @@ namespace mvc_app.Controllers;
 public class TicketController : Controller
 {
     private readonly ApplicationDbContext _context;
-
-    public TicketController(ApplicationDbContext context)
-    {
-       this._context = context;
-    }
-
-      private static HttpClient sharedClient = new()
+    private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
+    public TicketController(ApplicationDbContext context)
+    {
+        this._context = context;
+    }
+
+   
+
     [HttpGet]
-        public IActionResult Create(string categoryName)
-        {
-           
-            ViewBag.SelectedCategoryName = categoryName;
-            return View();
-        }  
+    public IActionResult Create(string categoryName)
+    {
+        ViewBag.SelectedCategoryName = categoryName;
+        return View();
+    }  
     
-     [HttpPost]
-     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
+
+    [HttpPost]
+    public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
+    {
+        
+        
+        //finds the selected category's id 
+        int categoryId = _context.Categories
+        .Where(c => c.CategoryName == categoryName)
+        .Select(c=> c.CategoryId)
+        .FirstOrDefault();
+
+           
+  
+        try
         {
-            var httpClient = new HttpClient();
-            try
+            if (ModelState.IsValid)
             {
-             //finds the selected category's id 
-               int categoryId = _context.Categories
-               .Where(c => c.CategoryName == categoryName)
-               .Select(c=> c.CategoryId)
-               .FirstOrDefault();
-
-                if (ModelState.IsValid)
+                var Ticket = new TicketDetail()
                 {
-                    var Ticket = new TicketDetail()
+                    
+                    TicketId = ticketDetail.TicketId,
+                    CategoryId = categoryId.ToString(),
+                    UserId = ticketDetail.UserId,
+                    DevId = ticketDetail.DevId,
+                    DateIssued = DateTime.UtcNow,
+                    MessageContent = ticketDetail.MessageContent,
+                    Status = ticketDetail.Status,
+                    CategoryName = categoryName,
+                    
+                };//send this object to api
+            
+
+                try
+                {
+                    HttpResponseMessage response = await sharedClient.PostAsJsonAsync("ticket/createuserticket",Ticket);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        
-                        TicketId = ticketDetail.TicketId,
-                        CategoryId = categoryId.ToString(),
-                        UserId = ticketDetail.UserId,
-                        DevId = ticketDetail.DevId,
-                        DateIssued = DateTime.Now,
-                        MessageContent = ticketDetail.MessageContent,
-                        Status = ticketDetail.Status,
-                        CategoryName = categoryName,
-                       
-                        
-                    };//send this object to api
-
-            /*HttpResponseMessage response = httpClient.PostAsJsonAsync(
-                            "API/Ticket/createUserTicket", Ticket);
-                            response.EnsureSuccessStatusCode();
-
-                    HttpContent content = new StringContent(Ticket.ToString(), Encoding.UTF8,"application/json");
-
-                    var response = httpClient.PostAsJsonAsync("API/Ticket/createTicket", Ticket).Result;*/
-                            
-                    //_context.TicketDetails.Add(Ticket);
-                    //_context.SaveChanges();
-
-                    // Serialize the Ticket object to JSON
-                    var serializedTicket = JsonSerializer.Serialize(Ticket);
-
-                    Console.WriteLine(serializedTicket);
-
-                    // API endpoint URL
-                    
-
-                    
-                        // Create the HTTP content with the serialized JSON
-                        var content = new StringContent(serializedTicket, Encoding.UTF8, "application/json");
-
-                    try{
-                        var response = await sharedClient.PostAsync("Ticket/createuserTicket", content);
-
-                        // Handle the response as needed
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Console.WriteLine("Ticket sent successfully.");
-                            return RedirectToAction("ViewTicket");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Failed to send ticket. Status code: " + response.StatusCode);
-                            return View();
-                        }
+                        Console.WriteLine("POST request successful");
+                        Console.WriteLine("Added to database");
+                        return RedirectToAction("ViewTicket");
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        TempData["errorMessage"] = ex.Message;
+                        Console.WriteLine($"Request failed with status code: {response.StatusCode}");
                         return View();
                     }
-                        // Send the POST request
-                    Console.WriteLine("Added to database");
-                }
-                else
-                {
-                    foreach (var modelState in ModelState.Values)
-                        {
-                            foreach (var error in modelState.Errors)
-                            {
-                                Console.WriteLine($"Model Error: {error.ErrorMessage}");
-                            }
-                        }
 
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"Request error: {ex.Message}");
                     return View();
                 }
+                
+            
+            
             }
-            catch (Exception ex)
+            else
             {
-                TempData["errorMessage"] = ex.Message;
-                return View();
+                foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            Console.WriteLine($"Model Error: {error.ErrorMessage}");
+                        }
+                    }
 
+                return View();
             }
         }
+        catch (Exception ex)
+        {
+            TempData["errorMessage"] = ex.Message;
+            return View();
 
-
-    // check when able to, not sure if correct but cannot test yet
-    /*static async Task<Uri> CreateTicketDetailAsync(TicketDetail ticketDetail)
-    {
-        HttpResponseMessage response = await client.PostAsJsonAsync(
-            "API/Ticket/createTicket", ticketDetail);
-        response.EnsureSuccessStatusCode();
-
-        // return URI of the created resource.
-        return response.Headers.Location;
+        }
     }
-*/
+
+
+
         [HttpGet]
         public IActionResult ViewTicket()
         {
@@ -162,7 +136,6 @@ public class TicketController : Controller
                     DateIssued = ticket.DateIssued,
                     Status = ticket.Status
                 };
-              
                 ticketList.Add(ticketDetail);
             }
 
