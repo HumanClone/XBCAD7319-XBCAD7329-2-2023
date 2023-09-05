@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 html {
   font-size: 14px;
 }
@@ -19,4 +21,142 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.nav-logo{
+  width: 200px;
+  height: 100px;
+}
+
+.nav-item{
+  color: #000000;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: #4c63a3;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #000000!important;
+}
+
+.navbar{
+  padding-bottom: 0px;
+}
+
+
+/* Landing Page  */
+
+.landing-heading{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin: 4rem 0;
+}
+
+.card{
+  border: none;
+}
+
+.card-btn{
+  background-color: #A6C4CB;
+  border: 1px solid #A6C4CB;
+  border-radius: 30px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  margin-top: 2rem;
+  padding: 5px;
+  width: 70%;
+}
+
+.card-btn:hover{
+  background-color: #95b0b7;
+  border: 1px solid #95b0b7;
+}
+
+.card-img-top {
+  margin-top: 3rem;
+  width: 40%;
+  height: 40%;
+  align-self: center;
+}
+
+/* Ticket Categories Grid */
+.category-btn{
+  background-color: #5D7894;
+  border-radius: 0px;
+  border: 1px solid white;
+  color: white;
+  font-weight: 500;
+  margin-top: 10px;
+  width: 30%;
+}
+
+.category-btn:hover{
+  background-color: white;
+  color:#5D7894;
+}
+
+.category-headings{ 
+  color: #5D7894;
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.category-grid{
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 2rem;
+}
+
+#category-cards{
+  background-color: #5D7894;
+  color: white;
+  padding: 2rem;
+}
+
+#categories-card-body{
+  padding: 1rem 0!important;
+}
+
+/* Log a Ticket Page */
+
+.ticket-headings{
+  font-weight: 700;
+}
+
+.ticket-form{
+  background-color: #5D7894;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 5rem;
+  padding: 2rem;
+}
+
+.ticket-student-num{
+ margin-bottom: 2rem;
+}
+
+.ticket-category{
+  margin-bottom: 2rem;
+}
+
+.ticket-submit-btn{
+  background-color: white;
+  border: none;
+  color: #5D7894;
+  font-weight: 500;
+  margin-top: 2rem;
+  padding: 5px 0;
+  width: 20%;
+}
+
+.ticket-submit-btn:hover{
+  background-color: #5D7894;
+  border: 1px solid white;
+  color: white;
 }
