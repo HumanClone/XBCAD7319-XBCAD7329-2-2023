@@ -58,7 +58,7 @@ namespace api.Controllers
                 tr.ResponseMessage=req.Body;
                 tr.sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
-                tr.date=DateTime.Now;
+                tr.date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -102,7 +102,7 @@ namespace api.Controllers
         [HttpGet("dateRangeTickets")]
         public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate)
         {
-            DateTime today = DateTime.Now;
+            DateTime today = DateTime.UtcNow;
 
             //default date range is 1 month
             DateTime defaultStartDate = today.AddMonths(-1).Date;
@@ -175,7 +175,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.date=DateTime.Now;
+                tr.date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
