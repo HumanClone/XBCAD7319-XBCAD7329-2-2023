@@ -1,32 +1,35 @@
 
 @model MVCAPP.Models.TicketDetail;
 
-<h3>Log your ticket for @ViewBag.SelectedCategoryName</h3>
-<hr/>
-<form action="Create" method="post">
 
+<form action="Create" method="post" class="ticket-form">
+    <h3 class="ticket-headings">Student Information</h3>
+    <hr/>
      <div class="row">
     <div class="col-md-6">
           <div class="mb-3">
-            <label class="form-label">User_ID</label>
-            <input type="text" class="form-control" asp-for="UserId" size="24" />
+            <label class="form-label">Student Number</label>
+            <input type="text" class="form-control ticket-student-num" asp-for="UserId" size="24" required/>
             <span asp-validation-for="UserId" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">CategoryName</label>
-            <input type="text" class="form-control" asp-for="CategoryName" size="24" />
+            <label class="form-label">Category Name</label>
+            <input type="text" class="form-control ticket-category" asp-for="CategoryName" size="24" readonly/>
         </div>
         
+        <h4 class="ticket-headings">Query</h4>
+        <hr/>
+
         <div class="mb-3">
-            <label class="form-label">MessageContent</label>
-            <textarea class="form-control" asp-for="MessageContent" rows="4" cols="50"></textarea>
+            <label class="form-label">Message</label>
+            <textarea class="form-control ticket-content" asp-for="MessageContent" rows="4" cols="50" required></textarea>
             <span asp-validation-for="MessageContent" class="text-danger"></span>
         </div>
     </div>
 
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="submit" class="ticket-submit-btn"/>
         </div>
     </div>
 </div>

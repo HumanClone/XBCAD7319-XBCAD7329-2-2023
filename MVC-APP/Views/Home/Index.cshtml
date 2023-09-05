@@ -3,6 +3,38 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h5 class="landing-heading">PLEASE SELECT A USER TO CONTINUE</h5>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+      <img src="~/images/study.png" class="card-img-top" alt="...">
+      <div class="card-body">
+      <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="STUDENT" class="card-btn"/>
+      </a>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+      <img src="~/images/maintenance.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="STAFF" class="card-btn"/>
+      </a>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+      <img src="~/images/key.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <a asp-controller="UserLogin" asp-action="Login">
+        <input type="submit" value="ADMIN" class="card-btn"/>
+      </a>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
