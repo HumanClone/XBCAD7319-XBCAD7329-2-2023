@@ -29,29 +29,21 @@ public class TicketController : Controller
         this._context = context;
     }
 
-   
-
     [HttpGet]
     public IActionResult Create(string categoryName)
     {
         ViewBag.SelectedCategoryName = categoryName;
         return View();
     }  
-    
 
     [HttpPost]
     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
     {
-        
-        
         //finds the selected category's id 
         int categoryId = _context.Categories
         .Where(c => c.CategoryName == categoryName)
         .Select(c=> c.CategoryId)
         .FirstOrDefault();
-
-           
-  
         try
         {
             if (ModelState.IsValid)
@@ -92,10 +84,7 @@ public class TicketController : Controller
                 {
                     Console.WriteLine($"Request error: {ex.Message}");
                     return View();
-                }
-                
-            
-            
+                }  
             }
             else
             {
@@ -117,9 +106,6 @@ public class TicketController : Controller
 
         }
     }
-
-
-
         [HttpGet]
         public IActionResult ViewTicket()
         {
