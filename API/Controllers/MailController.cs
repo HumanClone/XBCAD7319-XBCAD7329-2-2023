@@ -31,7 +31,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3,request.Subject.Length):request.Subject;
                 tr.sender=request.UserId;
-                tr.date=DateTime.Now;
+                tr.date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -56,7 +56,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.date=DateTime.Now;
+                tr.date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -98,29 +98,30 @@ namespace api.Controllers
                 updatedBody = updatedBody.Replace("\\r\\n", " ");
                 updatedBody = updatedBody.Replace(@"&nbsp;", " ");
 
-                // Create the MailReceive object
-                var tempObject = new MailReceive
-                {
-                    FromEmail = mailReceive.FromEmail,
-                    Subject = mailReceive.Subject,
-                    Body =updatedBody,
-                    ReceivedDate = mailReceive.ReceivedDate,
-                    //Attachments = mailReceive.Attachments
-                };
-
-                TicketDetail td=new TicketDetail();
-                td.DateIssued=DateTime.Now;
-                td.MessageContent=updatedBody;
-                td.Status="Needs attention";
-                _context.Add(td);
-                await _context.SaveChangesAsync();
-                var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
                 TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=mailReceive.Body;
-                tr.TicketId=tic.TicketId.ToString();
-                tr.sender=mailReceive.FromEmail;
-                tr.date=DateTime.Now;
+                var ids=_context.TicketDetails.Select(S=>S.TicketId);
+                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(2):mailReceive.Subject;
+                bool posID=int.TryParse(pID,out int result);
+                bool exist=ids.Contains(result);
+                if(!posID && !exist)
+                {
+                    TicketDetail td=new TicketDetail();
+                    td.DateIssued=DateTime.UtcNow;
+                    td.MessageContent=updatedBody;
+                    td.Status="Needs attention";
+                    _context.Add(td);
+                    await _context.SaveChangesAsync();
+                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    tr.TicketId=tic.TicketId.ToString();
+                }
+                else
+                {
+                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                }
                 
+                tr.ResponseMessage=mailReceive.Body;
+                tr.sender=mailReceive.FromEmail;
+                tr.date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 

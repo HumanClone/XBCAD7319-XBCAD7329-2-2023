@@ -164,7 +164,7 @@ public class DevController:ControllerBase
     {
         ticketDetail.DevId=HttpContext.Session.GetString("DevId");
         ticketDetail.CategoryName=categoryName;
-        ticketDetail.DateIssued=DateTime.Now;
+        ticketDetail.DateIssued=DateTime.UtcNow;
 
         try
         {
@@ -261,7 +261,9 @@ public class DevController:ControllerBase
 
 
     //to get all the responses of a ticket 
+
     [HttpGet]
+
     public async Task<IActionResult> getTicketResponses(string ticketID)
     {
         try
@@ -295,7 +297,10 @@ public class DevController:ControllerBase
 
 //method to send a response
 //TODO: should have a field for email if they want to send it to another email 
+
 [HttpPost]
+
+
     public async Task<IActionResult> SendResponse(string ticketID,string message)
     {
         MailRequest mr=new MailRequest();

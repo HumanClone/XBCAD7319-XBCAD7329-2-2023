@@ -6,7 +6,13 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using MVCAPP.Data;
 using MVCAPP.Models;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+
+
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
 
 namespace mvc_app.Controllers;
 
@@ -23,6 +29,8 @@ public class TicketController : Controller
         this._context = context;
     }
 
+   
+
     [HttpGet]
     public IActionResult Create(string categoryName)
     {
@@ -30,17 +38,22 @@ public class TicketController : Controller
         return View();
     }  
     
+
     [HttpPost]
     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
     {
+        
+        
+        //finds the selected category's id 
+        int categoryId = _context.Categories
+        .Where(c => c.CategoryName == categoryName)
+        .Select(c=> c.CategoryId)
+        .FirstOrDefault();
+
+           
+  
         try
         {
-            //finds the selected category's id 
-            int categoryId = _context.Categories
-            .Where(c => c.CategoryName == categoryName)
-            .Select(c=> c.CategoryId)
-            .FirstOrDefault();
-
             if (ModelState.IsValid)
             {
                 var Ticket = new TicketDetail()
@@ -50,12 +63,13 @@ public class TicketController : Controller
                     CategoryId = categoryId.ToString(),
                     UserId = ticketDetail.UserId,
                     DevId = ticketDetail.DevId,
-                    DateIssued = DateTime.Now,
+                    DateIssued = DateTime.UtcNow,
                     MessageContent = ticketDetail.MessageContent,
                     Status = ticketDetail.Status,
                     CategoryName = categoryName,
                     
                 };//send this object to api
+            
 
                 try
                 {
@@ -72,15 +86,16 @@ public class TicketController : Controller
                         Console.WriteLine($"Request failed with status code: {response.StatusCode}");
                         return View();
                     }
+
                 }
                 catch (HttpRequestException ex)
                 {
                     Console.WriteLine($"Request error: {ex.Message}");
                     return View();
                 }
-                    
                 
-                
+            
+            
             }
             else
             {
@@ -102,6 +117,7 @@ public class TicketController : Controller
 
         }
     }
+
 
 
         [HttpGet]
