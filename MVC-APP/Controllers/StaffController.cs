@@ -6,17 +6,17 @@ using MVCAPP.Models;
 
 namespace mvc_app.Controllers;
 
-public class DevController:ControllerBase
+public class StaffController:ControllerBase
 {
 
-    private readonly ILogger<DevController> _logger;
+    private readonly ILogger<StaffController> _logger;
     private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
 
-    public DevController(ILogger<DevController> logger)
+    public StaffController(ILogger<StaffController> logger)
     {
         _logger = logger;
     }
