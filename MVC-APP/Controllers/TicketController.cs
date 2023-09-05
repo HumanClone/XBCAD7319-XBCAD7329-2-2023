@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Newton;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
@@ -29,7 +34,7 @@ public class TicketController : Controller
         }  
     
      [HttpPost]
-     public IActionResult Create(TicketDetail ticketDetail, string categoryName) 
+     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
         {
             var httpClient = new HttpClient();
             try
@@ -59,16 +64,42 @@ public class TicketController : Controller
 
             /*HttpResponseMessage response = httpClient.PostAsJsonAsync(
                             "API/Ticket/createUserTicket", Ticket);
-                            response.EnsureSuccessStatusCode();*/
+                            response.EnsureSuccessStatusCode();
 
                     HttpContent content = new StringContent(Ticket.ToString(), Encoding.UTF8,"application/json");
 
-                    var response = httpClient.PostAsJsonAsync("API/Ticket/createTicket", Ticket).Result;
+                    var response = httpClient.PostAsJsonAsync("API/Ticket/createTicket", Ticket).Result;*/
                             
                     //_context.TicketDetails.Add(Ticket);
                     //_context.SaveChanges();
+
+                    // Serialize the Ticket object to JSON
+                    var serializedTicket = JsonSerializer.Serialize(Ticket);
+
+                    Console.WriteLine(serializedTicket);
+
+                    // API endpoint URL
+                    var apiUrl = "http://localhost:5173/API/Ticket/createuserTicket";
+
+                    
+                        // Create the HTTP content with the serialized JSON
+                        var content = new StringContent(serializedTicket, Encoding.UTF8, "application/json");
+
+                        // Send the POST request
+                        var response = await httpClient.PostAsync(apiUrl, ticket);
+
+                        // Handle the response as needed
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Ticket sent successfully.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed to send ticket. Status code: " + response.StatusCode);
+                        }
+                    
                   
-                  Console.WriteLine(response);
+                    Console.WriteLine(response);
                     Console.WriteLine("Added to database");
                     return RedirectToAction("ViewTicket");
                 }
