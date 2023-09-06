@@ -68,7 +68,7 @@ namespace api.Controllers
 
         //TODO:login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
         [HttpGet("Login")]
-        public async  Task<IActionResult> login(string? email,string?password)
+        public async  Task<IActionResult> Login(string? email,string? password)
         {
            //check if the user exists in the devteam table
             var dev = _context.TeamDevs.Where(x=>x.Email==email).FirstOrDefault();
