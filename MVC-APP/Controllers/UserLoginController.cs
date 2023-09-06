@@ -39,11 +39,7 @@ namespace MVCAPP.Controllers
             //TODO: Change form names to match form
             UserLogin cred= new UserLogin();
             cred.Email = form["Email"];
-            var passhash=BCrypt.Net.BCrypt.HashPassword(form["Password"]);
-            cred.Password = passhash;
-            // Console.WriteLine(cred.Email+"\t"+cred.Password);
-            // return View();
-
+            cred.Password=form["Password"];        
             try
             {
                 HttpResponseMessage response = await sharedClient.PostAsJsonAsync("users/Login",cred);
@@ -58,8 +54,8 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Name", user.Name);
                         HttpContext.Session.SetString("Email", user.Email);
 
-                        //TODO: Redirect to user screen 
-                        return View();
+                        HttpContext.Session.SetString("Role", "Student");
+                        return RedirectToAction("Ticket", "ViewTicket");
                         
                     }
                     //this will catch if they return a dev team object instead, ths and find the right exception then add a anpther catch with the genectic exception
@@ -69,8 +65,9 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetInt32("DevId", user.DevId);
                         HttpContext.Session.SetString("Name", user.Name+" "+user.Surname);
                         HttpContext.Session.SetString("Email", user.Email);
-                        //TODO: Redirect to dev screeen 
-                        return View();
+
+                        HttpContext.Session.SetString("Role", "Staff");
+                        return RedirectToAction("Ticket", "ViewTicket");
                     }
                 }
                 else
@@ -83,7 +80,7 @@ namespace MVCAPP.Controllers
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Notification = "Error ocureed try again";
+                ViewBag.Notification = "Error ocured try again";
                 Console.WriteLine($"Request error: {ex.Message}");
                 return View();
             }
