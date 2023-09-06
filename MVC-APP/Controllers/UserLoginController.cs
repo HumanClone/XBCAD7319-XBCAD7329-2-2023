@@ -34,8 +34,10 @@ namespace MVCAPP.Controllers
     /// Acccessed[1 September 2023]
 
         [HttpPost]
+
         public async Task<IActionResult> Login(UserLogin cred)
         {             
+
             try
             {
                 HttpResponseMessage response = await sharedClient.PostAsJsonAsync("users/Login",cred);
@@ -51,10 +53,13 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Email", user.Email);
 
                         HttpContext.Session.SetString("Role", "Student");
+
                         return RedirectToAction("ViewTicket", "Ticket");
+
                         
                     }
-                    //this will catch if they return a dev team object instead, ths and find the right exception then add a anpther catch with the genectic exception
+                    //this will catch if they return a dev team object instead, 
+                    //TODO:tests and find the right exception then add a anpther catch with the genectic exception
                     catch(Exception ex)
                     {
                         var user = await response.Content.ReadFromJsonAsync<TeamDev>();

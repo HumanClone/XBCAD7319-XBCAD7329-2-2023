@@ -118,14 +118,18 @@ public class TicketController : Controller
             {
                 var userId = HttpContext.Session.GetInt32("UserId");
                 //call api to get student tickets
+
                 tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/userTickets?userId={userId}").Result;            
+
                 
             }
             else if(role == "Staff")
             {
                 var devId = HttpContext.Session.GetInt32("DevId");
                 //call api to get dev tickets
+
                 tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/devtickets?devId={devId}").Result;            
+
             
             }else{
                 //call api to get all tickets
