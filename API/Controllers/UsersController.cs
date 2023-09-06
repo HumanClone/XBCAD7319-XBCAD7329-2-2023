@@ -21,6 +21,7 @@ namespace api.Controllers
             
         }
 
+
         //end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables, use bcrypt to check the hashes 
         [HttpPost("add")]
         public async Task<IActionResult> addUser([FromBody]UserInfo user)
@@ -67,37 +68,33 @@ namespace api.Controllers
             }
         }
 
-        //login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first , if it exists then return the devteam object once password is verified, else check verfiy password and retrun userInfo object
-        [HttpGet("Login")]
-        public async  Task<IActionResult> Login(string? email,string? password)
+
+        //login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] UserLogin cred)
         {
-            var user = _context.UserLogin.Where(x=>x.Email==email).FirstOrDefault();
-            //check if the user exists in the devteam table
-            var dev = _context.TeamDevs.Where(x=>x.Email==email).FirstOrDefault();
+           //check if the user exists in the devteam table
+            var dev = _context.TeamDevs.Where(x=>x.Email==cred.Email).FirstOrDefault();
             if(dev!=null)
             {
-                //verfiy password               
-                if(BCrypt.Net.BCrypt.Verify(password,user.Password))
-                {
-                    //return the dev object
-                    return Ok(dev);
-                }
-                else
-                {
-                    return BadRequest("Incorrect password");
-                }
+                //return the devteam object
+                return Ok(dev);
+
             }
             else
             {
                 //check if the user exists in the userlogin table
+
+                var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
                 {
                     //check if the password matches the hash
-                    if(BCrypt.Net.BCrypt.Verify(password,user.Password))
+                    if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
                     {
                         //return the user object
-                        var userinfo=_context.UserInfo.Where(x=>x.Email==email).FirstOrDefaultAsync();
-                        return Ok(userinfo);
+                        return Ok(user);
+
                     }
                     else
                     {

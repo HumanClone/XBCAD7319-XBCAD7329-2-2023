@@ -11,7 +11,8 @@ namespace MVCAPP.Controllers
 
         private static HttpClient sharedClient = new()
         {
-            BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+            //BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+            BaseAddress = new Uri("http://localhost:5173/api/"),
         };
 
         public UserLoginController(ApplicationDbContext context)
@@ -34,12 +35,10 @@ namespace MVCAPP.Controllers
     /// Acccessed[1 September 2023]
 
         [HttpPost]
-        public async Task<IActionResult> Login(IFormCollection form)
-        {
-            //TODO: Change form names to match form
-            UserLogin cred= new UserLogin();
-            cred.Email = form["Email"];
-            cred.Password=form["Password"];        
+
+        public async Task<IActionResult> Login(UserLogin cred)
+        {             
+
             try
             {
                 HttpResponseMessage response = await sharedClient.PostAsJsonAsync("users/Login",cred);
@@ -55,7 +54,9 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Email", user.Email);
 
                         HttpContext.Session.SetString("Role", "Student");
-                        return RedirectToAction("Ticket", "ViewTicket");
+
+                        return RedirectToAction("ViewTicket", "Ticket");
+
                         
                     }
                     //this will catch if they return a dev team object instead, 

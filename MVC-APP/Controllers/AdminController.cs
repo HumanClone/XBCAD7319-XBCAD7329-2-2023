@@ -30,7 +30,7 @@ public class AdminController : Controller
             string jsonTicketContent;
            List<TicketDetail> ticketList = new List<TicketDetail>();
            
-            HttpResponseMessage response = await sharedClient.GetAsync("Ticket/Tickets");
+            HttpResponseMessage response = await sharedClient.GetAsync("Ticket/getalltickets");
             if(response.IsSuccessStatusCode)
             {
                 jsonTicketContent= await response.Content.ReadAsStringAsync();
