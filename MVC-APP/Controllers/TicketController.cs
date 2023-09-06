@@ -25,18 +25,15 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
-    private readonly ApplicationDbContext _context;
     private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
-    public TicketController(ApplicationDbContext context)
+    public TicketController()
     {
-        this._context = context;
+        
     }
-
-   
 
     [HttpGet]
     public IActionResult Create(string categoryName)
@@ -44,21 +41,13 @@ public class TicketController : Controller
         ViewBag.SelectedCategoryName = categoryName;
         return View();
     }  
-    
 
     [HttpPost]
     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
     {
+        //finds the selected category's id, call the api to get the category id
+        var categoryId = await sharedClient.GetFromJsonAsync<int>($"category/getcategoryid?categoryName={categoryName}");     
         
-        
-        //finds the selected category's id 
-        int categoryId = _context.Categories
-        .Where(c => c.CategoryName == categoryName)
-        .Select(c=> c.CategoryId)
-        .FirstOrDefault();
-
-           
-  
         try
         {
             if (ModelState.IsValid)
@@ -99,10 +88,7 @@ public class TicketController : Controller
                 {
                     Console.WriteLine($"Request error: {ex.Message}");
                     return View();
-                }
-                
-            
-            
+                }  
             }
             else
             {
@@ -124,75 +110,50 @@ public class TicketController : Controller
 
         }
     }
-
-
-
         [HttpGet]
         public IActionResult ViewTicket()
         {
-            var tickets = _context.TicketDetails.ToList();
-            List<TicketDetail> ticketList = new List<TicketDetail>();
+            var tickets = new List<TicketDetail>();
 
-            foreach (var ticket in tickets)
+            var role = HttpContext.Session.GetString("Role");
+            if(role == "Student")
             {
-                var ticketDetail = new TicketDetail
-                {
-                    TicketId = ticket.TicketId,
-                    CategoryName = ticket.CategoryName,
-                    MessageContent = ticket.MessageContent,
-                    DateIssued = ticket.DateIssued,
-                    Status = ticket.Status
-                };
-                ticketList.Add(ticketDetail);
+                var userId = HttpContext.Session.GetInt32("UserId");
+                //call api to get student tickets
+
+                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/userTickets?userId={userId}").Result;            
+
+                
+            }
+            else if(role == "Staff")
+            {
+                var devId = HttpContext.Session.GetInt32("DevId");
+                //call api to get dev tickets
+
+                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/devtickets?devId={devId}").Result;            
+
+            
+            }else{
+                //call api to get all tickets
+                 tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>("ticket/getalltickets").Result;                     
             }
 
-            return View(ticketList);
+            List<TicketDetail> ticketList = new List<TicketDetail>();
+
+                foreach (var ticket in tickets)
+                {
+                    var ticketDetail = new TicketDetail
+                    {
+                        TicketId = ticket.TicketId,
+                        CategoryName = ticket.CategoryName,
+                        MessageContent = ticket.MessageContent,
+                        DateIssued = ticket.DateIssued,
+                        Status = ticket.Status
+                    };
+                    ticketList.Add(ticketDetail);
+                }
+
+                return View(ticketList);
+            
         }
-
-    //View ticket saff
-    [HttpGet]
-    public async Task<IActionResult> ViewTicket(string filter, string sortOrder)
-    {
-        // Get the developer's ID from the session
-        string devId = HttpContext.Session.GetString("DevId");
-
-        // Retrieve tickets associated with the developer
-        var tickets = await _context.TicketDetails
-            .Where(t => t.DevId == devId)
-            .OrderByDescending(t => t.Status == "Closed")
-            .ThenBy(t => t.Status == "Pending")
-            .ToListAsync();
-
-        // Create a list of TicketDetail objects for the view
-        List<TicketDetail> ticketList = tickets.Select(ticket => new TicketDetail
-        {
-            TicketId = ticket.TicketId,
-            CategoryName = ticket.CategoryName,
-            MessageContent = ticket.MessageContent,
-            DateIssued = ticket.DateIssued,
-            Status = ticket.Status
-        }).ToList();
-
-        // Apply filtering based on the 'filter' parameter
-        if (!string.IsNullOrEmpty(filter))
-        {
-            ticketList = ticketList.Where(t => t.CategoryName.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-        // Apply sorting based on the 'sortOrder' parameter
-        switch (sortOrder)
-        {
-            case "ClosedFirst":
-                ticketList = ticketList.OrderBy(t => t.Status == "Closed").ThenBy(t => t.DateIssued).ToList();
-                break;
-            case "PendingFirst":
-                ticketList = ticketList.OrderBy(t => t.Status == "Pending").ThenBy(t => t.DateIssued).ToList();
-                break;
-            default:
-                ticketList = ticketList.OrderBy(t => t.DateIssued).ToList();
-                break;
-        }
-
-        return View(ticketList);
-    }
 }

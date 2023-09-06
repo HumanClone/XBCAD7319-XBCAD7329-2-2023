@@ -11,7 +11,8 @@ namespace MVCAPP.Controllers
 
         private static HttpClient sharedClient = new()
         {
-            BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+            //BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+            BaseAddress = new Uri("http://localhost:5173/api/"),
         };
 
         public UserLoginController(ApplicationDbContext context)
@@ -34,15 +35,9 @@ namespace MVCAPP.Controllers
     /// Acccessed[1 September 2023]
 
         [HttpPost]
-        public async Task<IActionResult> Login(IFormCollection form)
-        {
-            //TODO: Change form names to match form
-            UserLogin cred= new UserLogin();
-            cred.Email = form["Email"];
-            var passhash=BCrypt.Net.BCrypt.HashPassword(form["Password"]);
-            cred.Password = passhash;
-            // Console.WriteLine(cred.Email+"\t"+cred.Password);
-            // return View();
+
+        public async Task<IActionResult> Login(UserLogin cred)
+        {             
 
             try
             {
@@ -58,19 +53,23 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Name", user.Name);
                         HttpContext.Session.SetString("Email", user.Email);
 
-                        //TODO: Redirect to user screen 
-                        return View();
+                        HttpContext.Session.SetString("Role", "Student");
+
+                        return RedirectToAction("ViewTicket", "Ticket");
+
                         
                     }
-                    //this will catch if they return a dev team object instead, ths and find the right exception then add a anpther catch with the genectic exception
+                    //this will catch if they return a dev team object instead, 
+                    //TODO:tests and find the right exception then add a anpther catch with the genectic exception
                     catch(Exception ex)
                     {
                         var user = await response.Content.ReadFromJsonAsync<TeamDev>();
                         HttpContext.Session.SetInt32("DevId", user.DevId);
                         HttpContext.Session.SetString("Name", user.Name+" "+user.Surname);
                         HttpContext.Session.SetString("Email", user.Email);
-                        //TODO: Redirect to dev screeen 
-                        return View();
+
+                        HttpContext.Session.SetString("Role", "Staff");
+                        return RedirectToAction("Ticket", "ViewTicket");
                     }
                 }
                 else
@@ -83,7 +82,7 @@ namespace MVCAPP.Controllers
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Notification = "Error ocureed try again";
+                ViewBag.Notification = "Error ocured try again";
                 Console.WriteLine($"Request error: {ex.Message}");
                 return View();
             }
