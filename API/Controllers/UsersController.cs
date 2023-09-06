@@ -90,7 +90,6 @@ namespace api.Controllers
             }
             else
             {
-                //check if the user exists in the userlogin table               
                 var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
                 {
