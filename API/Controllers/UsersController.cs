@@ -2,6 +2,7 @@ using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Resources;
 using System.Text.RegularExpressions;
 
@@ -20,7 +21,8 @@ namespace api.Controllers
             
         }
 
-        //TODO:end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables, use bcrypt to check the hashes 
+
+        //end point that adds a user when given the details make sure email doesnt already exist in Userlogin table if it does not then add the user and thier login to the respective tables, use bcrypt to check the hashes 
         [HttpPost("add")]
         public async Task<IActionResult> addUser([FromBody]UserInfo user)
         {
@@ -66,7 +68,8 @@ namespace api.Controllers
             }
         }
 
-        //TODO:login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
+
+        //login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserLogin cred)
         {
@@ -76,10 +79,12 @@ namespace api.Controllers
             {
                 //return the devteam object
                 return Ok(dev);
+
             }
             else
             {
                 //check if the user exists in the userlogin table
+
                 var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
                 var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
@@ -89,6 +94,7 @@ namespace api.Controllers
                     {
                         //return the user object
                         return Ok(user);
+
                     }
                     else
                     {
@@ -102,7 +108,7 @@ namespace api.Controllers
             }
         }
 
-        //TODO: delete user when given the user object and delete thier object from the userlogin table by using the email
+        // delete user when given the user object and delete thier object from the userlogin table by using the email
         [HttpDelete("remove")]
         public async Task<IActionResult> removeUser(int? userID)
         {

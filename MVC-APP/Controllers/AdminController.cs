@@ -18,7 +18,6 @@ namespace mvc_app.Controllers;
 
 public class AdminController : Controller
 {
-    private readonly ApplicationDbContext _context;
     private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),

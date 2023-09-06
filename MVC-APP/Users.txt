@@ -1,0 +1,44 @@
+ID;Email;Password;Name
+
+Normal Users
+13;Dale@student.com;Dale123;Dale Hart
+14;Justin@student.com;Justin123;Justin West
+15;Lucy@student.com;Lucy123;Lucy Raven
+
+Staff Members
+1;Ashley@TeamDev.com;Ashley123;Ashley Smith
+2;David@TeamDev.com;David123;David Matthews
+
+
+
+
+
+USE (DATABASENAME);
+
+-- Dummy Data for Login
+INSERT INTO UserLogin (Email, Password) VALUES
+    ('Dale@student.com', '$2a$11$50uknrZDh7IZ3AhQkOXYb.o85RUsdVyfeubEWa0YkjB92JIIMqJH6'),
+    ('Justin@student.com', '$2a$11$t2ZiriqacuWsKcGOTojjr.9Oxvnn.9bjyqUIVRP0mJ/r5So9ZEZPK'),
+    ('Lucy@student.com', '$2a$11$k9pJImBtFqESW63L/yPwaO7TH4uQKyju8M/hjLakxH0n.lE77QPm6'),
+    ('Ashley@TeamDev.com','$2a$11$mEhzcNlaQYa7tbVmwVMefu1v71x5wuv2AhW/AjIdz6Wae9796qnZ6'),
+    ('David@TeamDev.com','$2a$11$ilC.TPnl8pUnUqr4uuUjUeHV8E4wV5TGE9sgVMvfwEoUYFPT2Edxe');
+
+-- Dummy Data for User info
+INSERT INTO UserInfo (Email, Name, PhoneNumber) VALUES
+    ('Dale@student.com', 'Dale Hart', '0828461072'),
+    ('Justin@student.com', 'Justin West', '0792954061'),
+    ('Lucy@student.com', 'Lucy Raven', '0688439174');
+
+
+
+-- Dummy Data for TeamDev
+INSERT INTO TeamDev (Name, Surname, Email) VALUES
+    ('Ashley', 'Smith', 'Ashley@TeamDev.com'),
+    ('David', 'Matthews', 'David@TeamDev.com');
+
+
+
+
+
+
+
