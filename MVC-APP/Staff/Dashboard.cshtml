@@ -1,0 +1,46 @@
+@model List<TicketViewModel>
+
+<!-- Filter Form -->
+<form method="get">
+    <div class="form-group">
+        <label for="filter">Filter by Category:</label>
+        <input type="text" id="filter" name="filter" value="@ViewBag.CurrentFilter" />
+        <button type="submit">Filter</button>
+    </div>
+</form>
+
+<!-- Sorting Links -->
+<div>
+    <strong>Sort by:</strong>
+    <a asp-action="ViewTicket" asp-route-sortOrder="ClosedFirst">Closed First</a> |
+    <a asp-action="ViewTicket" asp-route-sortOrder="PendingFirst">Pending First</a> |
+    <a asp-action="ViewTicket" asp-route-sortOrder="DateAsc">Date Ascending</a>
+</div>
+
+<!-- Display Ticket Table -->
+<table>
+    <!-- Table Header -->
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Category Name</th>
+            <th>Message Content</th>
+            <th>Date Issued</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <!-- Table Body -->
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.TicketId</td>
+                <td>@ticket.CategoryName</td>
+                <td>@ticket.MessageContent</td>
+                <td>@ticket.DateIssued</td>
+                <td>@ticket.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

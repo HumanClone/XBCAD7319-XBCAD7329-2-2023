@@ -10,6 +10,13 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
@@ -141,4 +148,51 @@ public class TicketController : Controller
 
             return View(ticketList);
         }
+
+    //View ticket saff
+    [HttpGet]
+    public async Task<IActionResult> ViewTicket(string filter, string sortOrder)
+    {
+        // Get the developer's ID from the session
+        string devId = HttpContext.Session.GetString("DevId");
+
+        // Retrieve tickets associated with the developer
+        var tickets = await _context.TicketDetails
+            .Where(t => t.DevId == devId)
+            .OrderByDescending(t => t.Status == "Closed")
+            .ThenBy(t => t.Status == "Pending")
+            .ToListAsync();
+
+        // Create a list of TicketDetail objects for the view
+        List<TicketDetail> ticketList = tickets.Select(ticket => new TicketDetail
+        {
+            TicketId = ticket.TicketId,
+            CategoryName = ticket.CategoryName,
+            MessageContent = ticket.MessageContent,
+            DateIssued = ticket.DateIssued,
+            Status = ticket.Status
+        }).ToList();
+
+        // Apply filtering based on the 'filter' parameter
+        if (!string.IsNullOrEmpty(filter))
+        {
+            ticketList = ticketList.Where(t => t.CategoryName.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        // Apply sorting based on the 'sortOrder' parameter
+        switch (sortOrder)
+        {
+            case "ClosedFirst":
+                ticketList = ticketList.OrderBy(t => t.Status == "Closed").ThenBy(t => t.DateIssued).ToList();
+                break;
+            case "PendingFirst":
+                ticketList = ticketList.OrderBy(t => t.Status == "Pending").ThenBy(t => t.DateIssued).ToList();
+                break;
+            default:
+                ticketList = ticketList.OrderBy(t => t.DateIssued).ToList();
+                break;
+        }
+
+        return View(ticketList);
+    }
 }
