@@ -54,8 +54,8 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Name", user.Name);
                         HttpContext.Session.SetString("Email", user.Email);
 
-                        //TODO: Redirect to user screen 
-                        return View();
+                        HttpContext.Session.SetString("Role", "Student");
+                        return RedirectToAction("Ticket", "ViewTicket");
                         
                     }
                     //this will catch if they return a dev team object instead, ths and find the right exception then add a anpther catch with the genectic exception
@@ -65,8 +65,9 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetInt32("DevId", user.DevId);
                         HttpContext.Session.SetString("Name", user.Name+" "+user.Surname);
                         HttpContext.Session.SetString("Email", user.Email);
-                        //TODO: Redirect to dev screeen 
-                        return View();
+
+                        HttpContext.Session.SetString("Role", "Staff");
+                        return RedirectToAction("Ticket", "ViewTicket");
                     }
                 }
                 else

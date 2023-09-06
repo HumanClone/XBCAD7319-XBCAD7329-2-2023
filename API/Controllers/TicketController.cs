@@ -74,7 +74,7 @@ namespace api.Controllers
         }
 
         //endpoint to return a list of tickets 
-        [HttpGet("gatalltickets")]
+        [HttpGet("getalltickets")]
         public async Task<List<TicketDetail>> getTickets()
         {
             List<TicketDetail> td= _context.TicketDetails.ToList();

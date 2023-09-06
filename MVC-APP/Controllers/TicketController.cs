@@ -18,15 +18,14 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
-    private readonly ApplicationDbContext _context;
     private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
-    public TicketController(ApplicationDbContext context)
+    public TicketController()
     {
-        this._context = context;
+        
     }
 
     [HttpGet]
@@ -107,23 +106,44 @@ public class TicketController : Controller
         [HttpGet]
         public IActionResult ViewTicket()
         {
-            //call api to get all tickets
-            var tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>("ticket/getalltickets").Result;            
-            List<TicketDetail> ticketList = new List<TicketDetail>();
+            var tickets = new List<TicketDetail>();
 
-            foreach (var ticket in tickets)
+            var role = HttpContext.Session.GetString("Role");
+            if(role == "Student")
             {
-                var ticketDetail = new TicketDetail
-                {
-                    TicketId = ticket.TicketId,
-                    CategoryName = ticket.CategoryName,
-                    MessageContent = ticket.MessageContent,
-                    DateIssued = ticket.DateIssued,
-                    Status = ticket.Status
-                };
-                ticketList.Add(ticketDetail);
+                var userId = HttpContext.Session.GetInt32("UserId");
+                //call api to get student tickets
+                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/getusertickets?userId={userId}").Result;            
+                
+            }
+            else if(role == "Staff")
+            {
+                var devId = HttpContext.Session.GetInt32("DevId");
+                //call api to get dev tickets
+                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/getdevtickets?devId={devId}").Result;            
+            
+            }else{
+                //call api to get all tickets
+                 tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>("ticket/getalltickets").Result;                     
             }
 
-            return View(ticketList);
+            List<TicketDetail> ticketList = new List<TicketDetail>();
+
+                foreach (var ticket in tickets)
+                {
+                    var ticketDetail = new TicketDetail
+                    {
+                        TicketId = ticket.TicketId,
+                        CategoryName = ticket.CategoryName,
+                        MessageContent = ticket.MessageContent,
+                        DateIssued = ticket.DateIssued,
+                        Status = ticket.Status
+                    };
+                    ticketList.Add(ticketDetail);
+                }
+
+                return View(ticketList);
+            
         }
+
 }
