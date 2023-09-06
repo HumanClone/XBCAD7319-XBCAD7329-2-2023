@@ -79,7 +79,7 @@ namespace MVCAPP.Controllers
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Notification = "Error ocureed try again";
+                ViewBag.Notification = "Error ocured try again";
                 Console.WriteLine($"Request error: {ex.Message}");
                 return View();
             }

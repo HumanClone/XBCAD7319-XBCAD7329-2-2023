@@ -71,7 +71,7 @@ namespace api.Controllers
         public async  Task<IActionResult> login(string? email,string?password)
         {
            //check if the user exists in the devteam table
-            var dev = _context.DevTeam.Where(x=>x.Email==email).FirstOrDefault();
+            var dev = _context.TeamDevs.Where(x=>x.Email==email).FirstOrDefault();
             if(dev!=null)
             {
                 //return the devteam object
@@ -103,14 +103,15 @@ namespace api.Controllers
 
         //TODO: delete user when given the user object and delete thier object from the userlogin table by using the email
         [HttpDelete("remove")]
-        public async Task<IActionResult> removeUser(string? userID)
+        public async Task<IActionResult> removeUser(int? userID)
         {
             //get the users email from the userlogin table
-            var user = _context.UserLogin.Where(x=>x.UserId==userID).FirstOrDefault();
+            var user = _context.UserInfo.Where(x=>x.UserId==userID).FirstOrDefault();
             string email = user.Email;
 
             //remove the user from the userlogin table
-            _context.UserLogin.Remove(user);
+            _context.UserLogin.Remove(_context.UserLogin.Where(x=>x.Email==email).FirstOrDefault());
+            _context.UserInfo.Remove(user);
             _context.SaveChanges();
             return Ok("User removed");
         }

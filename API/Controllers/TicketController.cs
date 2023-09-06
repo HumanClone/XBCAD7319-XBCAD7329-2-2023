@@ -74,7 +74,7 @@ namespace api.Controllers
         }
 
         //endpoint to return a list of tickets 
-        [HttpGet("tickets")]
+        [HttpGet("gatalltickets")]
         public async Task<List<TicketDetail>> getTickets()
         {
             List<TicketDetail> td= _context.TicketDetails.ToList();
@@ -120,7 +120,7 @@ namespace api.Controllers
 
             DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
 
-            if(userID!=null)
+            if(userId!=null)
             {
                 //only compare the date, not the time
                 List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();

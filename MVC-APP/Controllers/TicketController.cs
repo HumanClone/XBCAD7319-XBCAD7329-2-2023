@@ -39,11 +39,9 @@ public class TicketController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
     {
-        //finds the selected category's id 
-        int categoryId = _context.Categories
-        .Where(c => c.CategoryName == categoryName)
-        .Select(c=> c.CategoryId)
-        .FirstOrDefault();
+        //finds the selected category's id, call the api to get the category id
+        var categoryId = await sharedClient.GetFromJsonAsync<int>($"category/getcategoryid?categoryName={categoryName}");     
+        
         try
         {
             if (ModelState.IsValid)
@@ -109,7 +107,8 @@ public class TicketController : Controller
         [HttpGet]
         public IActionResult ViewTicket()
         {
-            var tickets = _context.TicketDetails.ToList();
+            //call api to get all tickets
+            var tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>("ticket/getalltickets").Result;            
             List<TicketDetail> ticketList = new List<TicketDetail>();
 
             foreach (var ticket in tickets)
