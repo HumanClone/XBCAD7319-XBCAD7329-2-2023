@@ -58,7 +58,8 @@ namespace MVCAPP.Controllers
                         return RedirectToAction("Ticket", "ViewTicket");
                         
                     }
-                    //this will catch if they return a dev team object instead, ths and find the right exception then add a anpther catch with the genectic exception
+                    //this will catch if they return a dev team object instead, 
+                    //TODO:tests and find the right exception then add a anpther catch with the genectic exception
                     catch(Exception ex)
                     {
                         var user = await response.Content.ReadFromJsonAsync<TeamDev>();
