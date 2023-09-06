@@ -67,11 +67,11 @@ namespace api.Controllers
         }
 
         //TODO:login:end point that will get the email and encrypted pasword and if successfull return the user object from db but check if the email exists in the dev table first, if it exists then return the devteam object
-        [HttpGet("Login")]
-        public async  Task<IActionResult> Login(string? email,string? password)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] UserLogin cred)
         {
            //check if the user exists in the devteam table
-            var dev = _context.TeamDevs.Where(x=>x.Email==email).FirstOrDefault();
+            var dev = _context.TeamDevs.Where(x=>x.Email==cred.Email).FirstOrDefault();
             if(dev!=null)
             {
                 //return the devteam object
@@ -80,11 +80,12 @@ namespace api.Controllers
             else
             {
                 //check if the user exists in the userlogin table
-                var user = _context.UserLogin.Where(x=>x.Email==email).FirstOrDefault();
+                var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
                 {
                     //check if the password matches the hash
-                    if(BCrypt.Net.BCrypt.Verify(password,user.Password))
+                    if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
                     {
                         //return the user object
                         return Ok(user);
