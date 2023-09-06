@@ -74,16 +74,24 @@ namespace api.Controllers
             var dev = _context.TeamDevs.Where(x=>x.Email==cred.Email).FirstOrDefault();
             if(dev!=null)
             {
-                //return the devteam object
-                return Ok(dev);
+                var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
+                {
+                        //return the user object
+                    return Ok(dev);
+                }
+                else
+                {
+                    return BadRequest("Incorrect password");
+                }
             }
             else
             {
-                //check if the user exists in the userlogin table
-                var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                //check if the user exists in the userlogin table               
                 var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
                 {
+                    var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
                     //check if the password matches the hash
                     if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
                     {
