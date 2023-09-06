@@ -39,11 +39,7 @@ namespace MVCAPP.Controllers
             //TODO: Change form names to match form
             UserLogin cred= new UserLogin();
             cred.Email = form["Email"];
-            var passhash=BCrypt.Net.BCrypt.HashPassword(form["Password"]);
-            cred.Password = passhash;
-            // Console.WriteLine(cred.Email+"\t"+cred.Password);
-            // return View();
-
+            cred.Password=form["Password"];        
             try
             {
                 HttpResponseMessage response = await sharedClient.PostAsJsonAsync("users/Login",cred);

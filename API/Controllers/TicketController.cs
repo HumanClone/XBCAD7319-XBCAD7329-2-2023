@@ -97,10 +97,18 @@ namespace api.Controllers
             return td;
         }
 
+        //end point to return tickets of a user
+        [HttpGet("userTickets")]
+        public async Task<List<TicketDetail>> getUserTickets(string? userId)
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.UserId.ToString().Equals(userId)).ToList();
+            return td;
+        }
+
 
         //end point to return tickets within a date range
         [HttpGet("dateRangeTickets")]
-        public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate)
+        public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate, string? userId)
         {
             DateTime today = DateTime.UtcNow;
 
@@ -112,9 +120,17 @@ namespace api.Controllers
 
             DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
 
-            //only compare the date, not the time
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
-            return td;
+            if(userID!=null)
+            {
+                //only compare the date, not the time
+                List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();
+                return td;
+            }else{
+                //for the admin side
+                List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
+                return td;
+            }
+            
         }
 
         [HttpGet("openTickets")]
