@@ -7,17 +7,10 @@ namespace MVCAPP.Controllers
 {
     public class UserLoginController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
         private static HttpClient sharedClient = new()
         {
             BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),           
         };
-
-        public UserLoginController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
 
         public IActionResult Login()
         {

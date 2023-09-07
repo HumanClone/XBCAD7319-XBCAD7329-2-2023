@@ -10,12 +10,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-using System.Text;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
@@ -24,11 +19,6 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
-    private static HttpClient sharedClient = new()
-    {
-         BaseAddress = new Uri("http://localhost:5173/api/"),
-    };
-
     public TicketController()
     {
         
@@ -75,26 +65,13 @@ public class TicketController : Controller
                         
                     };//send this object to api
 
-            /*HttpResponseMessage response = httpClient.PostAsJsonAsync(
-                            "API/Ticket/createUserTicket", Ticket);
-                            response.EnsureSuccessStatusCode();
-
-                    HttpContent content = new StringContent(Ticket.ToString(), Encoding.UTF8,"application/json");
-
-                    var response = httpClient.PostAsJsonAsync("API/Ticket/createTicket", Ticket).Result;*/
-                            
-                    //_context.TicketDetails.Add(Ticket);
-                    //_context.SaveChanges();
-
                     // Serialize the Ticket object to JSON
                     var serializedTicket = JsonSerializer.Serialize(Ticket);
 
                     Console.WriteLine(serializedTicket);
 
                     // API endpoint URL
-                    
 
-                    
                         // Create the HTTP content with the serialized JSON
                         var content = new StringContent(serializedTicket, Encoding.UTF8, "application/json");
 
@@ -141,17 +118,7 @@ public class TicketController : Controller
 
         }
     }
-    // check when able to, not sure if correct but cannot test yet
-    /*static async Task<Uri> CreateTicketDetailAsync(TicketDetail ticketDetail)
-    {
-        HttpResponseMessage response = await client.PostAsJsonAsync(
-            "API/Ticket/createTicket", ticketDetail);
-        response.EnsureSuccessStatusCode();
-
-        // return URI of the created resource.
-        return response.Headers.Location;
-    }
-*/
+    
         [HttpGet]
         public async Task<IActionResult> ViewTicket()
         {
