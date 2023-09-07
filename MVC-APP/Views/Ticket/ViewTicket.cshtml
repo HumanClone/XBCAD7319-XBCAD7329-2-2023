@@ -1,14 +1,43 @@
 @model List<MVCAPP.Models.TicketDetail>
 
-<hr/>
-<form>
-    <button asp-action="Create" asp-controller="Ticket" class="btn btn-primary mb-3">Log Ticket</button>
+@{
+    var statuses = ViewData["StatusList"] as List<string>;
+}
+
+<form asp-controller="Ticket" asp-action="Filter" class="filter-frm">
+    <div class="form-group row">
+        <div class="col-md-2">
+            <label for="StartDate" class="control-label">Start Date</label>
+            <input id="start-date" name="startDate" class="form-control" type="date" value="@DateTime.Now" />
+        </div>
+        <div class="col-md-2">
+            <label for="EndDate" class="control-label">End Date</label>
+            <input id="end-date" name="endDate" class="form-control" type="date" value="@DateTime.Now" />
+        </div>
+        <div class="col-md-2">
+            <label for="status" class="control-label">Status</label>
+            <select name="status" class="form-control">
+                @if (statuses != null)
+                {
+                    @foreach (var item in statuses)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2" style="margin-left:30px;padding-top:25px;">
+            <input type="submit" value="Filter" class="submit-filter" />
+        </div>
+    </div>
+</form>
+ 
     <table class="table table-responsive table-hover table-bordered">
         <thead>
             <tr class="table-active">
-                <th>TicketId</th>
-                <th>Category Name</th>
-                <th>Query Message</th>
+                <th>Ticket Id</th>
+                <th>Category</th>
+                <th>Message</th>
                 <th>Date Issued</th>
                 <th>Status</th>
             </tr>
@@ -35,7 +64,7 @@
                 <tr>
                     <td colspan="6">
                         <div>
-                            No Product availble at this moment!
+                            No Tickets.
                         </div>
                     </td>
                 </tr>
@@ -44,4 +73,3 @@
     </table>
 
 
-</form>
