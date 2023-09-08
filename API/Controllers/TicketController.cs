@@ -106,9 +106,9 @@ namespace api.Controllers
         }
 
 
-        //end point to return tickets within a date range
-        [HttpGet("dateRangeTickets")]
-        public async Task<List<TicketDetail>> getDateTickets(string? startDate,string? endDate, string? userId)
+        //end point to return tickets within a date range and filter if a status is provided
+        [HttpGet("filter")]
+        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? userId, string? userRole)
         {
             DateTime today = DateTime.UtcNow;
 
@@ -122,9 +122,33 @@ namespace api.Controllers
 
             if(userId!=null)
             {
-                //only compare the date, not the time
-                List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();
-                return td;
+                if(userRole == "Staff"){
+
+                    if(status != "All"){
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
+                        return td;
+                    }else{
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId)).ToList();
+                        return td;
+                    }
+                }else if (userRole == "Student"){
+                    if(status != "All"){
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
+                        return td;
+                    }else{
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();
+                        return td;
+                    }
+                }else{
+                    if(status != "All"){
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.Status.Equals(status)).ToList();
+                        return td;
+                    }else{
+                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
+                        return td;
+                    }
+                }
+                
             }else{
                 //for the admin side
                 List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
@@ -147,6 +171,27 @@ namespace api.Controllers
             return td;
         }
 
+        [HttpGet("pendingTickets")]
+        public async Task<List<TicketDetail>> getPendingTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("pending")).ToList();
+            return td;
+        }
+
+        [HttpGet("unopenedTickets")]
+        public async Task<List<TicketDetail>> getUnopenedTickets()
+        {
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.Status.Equals("unopened")).ToList();
+            return td;
+        }
+
+        //get all the ticket statuses
+        [HttpGet("ticketStatuses")]
+        public async Task<List<string>> getTicketStatuses()
+        {
+            List<string> td = _context.TicketDetails.Select(s=>s.Status).Distinct().ToList();
+            return td;
+        }
 
 
         //end point to edit a ticket

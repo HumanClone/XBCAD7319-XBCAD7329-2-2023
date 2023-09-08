@@ -27,6 +27,15 @@ namespace api.Controllers
             var category = _context.Categories.Where(x=>x.CategoryName==categoryName).FirstOrDefault();
             return Ok(category.CategoryId);
         }
+
+        //get all the category names
+        [HttpGet("getcategoryNames")]
+        public async Task<IActionResult> getCategoryNames()
+        {
+            var category = _context.Categories.Select(x=>x.CategoryName).ToList();
+            return Ok(category);
+        }
+        
         
 
     }

@@ -11,8 +11,7 @@ namespace MVCAPP.Controllers
 
         private static HttpClient sharedClient = new()
         {
-            //BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-            BaseAddress = new Uri("http://localhost:5173/api/"),
+            BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),           
         };
 
         public UserLoginController(ApplicationDbContext context)
@@ -69,7 +68,7 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Email", user.Email);
 
                         HttpContext.Session.SetString("Role", "Staff");
-                        return RedirectToAction("Ticket", "ViewTicket");
+                        return RedirectToAction("ViewTicket", "Ticket");
                     }
                 }
                 else

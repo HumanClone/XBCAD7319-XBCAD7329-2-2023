@@ -8,22 +8,28 @@ namespace mvc_app.Controllers;
 
 public class CategoryController : Controller
 {
-    private readonly ApplicationDbContext _context; 
+    private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),       
+    };
  
      
- List<Category> listCategories = new List<Category>();
+    List<Category> listCategories = new List<Category>();
 
-    public CategoryController(ApplicationDbContext context)
+    public CategoryController()
     {
-       this._context = context;
+       
     }
 
     [HttpGet]
     public IActionResult ReadCategory()
     { 
-        listCategories = _context.Categories.ToList();
-        // ViewBag.SelectedCategory =  HttpContext.Session.GetString("SelectedCategory");
+        var categoryNames = sharedClient.GetFromJsonAsync<List<string>>($"category/getcategoryNames").Result;
+        foreach (var categoryName in categoryNames)
+        {
+            listCategories.Add(new Category() { CategoryName = categoryName });
+        }
         return View(listCategories);
+        
     }  
 }
-//  HttpContext.Session.SetString("SelectedCategoryName", )
