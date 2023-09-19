@@ -108,7 +108,13 @@ public class TicketController : Controller
         [HttpGet]
         public async Task<IActionResult> ViewTicket()
         {
-            var statuses = await PopulateStatusList();
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var devId = HttpContext.Session.GetInt32("DevId");
+            if (userId == null && devId == null)
+            {
+                return RedirectToAction("Login", "UserLogin");
+            }else{
+                var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
 
             var tickets = new List<TicketDetail>();
@@ -116,18 +122,12 @@ public class TicketController : Controller
             var role = HttpContext.Session.GetString("Role");
             if(role == "Student")
             {
-                var userId = HttpContext.Session.GetInt32("UserId");
                 //call api to get student tickets
-
-                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/userTickets?userId={userId}").Result;            
-
-                
+                tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/userTickets?userId={userId}").Result;                          
             }
             else if(role == "Staff")
             {
-                var devId = HttpContext.Session.GetInt32("DevId");
                 //call api to get dev tickets
-
                 tickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/devtickets?devId={devId}").Result;            
 
             
@@ -152,6 +152,8 @@ public class TicketController : Controller
                 }
 
                 return View(ticketList);
+            }
+            
             
         }
 
