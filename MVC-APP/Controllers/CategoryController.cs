@@ -24,12 +24,20 @@ public class CategoryController : Controller
     [HttpGet]
     public IActionResult ReadCategory()
     { 
-        var categoryNames = sharedClient.GetFromJsonAsync<List<string>>($"category/getcategoryNames").Result;
-        foreach (var categoryName in categoryNames)
+        var userId = HttpContext.Session.GetInt32("UserId");
+        var devId = HttpContext.Session.GetInt32("DevId");
+        if (userId == null && devId == null)
         {
-            listCategories.Add(new Category() { CategoryName = categoryName });
+            return RedirectToAction("Login", "UserLogin");
+        }else{
+            var categoryNames = sharedClient.GetFromJsonAsync<List<string>>($"category/getcategoryNames").Result;
+            foreach (var categoryName in categoryNames)
+            {
+                listCategories.Add(new Category() { CategoryName = categoryName });
+            }
+            return View(listCategories);
         }
-        return View(listCategories);
+        
         
     }  
 }
