@@ -1,0 +1,50 @@
+@model List<MVCAPP.Models.TicketResponse>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Responses: For Ticket @ViewBag.TicketID</h1>
+<a class="button" asp-area="" asp-controller="Response" asp-action="Create" asp-route-id="@ViewBag.TicketID">Create New Response</a>
+
+
+
+<table class="table table-responsive table-hover table-bordered">
+        <thead>
+            <tr class="table-active">
+                <th>Response Id</th>
+                <th>DevId</th>
+                <th>Sender</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var response in Model)
+                {
+                    <tr>
+                        <td>@response.ResponseId</td>
+                        <td>@response.DevId</td>
+                        <td>@response.sender</td>
+                        <td>@response.ResponseMessage</td>
+                        <td>@response.date</td>
+                        
+                    </tr>
+
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">
+                        <div>
+                            No Responses.
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

@@ -128,6 +128,19 @@ namespace api.Controllers
             return Ok("User removed");
         }
 
+        [HttpGet("users")]
+        public async Task<List<UserInfo>> users()
+        {
+            return _context.UserInfo.ToList<UserInfo>();
+        }
+
+
+        [HttpGet("devs")]
+        public async Task<List<TeamDev>> devs()
+        {
+            return _context.TeamDevs.ToList();
+        }
+
     }
 
 }

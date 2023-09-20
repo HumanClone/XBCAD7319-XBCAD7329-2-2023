@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Data;
 using MVCAPP.Models;
@@ -7,17 +8,16 @@ namespace MVCAPP.Controllers
 {
     public class UserLoginController : Controller
     {
-        private readonly ApplicationDbContext _context;
 
         private static HttpClient sharedClient = new()
         {
             BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),           
         };
 
-        public UserLoginController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+     
+
+
+       
 
         public IActionResult Login()
         {
@@ -35,6 +35,8 @@ namespace MVCAPP.Controllers
 
         [HttpPost]
 
+       [HttpPost]
+
         public async Task<IActionResult> Login(UserLogin cred)
         {             
 
@@ -48,6 +50,17 @@ namespace MVCAPP.Controllers
                     try
                     {
                         var user = await response.Content.ReadFromJsonAsync<UserInfo>();
+                        if(user.UserId==0)
+                        {
+                            response = await sharedClient.PostAsJsonAsync("users/Login",cred);
+                            var dev = await response.Content.ReadFromJsonAsync<TeamDev>();
+                            HttpContext.Session.SetInt32("DevId", dev.DevId);
+                            HttpContext.Session.SetString("Name", dev.Name+" "+dev.Surname);
+                            HttpContext.Session.SetString("Email", dev.Email);
+
+                            HttpContext.Session.SetString("Role", "Staff");
+                            return RedirectToAction("ViewTicket", "Ticket");   
+                        }
                         HttpContext.Session.SetInt32("UserId", user.UserId);
                         HttpContext.Session.SetString("Name", user.Name);
                         HttpContext.Session.SetString("Email", user.Email);
@@ -59,8 +72,7 @@ namespace MVCAPP.Controllers
                         
                     }
                     //this will catch if they return a dev team object instead, 
-                    //TODO:tests and find the right exception then add a anpther catch with the genectic exception
-                    catch(Exception ex)
+                    catch(JsonException jsonEx)
                     {
                         var user = await response.Content.ReadFromJsonAsync<TeamDev>();
                         HttpContext.Session.SetInt32("DevId", user.DevId);
@@ -86,7 +98,6 @@ namespace MVCAPP.Controllers
                 return View();
             }
         }
-
 
         public IActionResult Logout()
         {
