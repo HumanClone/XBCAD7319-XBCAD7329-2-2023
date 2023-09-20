@@ -8,6 +8,8 @@ using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace mvc_app.Controllers;
@@ -111,8 +113,18 @@ public class ResponseController : Controller
             {
                 List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
                 ViewBag.TicketID = id;
-                ViewBag.Send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
+                try
+                {
+                    var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
+                    HttpContext.Session.SetString("Send",send);
+                    Console.WriteLine(send);
+                }
+                catch(System.ArgumentNullException ex)
+                {
+                    return View(response);
+                }
                 return View(responses);
+                
             }
             else
             {
@@ -125,6 +137,7 @@ public class ResponseController : Controller
             Console.WriteLine($"Request error: {ex.Message}");
             return View();
         }
+        
 
     }
 
@@ -138,50 +151,46 @@ public class ResponseController : Controller
         model.Subject=subject;
         model.Body=body;
         model.Toemail=toemail;
-        Console.WriteLine("here");
         if(HttpContext.Session.GetInt32("UserId")==null)
         {
             Console.WriteLine("Dev");
+            Console.WriteLine(HttpContext.Session.GetInt32("DevId"));
             Console.WriteLine(model.Subject);
             Console.WriteLine(model.Body);
             var mr = new MailRequest
-                {
-                    
-                    Subject =model.Subject,
-                    Body = model.Body,
-                    DevId = HttpContext.Session.GetString("DevId"),
-                    ToEmail = model.Toemail
+            {
                 
-                };
-            // MailRequest mr = new MailRequest();
-
-            // mr.Subject =model.Subject;
-            // mr.Body = model.Body;
-            // mr.DevId = HttpContext.Session.GetString("DevId");
-            // mr.ToEmail = model.Toemail;
-
+                Subject =model.Subject,
+                Body = model.Body,
+                DevId = ""+HttpContext.Session.GetInt32("DevId"),
+                ToEmail = (model.Toemail.IsNullOrEmpty()) ? "" : model.Toemail
+            
+            };
+            
             try
             {
-                Console.WriteLine("before request");
 
-                HttpResponseMessage response = await sharedClient.PostAsJsonAsync("response/Admin",mr);
+                HttpResponseMessage response = await sharedClient.PostAsJsonAsync<MailRequest>("response/Admin",mr);
                 
-
+                string responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseContent);
                 if(response.IsSuccessStatusCode)
                 {
                     var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return Redirect("Index");
+                    return RedirectToAction("ViewTicket","Ticket");
                 }
                 else
                 {
-                    Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+                    Console.WriteLine($"Request failed with status code: {response.RequestMessage}");
+                    Console.WriteLine($"Request failed with status code: {response.ToString}");
+
                     return View("Create");
                 }
             }
             catch (System.Exception)
             {
-                return View("Create");
+                return RedirectToAction("ViewTicket","Ticket");
                 throw;
             }
         }
@@ -189,21 +198,29 @@ public class ResponseController : Controller
         else
         {
             Console.WriteLine("User");
-            MailRequest mr = new MailRequest();
-
-            mr.Subject =model.Subject;
-            mr.Body = model.Body;
-            mr.UserId = HttpContext.Session.GetString("UserId");
+            var mr = new MailRequest
+            {
+                
+                Subject =model.Subject,
+                Body = model.Body,
+                UserId = ""+HttpContext.Session.GetInt32("UserId"),
+                ToEmail = ""
+            
+            };
 
             try
             {
+                Console.WriteLine(model.Subject);
+                Console.WriteLine(model.Body);
+                Console.WriteLine(HttpContext.Session.GetInt32("UserId")+"");
+
                 HttpResponseMessage response = await sharedClient.PostAsJsonAsync("response/sendUser", mr);
 
                 if(response.IsSuccessStatusCode)
                 {
                     var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return View("Index");
+                    return RedirectToAction("ViewTicket","Ticket");
                 }
                 else
                 {
@@ -213,10 +230,10 @@ public class ResponseController : Controller
             }
             catch (System.Exception)
             {
-                
+                return RedirectToAction("ViewTicket","Ticket");
                 throw;
-                return View("Create");
             }
+           
         }
     }
 }

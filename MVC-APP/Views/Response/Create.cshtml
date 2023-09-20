@@ -13,8 +13,8 @@
     @if(Context.Session.GetString("UserId") == null )
     {
         <div class="form-group">
-            <label for="recipient">Send To:</label>
-            <input type="text" class="form-control" id="toemail" name="toemail" value="@ViewBag.Send">
+            <label for="toemail">Send To:</label>
+            <input type="text" class="form-control" id="toemail" name="toemail" value="@Context.Session.GetString("Send")">
         </div>
     }
     
