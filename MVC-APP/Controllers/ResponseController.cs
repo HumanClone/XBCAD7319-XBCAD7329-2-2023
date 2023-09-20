@@ -16,80 +16,10 @@ namespace mvc_app.Controllers;
 
 public class ResponseController : Controller
 {
-    // private static HttpClient sharedClient = new()
-    // {
-    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-    // };
-
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("http://localhost:5173/api/"),
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
-
-    // [HttpPost]
-    // public async Task<IActionResult> SendDevResponse([Bind("subject","toemail","body")] MailRequest model)
-    // {
-    //     MailRequest mr = new MailRequest();
-
-    //     mr.Subject =model.Subject;
-    //     mr.Body = model.Body;
-    //     mr.DevId = HttpContext.Session.GetString("DevId");
-    //     mr.ToEmail = model.ToEmail;
-
-    //     try
-    //     {
-    //         HttpResponseMessage response = await sharedClient.PostAsJsonAsync("response/sendadmin", mr);
-
-    //         if(response.IsSuccessStatusCode)
-    //         {
-    //             var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
-    //             Console.WriteLine($"Response sent {response.StatusCode}");
-    //             return null;
-    //         }
-    //         else
-    //         {
-    //             Console.WriteLine($"Request failed with status code: {response.StatusCode}");
-    //             return null;
-    //         }
-    //     }
-    //     catch (System.Exception)
-    //     {
-            
-    //         throw;
-    //     }
-    // }
-
-    // [HttpPost]
-    // public async Task<IActionResult> SendUserResponse(string ticketID, string message)
-    // {
-    //     MailRequest mr = new MailRequest();
-
-    //     mr.Subject =ticketID;
-    //     mr.Body = message;
-    //     mr.UserId = HttpContext.Session.GetString("UserId");
-
-    //     try
-    //     {
-    //         HttpResponseMessage response = await sharedClient.PostAsJsonAsync("response/senduser", mr);
-
-    //         if(response.IsSuccessStatusCode)
-    //         {
-    //             var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
-    //             Console.WriteLine($"Response sent {response.StatusCode}");
-    //             return null;
-    //         }
-    //         else
-    //         {
-    //             Console.WriteLine($"Request failed with status code: {response.StatusCode}");
-    //             return null;
-    //         }
-    //     }
-    //     catch (System.Exception)
-    //     {
-            
-    //         throw;
-    //     }
-    // }
 
 
 
