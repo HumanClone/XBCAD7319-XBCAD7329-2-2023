@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Create";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<h2>Response</h2>
+<form asp-controller="Response" asp-action="SendResponse"  method="post">
+    <div class="form-group">
+        <label for="subject">Subject:</label>
+        <input type="text" class="form-control" id="subject" name="subject"  required value="Re:@ViewBag.TicketId">
+    </div>
+    @if(Context.Session.GetString("UserId") == null )
+    {
+        <div class="form-group">
+            <label for="recipient">Send To:</label>
+            <input type="text" class="form-control" id="toemail" name="toemail" value="@ViewBag.Send">
+        </div>
+    }
+    
+    <div class="form-group">
+        <label for="body">Body:</label>
+        <textarea class="form-control" id="body" name="body" rows="8" required></textarea>
+    </div>
+    <div>
+            <button type="submit" class="btn btn-primary">Send Response</button>
+    </div>
+
+</form>

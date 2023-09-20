@@ -53,7 +53,7 @@
                         <td>@ticketDetail.MessageContent</td>
                         <td>@ticketDetail.DateIssued</td>
                         <td>@ticketDetail.Status</td>
-                        
+                        <td><a class="text-success" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a></td>
                     </tr>
 
                 }

@@ -50,22 +50,28 @@
                         @if(Context.Session.GetString("DevId") != null)
                         {
                             <li class="nav-item">
-
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ViewAdminTicket">ADMIN</a>
                             </li>
+                         
                         }
                        
                         
+
+
                         @if(Context.Session.GetString("UserId") != null || Context.Session.GetString("DevId") != null)
                         {
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="ViewTicket">YOUR TICKETS</a>
                             </li>
+                            
+                            
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="UserLogin" asp-action="Logout">LOGOUT</a>
                             </li>
                         }                  
+
                     </ul>
                 </div>
             </div>
