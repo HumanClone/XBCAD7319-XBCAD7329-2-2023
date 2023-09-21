@@ -37,21 +37,15 @@ public class ResponseController : Controller
     {
         try
         {
-in
+            Console.WriteLine("Before Request");
             HttpResponseMessage response = await sharedClient.GetAsync("response/ticket/?ticketID="+id);
 
             if (response.IsSuccessStatusCode)
             {
-
+                Console.WriteLine("Success");
                 List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
                 ViewBag.TicketID = id;
-              
-                try
-                {
-                    var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
-                   HttpContext.Session.SetString("Send",send);
-                   List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
-                   ViewBag.TicketID = id;
+                Console.WriteLine("After");
                 try
                 {
                     var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
@@ -60,13 +54,11 @@ in
                 }
                 catch(System.ArgumentNullException ex)
                 {
-
                     return View(responses);
                 }
                 catch (System.InvalidOperationException ex)
                 {
                     return View(responses);
-
                 }
                 return View(responses);
                 
