@@ -45,7 +45,7 @@ public class ResponseController : Controller
                 Console.WriteLine("Success");
                 List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
                 ViewBag.TicketID = id;
-                 Console.WriteLine("After");
+                Console.WriteLine("After");
                 try
                 {
                     var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
