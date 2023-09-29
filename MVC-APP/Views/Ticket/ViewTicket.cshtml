@@ -4,8 +4,10 @@
     var statuses = ViewData["StatusList"] as List<string>;
 }
 
+<div class="container">
+<div class="row">
 <form asp-controller="Ticket" asp-action="Filter" class="filter-frm">
-    <div class="form-group row">
+    <div class="form-group row justify-content-center">
         <div class="col-md-2">
             <label for="StartDate" class="control-label">Start Date</label>
             <input id="start-date" name="startDate" class="form-control" type="date" value="@DateTime.Now" />
@@ -26,50 +28,35 @@
                 }
             </select>
         </div>
-        <div class="col-md-2" style="margin-left:30px;padding-top:25px;">
+        <div class="col-md-2" style="margin-top: 25px;">
             <input type="submit" value="Filter" class="submit-filter" />
         </div>
     </div>
 </form>
- 
-    <table class="table table-responsive table-hover table-bordered">
-        <thead>
-            <tr class="table-active">
-                <th>Ticket Id</th>
-                <th>Category</th>
-                <th>Message</th>
-                <th>Date Issued</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
+</div>
+    <div class="row justify-content-center mt-4">
             @if (Model != null && Model.Any())
             {
                 @foreach (var ticketDetail in Model)
                 {
-                    <tr>
-                        <td>@ticketDetail.TicketId</td>
-                        <td>@ticketDetail.CategoryName</td>
-                        <td>@ticketDetail.MessageContent</td>
-                        <td>@ticketDetail.DateIssued</td>
-                        <td>@ticketDetail.Status</td>
-                        
-                    </tr>
+                    <div class="card ticket-card">
+                        <div class="card-header ticket-card-header">
+                            Ticket Reference @ticketDetail.TicketId         @ticketDetail.Status
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@ticketDetail.CategoryName</h5>
+                            <h6 class="card-text">@ticketDetail.DateIssued</h6>
+                            <p class="card-text">@ticketDetail.MessageContent</p>                            
+                            <a class="view-response-btn" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a>
+                        </div>
+                    </div>
 
                 }
-
             }
             else
             {
-                <tr>
-                    <td colspan="6">
-                        <div>
-                            No Tickets.
-                        </div>
-                    </td>
-                </tr>
+                <h1>No tickets found</h1>
             }
-        </tbody>
-    </table>
 
-
+    </div>
+</div>

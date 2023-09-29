@@ -28,7 +28,7 @@ public class AdminController : Controller
         public async Task<IActionResult> ViewAdminTicket()
         {  
             string jsonTicketContent;
-           List<TicketDetail> ticketList = new List<TicketDetail>();
+            List<TicketDetail> ticketList = new List<TicketDetail>();
            
             HttpResponseMessage response = await sharedClient.GetAsync("Ticket/getalltickets");
             if(response.IsSuccessStatusCode)

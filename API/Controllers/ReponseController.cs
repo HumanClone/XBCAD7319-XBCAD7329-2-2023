@@ -43,8 +43,8 @@ namespace api.Controllers
 
         //calls the send method to send the email 
 
-        [HttpPost("sendAdmin")]
-        public async Task<IActionResult> SendMail([FromForm]MailRequest request)
+        [HttpPost("Admin")]
+        public async Task<IActionResult> SendMail([FromBody]MailRequest request)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace api.Controllers
         }
 
         [HttpPost("sendUser")]
-        public async Task<IActionResult> SendMailuser([FromForm]MailRequest request)
+        public async Task<IActionResult> SendMailuser([FromBody]MailRequest request)
         {
             try
             {
