@@ -18,19 +18,13 @@ namespace api.Controllers
     {
         private readonly IMailService mailService;
         private readonly StudentSupportXbcadContext _context;
-        private readonly IConfiguration _configuration;
-        private readonly BlobContainerClient _containerClient;
+       
 
-        private readonly String containerName="attachments";
 
-        public MailController(IMailService mailService,StudentSupportXbcadContext context,IConfiguration configuration)
+        public MailController(IMailService mailService,StudentSupportXbcadContext context)
         {
             this.mailService = mailService;
             _context = context;
-            _configuration = configuration;
-            BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("BlobString"));
-            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
         }
 
         //calls the send method to send the email 
@@ -100,6 +94,7 @@ namespace api.Controllers
 
 
         // gets the information from teh json this will most likely be used by the logic app 
+        //TODO:Test too see if new logic app works
         [HttpPost("res")]
         public async Task<IActionResult> ReceiveEmail([FromForm] MailReceive mailReceive)
         {
@@ -135,13 +130,11 @@ namespace api.Controllers
 
                 if(!mailReceive.Attachments.IsNullOrEmpty())
                 {
+                    Console.WriteLine("Attachments Recieved");
                     string links = await mailService.StoreAttachments(mailReceive.Attachments);
                     Console.WriteLine(links);
                 }
-                else
-                {
-                    //set the attachment field to false ...
-                }
+                
 
 
                 tr.ResponseMessage=mailReceive.Body;

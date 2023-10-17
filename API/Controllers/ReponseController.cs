@@ -1,6 +1,7 @@
 using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
@@ -48,29 +49,33 @@ namespace api.Controllers
         [HttpPost("Admin")]
         public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
+            if(request.ToEmail.Equals("."))
+            {
+                request.ToEmail=null;
+            }
             try
             {
-                await mailService.SendEmailAdmin(request);
-                TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=request.Body;
-                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                tr.DevId=request.DevId;
-                tr.date=DateTime.UtcNow;
-                // if(!request.Attachments.IsNullOrEmpty())
-                // {
-                //     string links=await mailService.StoreAttachments(request.Attachments);
-                //     tr.links=links;
-                // }
+                //await mailService.SendEmailAdmin(request);
+                // TicketResponse tr= new TicketResponse();
+                // tr.ResponseMessage=request.Body;
+                // tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                // tr.DevId=request.DevId;
+                // tr.date=DateTime.UtcNow;
+                if(!request.Attachments.IsNullOrEmpty())
+                {
+                    Console.WriteLine("Admin attachments");
+                    string links=await mailService.StoreAttachments(request.Attachments);
+                    //tr.links=links;
+                }
 
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
+                //_context.Add(tr);
+                //await _context.SaveChangesAsync();
 
                 return Ok();
             }
             catch (Exception ex)
             {
-
-
+                Console.WriteLine(ex);
                 return BadRequest();
 
             }
@@ -82,27 +87,28 @@ namespace api.Controllers
         {
             try
             {
-                await mailService.SendEmailUser(request);
-                TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=request.Body;
-                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                tr.sender=request.UserId;
-                tr.date=DateTime.UtcNow;
-                // if(!request.Attachments.IsNullOrEmpty())
-                // {
-                //     string links=await mailService.StoreAttachments(request.Attachments);
-                //     tr.links=links;
-                // }
+                // await mailService.SendEmailUser(request);
+                // TicketResponse tr= new TicketResponse();
+                // tr.ResponseMessage=request.Body;
+                // tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                // tr.sender=request.UserId;
+                // tr.date=DateTime.UtcNow;
+                if(!request.Attachments.IsNullOrEmpty())
+                {
+                    Console.WriteLine("User attachments");
+                    string links=await mailService.StoreAttachments(request.Attachments);
+                    //tr.links=links;
+                }
 
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
+                // _context.Add(tr);
+                // await _context.SaveChangesAsync();
 
                 return Ok();
             }
             catch (Exception ex)
             {
 
-
+                Console.WriteLine(ex);
                 return BadRequest();
 
             }
