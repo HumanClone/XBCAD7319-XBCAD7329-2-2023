@@ -202,9 +202,22 @@ namespace api.Controllers
             return td;
         }
 
+        [HttpGet]
+        [Route("countByStatusAndDate")]
+        public async Task<IActionResult> GetTicketCountByStatusAndDate()
+        {
+            var status = Request.Query["status"];
+            var date = Request.Query["date"];
+            
+            var tickets = await getTickets();
         
+            // Filter the tickets based on the specified status and date
+            int count = tickets.Count(ticket => ticket.Status != null && ticket.Status == status && ticket.DateIssued.Date == date.Date);
+
+            var result = new { Date = date.Date, Count = count };
         
-        
+            return Ok(result);
+        }
 
 
         //end point to edit a ticket
