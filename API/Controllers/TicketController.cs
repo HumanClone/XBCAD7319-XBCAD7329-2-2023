@@ -193,6 +193,19 @@ namespace api.Controllers
             return td;
         }
 
+        //get the number of tickets for each status that is not null, return a dictionary where the key is the status and the value is the number of tickets
+        [HttpGet("ticketStatusCount")]
+        public async Task<Dictionary<string,int>> getTicketStatusCount()
+        {
+            // TODO : Change when the database is updated
+            Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status).ToDictionary(s=>s.Key,s=>s.Count());
+            return td;
+        }
+
+        
+        
+        
+
 
         //end point to edit a ticket
         [HttpPost("editTicket")]
