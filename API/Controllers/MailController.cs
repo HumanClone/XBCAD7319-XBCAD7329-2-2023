@@ -1,11 +1,16 @@
 using api.email;
 using api.Models;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using NuGet.Protocol;
+using System.Reflection.Metadata;
+using System.Runtime.Intrinsics.Arm;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
-
     //api/mail/method
     [ApiController]
     [Route("api/[controller]")]
@@ -13,11 +18,19 @@ namespace api.Controllers
     {
         private readonly IMailService mailService;
         private readonly StudentSupportXbcadContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly BlobContainerClient _containerClient;
 
-        public MailController(IMailService mailService,StudentSupportXbcadContext context)
+        private readonly String containerName="attachments";
+
+        public MailController(IMailService mailService,StudentSupportXbcadContext context,IConfiguration configuration)
         {
             this.mailService = mailService;
             _context = context;
+            _configuration = configuration;
+            BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("BlobString"));
+            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
         }
 
         //calls the send method to send the email 
@@ -47,7 +60,7 @@ namespace api.Controllers
 
 
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromBody]MailRequest request)//might need to be from Body
+        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
         {
             try
             {
@@ -57,8 +70,8 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
                 tr.date=DateTime.UtcNow;
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
+                // _context.Add(tr);
+                // await _context.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -88,7 +101,7 @@ namespace api.Controllers
 
         // gets the information from teh json this will most likely be used by the logic app 
         [HttpPost("res")]
-        public async Task<IActionResult> ReceiveEmailWithAttachments([FromBody] MailReceive mailReceive)
+        public async Task<IActionResult> ReceiveEmail([FromForm] MailReceive mailReceive)
         {
             try
             {
@@ -109,21 +122,34 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
-                    _context.Add(td);
-                    await _context.SaveChangesAsync();
-                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-                    tr.TicketId=tic.TicketId.ToString();
+                    // _context.Add(td);
+                    // await _context.SaveChangesAsync();
+                    // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    // tr.TicketId=tic.TicketId.ToString();
+                    Console.WriteLine(td.ToString());
                 }
                 else
                 {
                     tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
                 }
-                
+
+                if(!mailReceive.Attachments.IsNullOrEmpty())
+                {
+                    string links = await mailService.StoreAttachments(mailReceive.Attachments);
+                    Console.WriteLine(links);
+                }
+                else
+                {
+                    //set the attachment field to false ...
+                }
+
+
                 tr.ResponseMessage=mailReceive.Body;
                 tr.sender=mailReceive.FromEmail;
-                tr.date=DateTime.UtcNow;
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
+                // tr.date=DateTime.UtcNow;
+                // _context.Add(tr);
+                // await _context.SaveChangesAsync();
+                Console.WriteLine(tr.ToString());
                 
                 // Return a success response
                 return Ok("Email received and processed successfully and ticket created.");
@@ -135,6 +161,41 @@ namespace api.Controllers
             }
         }
 
-    
-    }
+
+        
+
+
+        [HttpPost("sendAT")]
+        public async Task<IActionResult> SendMail([FromForm]MailRequest request)
+        {
+            try
+            {
+                await mailService.SendEmailAdmin(request);
+                // // TicketResponse tr= new TicketResponse();
+                // // tr.ResponseMessage=request.Body;
+                // // tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                // // tr.DevId=request.DevId;
+                // // tr.date=DateTime.UtcNow;
+                // if(!request.Attachments.IsNullOrEmpty())
+                // {
+                //     string links=await mailService.StoreAttachments(request.Attachments);
+                //     tr.links=links;
+                // }
+                // // _context.Add(tr);
+                // // await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex);
+                return BadRequest();
+
+            }
+
+        }
+
+
+    }    
 }

@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 namespace api.Controllers
 {
 
+
+//var blobServiceClient = new BlobServiceClient(connectionString);
     [ApiController]
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
@@ -44,7 +46,7 @@ namespace api.Controllers
         //calls the send method to send the email 
 
         [HttpPost("Admin")]
-        public async Task<IActionResult> SendMail([FromBody]MailRequest request)
+        public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
             try
             {
@@ -54,6 +56,11 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
                 tr.date=DateTime.UtcNow;
+                // if(!request.Attachments.IsNullOrEmpty())
+                // {
+                //     string links=await mailService.StoreAttachments(request.Attachments);
+                //     tr.links=links;
+                // }
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
@@ -71,7 +78,7 @@ namespace api.Controllers
         }
 
         [HttpPost("sendUser")]
-        public async Task<IActionResult> SendMailuser([FromBody]MailRequest request)
+        public async Task<IActionResult> SendMailuser([FromForm]MailRequest request)
         {
             try
             {
@@ -81,6 +88,11 @@ namespace api.Controllers
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.sender=request.UserId;
                 tr.date=DateTime.UtcNow;
+                // if(!request.Attachments.IsNullOrEmpty())
+                // {
+                //     string links=await mailService.StoreAttachments(request.Attachments);
+                //     tr.links=links;
+                // }
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();

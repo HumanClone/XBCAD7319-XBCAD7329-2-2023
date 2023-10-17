@@ -82,6 +82,7 @@ public class ResponseController : Controller
 
     [HttpPost]
     //[Route("/Response/mail")]
+    //TODO:GET the Files
     public async Task<IActionResult> SendResponse(string subject,string body,string toemail)
     {
         Mail model=new Mail();

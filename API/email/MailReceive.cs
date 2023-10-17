@@ -7,6 +7,6 @@ public class MailReceive
     public string Body { get; set; }
 
     public DateTime ReceivedDate {get;set;}
-    //public List<IFormFile>? Attachments { get; set; }
+    public List<IFormFile>? Attachments { get; set; }
     
 }

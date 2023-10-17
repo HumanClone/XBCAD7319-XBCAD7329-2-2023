@@ -41,7 +41,7 @@ namespace api.Controllers
         }
 
 
-        //endpoint the creates a ticket from the user side and sends emai 
+        //endpoint the creates a ticket from the user side and sends email 
         [HttpPost("createuserticket")]
         public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
         {
