@@ -1,3 +1,4 @@
+using System;
 using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Diagnostics;
@@ -204,19 +205,22 @@ namespace api.Controllers
 
         [HttpGet]
         [Route("countByStatusAndDate")]
-        public async Task<IActionResult> GetTicketCountByStatusAndDate()
+        public async Task<TicketData> GetTicketCountByStatusAndDate()
         {
             var status = Request.Query["status"];
-            var date = Request.Query["date"];
+            var date = DateTime.Parse(Request.Query["date"]);
             
             var tickets = await getTickets();
         
             // Filter the tickets based on the specified status and date
-            int count = tickets.Count(ticket => ticket.Status != null && ticket.Status == status && ticket.DateIssued.Date == date.Date);
-
-            var result = new { Date = date.Date, Count = count };
+            int count = tickets.Count(ticket => ticket.Status != null && ticket.Status.ToUpper() == status && ticket.DateIssued.Date == date.Date);
+            var data = new TicketData
+            {
+                Date = date,
+                Count = count
+            };
         
-            return Ok(result);
+            return data;
         }
 
 

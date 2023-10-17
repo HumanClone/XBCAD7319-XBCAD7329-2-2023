@@ -3,8 +3,58 @@
     ViewData["Title"] = "Report";
 }
 <head>
-    @* canvasjs *@
-    <script src="https://cdn.canvasjs.com/ga/canvasjs.min.js"></script>
+
+    <script>
+    window.onload = function () {
+        var reportingData = @Html.Raw(Json.Serialize(Model.TicketStatuses));
+        var dataPoints = [];
+    
+        reportingData.forEach(function (ticketStatus) {
+            ticketStatus.tickets.forEach(function (ticketData) {
+                var dateParts = ticketData.date.split('T')[0].split('-');
+                var year = parseInt(dateParts[0]);
+                var month = parseInt(dateParts[1]) - 1;
+                var day = parseInt(dateParts[2]);
+                var date = new Date(year, month, day);
+                
+                var dataPoint = {
+                    x: date,
+                    y: ticketData.count
+                };
+                
+                dataPoints.push(dataPoint);
+                console.log(dataPoint);
+            });
+        });
+
+
+        var maxCount = Math.max.apply(Math, dataPoints.map(function (point) { return point.y +2; }));
+
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            title: {
+                text: "Ticket Count by Date"
+            },
+            toolTip: {
+		        shared: true
+	        },
+            axisX: {
+                valueFormatString: "dd MMM",
+            },
+            axisY: {
+                title: "Ticket Count",
+                maximum: maxCount
+            
+            },
+            data: [{
+                type: "line",
+                dataPoints: dataPoints
+            }]
+        });
+
+        chart.render();
+    }
+</script>
 </head>
 <body>
     <div class="text-center" style="margin-top: 4rem;">
@@ -24,6 +74,6 @@
     </div>
 
     <div id="chartContainer" style="height: 400px; width: 100%;"></div>
-
+    <script src="https://cdn.canvasjs.com/ga/canvasjs.min.js"></script>
 
 </body>
