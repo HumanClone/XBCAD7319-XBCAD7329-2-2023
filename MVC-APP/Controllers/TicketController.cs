@@ -7,20 +7,27 @@ using System.Net.Http.Json;
 using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using System.Net.Mime;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-
-
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
+    // private static HttpClient sharedClient = new()
+    // {
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     public TicketController()
@@ -36,7 +43,7 @@ public class TicketController : Controller
     }  
 
     [HttpPost]
-    public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName) 
+    public async Task<IActionResult> Create(TicketDetail ticketDetail, string categoryName,List<IFormFile> files) 
     {
         //finds the selected category's id, call the api to get the category id
         var categoryId = await sharedClient.GetFromJsonAsync<int>($"category/getcategoryid?categoryName={categoryName}");     
@@ -53,18 +60,50 @@ public class TicketController : Controller
                     TicketId = ticketDetail.TicketId,
                     CategoryId = categoryId.ToString(),
                     UserId = ticketDetail.UserId,
-                    DevId = ticketDetail.DevId,
+                    DevId = "1",
                     DateIssued = DateTime.UtcNow,
                     MessageContent = ticketDetail.MessageContent,
                     Status = ticketDetail.Status,
                     CategoryName = categoryName,
                     
-                };//send this object to api
-            
+                };
+
+                using MultipartFormDataContent multipartContent = new();
+                // string jsonContent = JsonConvert.SerializeObject(Ticket);
+                // StringContent jsonContentString = new StringContent(jsonContent, Encoding.UTF8, MediaTypeNames.Application.Json); 
+                // multipartContent.Add(jsonContentString, "ticket");
+                // Console.WriteLine(jsonContent);
+                multipartContent.Add(new StringContent(Ticket.CategoryId,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategorId");
+                multipartContent.Add(new StringContent(Ticket.UserId+"",Encoding.UTF8, MediaTypeNames.Text.Plain),"UserId");
+                multipartContent.Add(new StringContent(Ticket.MessageContent,Encoding.UTF8, MediaTypeNames.Text.Plain),"MessageContent");
+                multipartContent.Add(new StringContent(Ticket.CategoryName,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategorName");
+
+                Console.WriteLine(files.Count.ToString());
+               
+                if(!files.IsNullOrEmpty())
+                {
+                    foreach(var file in files)
+                    {
+                        var streamContent = new StreamContent(file.OpenReadStream());
+                        streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType.ToString());
+                        streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                        {
+                            Name = "Attachments",
+                            FileName = file.FileName
+                        };
+                        multipartContent.Add(streamContent, "Attachments");
+
+                    }
+
+                    foreach(var item in multipartContent)
+                    {
+                        Console.WriteLine(item.Headers.ToString());
+                    }
+                }
 
                 try
                 {
-                    HttpResponseMessage response = await sharedClient.PostAsJsonAsync("ticket/createuserticket",Ticket);
+                    var response = await sharedClient.PostAsync("ticket/createuserticket",multipartContent);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -74,7 +113,7 @@ public class TicketController : Controller
                     }
                     else
                     {
-                        Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+                        Console.WriteLine($"Request failed with status code: {response.RequestMessage.ToString()}");
                         return View();
                     }
 
@@ -105,6 +144,10 @@ public class TicketController : Controller
 
         }
     }
+
+
+
+
         [HttpGet]
         public async Task<IActionResult> ViewTicket()
         {

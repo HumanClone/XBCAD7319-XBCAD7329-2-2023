@@ -42,36 +42,97 @@ namespace api.Controllers
 
 
         //endpoint the creates a ticket from the user side and sends email 
+        // [HttpPost("createuserticket")]
+        // public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        // {
+        //     _context.Add(ticket);
+        //     await _context.SaveChangesAsync();
+        //     var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+        //     MailRequest req= new MailRequest();
+        //     req.Body=tic.MessageContent;
+        //     req.Subject=tic.TicketId.ToString();
+        //     try
+        //     {
+        //         await mailService.SendEmailUser(req);
+        //         TicketResponse tr= new TicketResponse();
+        //         tr.ResponseMessage=req.Body;
+        //         tr.sender=tic.UserId.ToString();
+        //         tr.TicketId=req.Subject;
+        //         tr.date=DateTime.UtcNow;
+        //         _context.Add(tr);
+        //         await _context.SaveChangesAsync();
+
+
+        //         return Ok(tic);
+
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest();
+
+        //     }    
+        // }
+
         [HttpPost("createuserticket")]
-        public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        public async Task<IActionResult> createTicketUser([FromForm]TicketVM log)
         {
-            _context.Add(ticket);
-            await _context.SaveChangesAsync();
-            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-            MailRequest req= new MailRequest();
-            req.Body=tic.MessageContent;
-            req.Subject=tic.TicketId.ToString();
+            // var Ticket = new TicketDetail()
+            //     {
+                    
+            //         CategoryId = log.CategoryId.ToString(),
+            //         UserId = log.UserId,
+            //         DevId = null,
+            //         DateIssued = DateTime.UtcNow,
+            //         MessageContent =log.MessageContent,
+            //         Status = "pending",
+            //         CategoryName = log.CategoryName,
+                    
+            //     };
+            var ticket=new TicketDetail();
+            ticket.CategoryId=log.CategoryId;
+            ticket.UserId=log.UserId;
+            ticket.DateIssued=DateTime.Now;
+            ticket.MessageContent=log.MessageContent;
+            ticket.Status="pending";
+            ticket.CategoryName=log.CategoryName;
+
+            if(!log.Attachments.IsNullOrEmpty())
+            {
+                Console.WriteLine("ticket attachments");
+                string links=await mailService.StoreAttachments(log.Attachments);
+                //log.ticket.links=links;
+            }
+
+            // _context.Add(log.ticket);
+            // await _context.SaveChangesAsync();
+            // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+            // MailRequest req= new MailRequest();
+            // req.Body=tic.MessageContent;
+            // req.Subject=tic.TicketId.ToString();
             try
             {
-                await mailService.SendEmailUser(req);
-                TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=req.Body;
-                tr.sender=tic.UserId.ToString();
-                tr.TicketId=req.Subject;
-                tr.date=DateTime.UtcNow;
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
+                // await mailService.SendEmailUser(req);
+                // TicketResponse tr= new TicketResponse();
+                // tr.ResponseMessage=req.Body;
+                // tr.sender=tic.UserId.ToString();
+                // tr.TicketId=req.Subject;
+                // tr.date=DateTime.UtcNow;
+                // _context.Add(tr);
+                // await _context.SaveChangesAsync();
 
 
-                return Ok(tic);
+                return Ok(ticket);
 
             }
             catch (Exception ex)
             {
-                return BadRequest();
+
+                Console.WriteLine("HellO\n\n"+ex);
+                return BadRequest(ex);
 
             }    
         }
+
 
         //endpoint to return a list of tickets 
         [HttpGet("getalltickets")]

@@ -151,6 +151,8 @@ private static HttpClient sharedClient = new()
                 Console.WriteLine(responseContent);
                 if(response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($": {response.RequestMessage.ToString()}");
+
                     Console.WriteLine($"Response sent {response.StatusCode}");
                     return RedirectToAction("ViewTicket","Ticket");
                 }
@@ -225,7 +227,6 @@ private static HttpClient sharedClient = new()
                 }
                 else
                 {
-                    Create("52");
                     Console.WriteLine($"Request failed with status code: {response.StatusCode}");
                     return View("Create");
                     
