@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -38,8 +38,6 @@
 
                             <a class="nav-link text-dark" >FAQ</a>
                         </li> *@
-
-                       >
                         @if(Context.Session.GetString("UserId") != null )
                         {
                             <li class="nav-item">
@@ -70,8 +68,7 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="UserLogin" asp-action="Logout">LOGOUT</a>
                             </li>
-                        }                  
-
+                        }                 
                     </ul>
                 </div>
             </div>

@@ -4,47 +4,36 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Responses: For Ticket @ViewBag.TicketID</h1>
-<a class="button" asp-area="" asp-controller="Response" asp-action="Create" asp-route-id="@ViewBag.TicketID">Create New Response</a>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center" style="padding: 0 15%; margin: 2rem 0;">
+        <div>
+            <h1 style="color: #5D7894; font-family: 'Montserrat', sans-serif; font-weight:400;">Responses</h1>
+        </div>
+        <div>
+            <a class="view-response-btn" asp-area="" asp-controller="Response" asp-action="Create" asp-route-id="@ViewBag.TicketID">New Response</a>
+        </div>
+    </div>
 
-
-
-<table class="table table-responsive table-hover table-bordered">
-        <thead>
-            <tr class="table-active">
-                <th>Response Id</th>
-                <th>DevId</th>
-                <th>Sender</th>
-                <th>Message</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="row justify-content-center mt-4">
             @if (Model != null && Model.Any())
             {
                 @foreach (var response in Model)
                 {
-                    <tr>
-                        <td>@response.ResponseId</td>
-                        <td>@response.DevId</td>
-                        <td>@response.sender</td>
-                        <td>@response.ResponseMessage</td>
-                        <td>@response.date</td>
-                        
-                    </tr>
-
+                    <div class="card ticket-card">
+                        <div class="card-header ticket-card-header">
+                            Response Reference @response.ResponseId
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-text">@response.date</h6>
+                            <p class="card-text">@response.ResponseMessage</p>
+                        </div>
+                    </div>                   
                 }
 
             }
             else
             {
-                <tr>
-                    <td colspan="6">
-                        <div>
-                            No Responses.
-                        </div>
-                    </td>
-                </tr>
+                <h1>No tickets found</h1>
             }
-        </tbody>
-    </table>
+
+</div>
