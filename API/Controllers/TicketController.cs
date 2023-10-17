@@ -198,7 +198,7 @@ namespace api.Controllers
         public async Task<Dictionary<string,int>> getTicketStatusCount()
         {
             // TODO : Change when the database is updated
-            Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status).ToDictionary(s=>s.Key,s=>s.Count());
+            Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status.ToUpper()).ToDictionary(s=>s.Key,s=>s.Count());
             return td;
         }
 

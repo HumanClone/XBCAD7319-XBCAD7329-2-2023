@@ -14,13 +14,17 @@ public class ReportingController : Controller{
 
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     
     public IActionResult Index()
     {
-        return View();
+        var statusCounts = sharedClient.GetFromJsonAsync<Dictionary<string, int>>("ticket/ticketStatusCount").Result;
+        ReportingViewModel model = new ReportingViewModel();
+        model.StatusCounts = statusCounts;
+        return View(model);
     }
 
 }

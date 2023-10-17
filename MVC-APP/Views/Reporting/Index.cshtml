@@ -1,0 +1,20 @@
+@model MVCAPP.Models.ReportingViewModel;
+@{
+    ViewData["Title"] = "Report";
+}
+
+<div class="text-center" style="margin-top: 4rem;">
+  <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+    @foreach (var status in Model.StatusCounts)
+    {
+      <div class="col-md-2 mb-4">
+        <div class="card status-count-card">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <h4 class="card-title">@status.Value</h4>
+            <p class="card-text"><strong>@status.Key</strong></p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

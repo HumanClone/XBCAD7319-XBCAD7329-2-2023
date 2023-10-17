@@ -190,7 +190,7 @@ body {
 
 .ticket-card{
   border: 2px solid #5D7894;
-  font-family: 'Montserrat', sans-serif;;
+  font-family: 'Montserrat', sans-serif;
   margin-bottom: 2rem;
   padding: 0;
   width: 70%;
@@ -216,3 +216,24 @@ body {
   border: 2px solid #5D7894;
   color: #5D7894;
 }
+
+/* Reporting Page */
+
+.status-count-card {
+  background-color: #5D7894;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  height: 200px;
+}
+
+@media (max-width: 768px) {
+  .col-md-2 {
+    width: 20%;
+  }
+}
+
+@media (max-width: 425px) {
+  .row-cols-1>* {
+    width: 70%;
+}}
+
