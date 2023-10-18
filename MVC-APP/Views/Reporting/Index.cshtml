@@ -3,55 +3,72 @@
     ViewData["Title"] = "Report";
 }
 <head>
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
     window.onload = function () {
         var reportingData = @Html.Raw(Json.Serialize(Model.TicketStatuses));
-        var dataPoints = [];
+        var dataSeries = [];
     
-        reportingData.forEach(function (ticketStatus) {
-            ticketStatus.tickets.forEach(function (ticketData) {
+        var colors = ["steelblue", "orange", "green", "red", "purple"]; // Add more colors as needed
+    
+        reportingData.forEach(function (ticketStatus, index) {
+            var dataPoints = ticketStatus.tickets.map(function (ticketData) {
                 var dateParts = ticketData.date.split('T')[0].split('-');
                 var year = parseInt(dateParts[0]);
                 var month = parseInt(dateParts[1]) - 1;
                 var day = parseInt(dateParts[2]);
                 var date = new Date(year, month, day);
-                
-                var dataPoint = {
+    
+                return {
                     x: date,
                     y: ticketData.count
                 };
-                
-                dataPoints.push(dataPoint);
-                console.log(dataPoint);
             });
+    
+            var dataSeriesItem = {
+                type: "line",
+                name: ticketStatus.name,
+                dataPoints: dataPoints,
+                color: colors[index % colors.length] // Assign a color based on the index
+            };
+    
+            dataSeries.push(dataSeriesItem);
         });
-
-
-        var maxCount = Math.max.apply(Math, dataPoints.map(function (point) { return point.y +2; }));
-
+    
+        var maxCount = Math.max.apply(Math, dataSeries.flatMap(function (series) {
+            return series.dataPoints.map(function (point) {
+                return point.y + 2;
+            });
+        }));
+    
         var chart = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
             title: {
-                text: "Ticket Count by Date"
+                fontFamily: "Montserrat, sans-serif",
+                text: "Ticket Count by Date",
+                padding: 20
             },
             toolTip: {
-		        shared: true
-	        },
+                fontFamily: "Montserrat, sans-serif",
+                shared: true
+            },
             axisX: {
-                valueFormatString: "dd MMM",
+                title: "Current Week",
+                labelFormatter: function (e) {
+				    return CanvasJS.formatDate( e.value, "DD MMM");
+			    },
+			    labelAngle: -20,
+                titleFontFamily: "Montserrat, sans-serif",
             },
             axisY: {
                 title: "Ticket Count",
-                maximum: maxCount
-            
+                maximum: maxCount,
+                titleFontFamily: "Montserrat, sans-serif",
             },
-            data: [{
-                type: "line",
-                dataPoints: dataPoints
-            }]
+            data: dataSeries
         });
-
+    
         chart.render();
     }
 </script>
