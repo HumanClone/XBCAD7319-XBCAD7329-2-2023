@@ -29,8 +29,7 @@
             var dataSeriesItem = {
                 type: "line",
                 name: ticketStatus.name,
-                dataPoints: dataPoints,
-                color: colors[index % colors.length] // Assign a color based on the index
+                dataPoints: dataPoints
             };
     
             dataSeries.push(dataSeriesItem);
@@ -43,10 +42,12 @@
         }));
     
         var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "light2",
             animationEnabled: true,
             title: {
                 fontFamily: "Montserrat, sans-serif",
                 text: "Ticket Count by Date",
+                fontWeight: "normal",
                 padding: 20
             },
             toolTip: {
@@ -56,20 +57,60 @@
             axisX: {
                 title: "Current Week",
                 labelFormatter: function (e) {
-				    return CanvasJS.formatDate( e.value, "DD MMM");
-			    },
-			    labelAngle: -20,
-                titleFontFamily: "Montserrat, sans-serif",
+                    return CanvasJS.formatDate(e.value, "DD MMM");
+                },
+                labelAngle: -20,
+                titleFontFamily: "Montserrat, sans-serif"
             },
             axisY: {
                 title: "Ticket Count",
                 maximum: maxCount,
-                titleFontFamily: "Montserrat, sans-serif",
+                titleFontFamily: "Montserrat, sans-serif"
             },
             data: dataSeries
         });
     
         chart.render();
+    
+        var statusCounts = @Html.Raw(Json.Serialize(Model.StatusCounts));
+        var totalCount = Object.values(statusCounts).reduce((total, count) => total + count, 0);
+        var dataPointsPie = [];
+        
+        Object.entries(statusCounts).forEach(([status, count]) => {
+          var percentage = ((count / totalCount) * 100).toFixed(1);
+          dataPointsPie.push({
+            y: parseFloat(percentage),
+            label: status
+          });
+        });
+
+        var pieChart = new CanvasJS.Chart("piechartContainer", {
+            theme: "light2",
+            exportEnabled: true,
+            animationEnabled: true,
+            title: {
+                fontFamily: "Montserrat, sans-serif",
+                text: "Status Percetange",
+                padding: 20,
+                fontWeight: "normal"
+            },
+            legend: {
+                fontSize: 15,
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: "normal"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 180,
+                fontFamily: "Montserrat, sans-serif",
+                toolTipContent: "<b>{label}</b>: {y}%",
+                showInLegend: "true",
+                legendText: "{label}",
+                indexLabel: "{label} - {y}%",
+                dataPoints: dataPointsPie
+            }]
+        });
+        pieChart.render();
     }
 </script>
 </head>
@@ -91,6 +132,7 @@
     </div>
 
     <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+    <div id="piechartContainer" style="height: 370px; width: 100%;"></div>
     <script src="https://cdn.canvasjs.com/ga/canvasjs.min.js"></script>
 
 </body>
