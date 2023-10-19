@@ -76,6 +76,7 @@ public class ReportingController : Controller{
         //     weekDates.Add(date);
         // }
 
+        // TODO : Change to currentdates
         DateTime startDate = new DateTime(2023, 9, 5); // Set the start date to September 5th, 2023
         DateTime endDate = new DateTime(2023, 9, 11); // Set the end date to September 11th, 2023
         

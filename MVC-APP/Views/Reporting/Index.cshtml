@@ -29,7 +29,9 @@
             var dataSeriesItem = {
                 type: "line",
                 name: ticketStatus.name,
-                dataPoints: dataPoints
+                dataPoints: dataPoints,
+                legendText: ticketStatus.name,
+                showInLegend: true
             };
     
             dataSeries.push(dataSeriesItem);
@@ -49,6 +51,13 @@
                 text: "Ticket Count by Date",
                 fontWeight: "normal",
                 padding: 20
+            },
+            legend: {
+                horizontalAlign: "right", 
+                verticalAlign: "center", 
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: "normal",
+                fontSize: 15
             },
             toolTip: {
                 fontFamily: "Montserrat, sans-serif",
@@ -97,7 +106,9 @@
             legend: {
                 fontSize: 15,
                 fontFamily: "Montserrat, sans-serif",
-                fontWeight: "normal"
+                fontWeight: "normal",
+                horizontalAlign: "right", 
+                verticalAlign: "center"
             },
             data: [{
                 type: "pie",
