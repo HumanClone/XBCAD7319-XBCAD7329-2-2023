@@ -4,6 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
+<head>
+
+</head>
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center" style="padding: 0 15%; margin: 2rem 0;">
         <div>
@@ -25,6 +29,8 @@
                         </div>
                         <div class="card-body">
                             <h6 class="card-text">@response.date</h6>
+                            @* TODO : Add When db updates *@
+                            @* <p class="card-text">@response.sender</p> *@
                             <p class="card-text">@response.ResponseMessage</p>
                         </div>
                     </div>                   
@@ -37,3 +43,7 @@
             }
 
 </div>
+
+</div>
+
+<div id="pagination-container" class="pagination justify-content-center"></div>
