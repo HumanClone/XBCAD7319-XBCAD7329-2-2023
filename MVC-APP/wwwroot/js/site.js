@@ -1,6 +1,6 @@
 ﻿// Pagination
   // Show 5 cards per page
-  var cardsPerPage = 5;
+  var cardsPerPage = 3;
 
   // Get the card elements
   var cards = document.querySelectorAll('.card.ticket-card');

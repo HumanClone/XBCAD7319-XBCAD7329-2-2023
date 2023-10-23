@@ -36,7 +36,7 @@ namespace api.Controllers
         public async Task<List<TicketResponse>> getResponsesTicket(string? ticketID)
         {
             var data=_context.TicketResponses.ToList();
-            data=data.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).ToList();
+            data=data.Select(s=>s).Where(s=>s.TicketId.Equals(ticketID)).OrderByDescending(s=>s.date).ToList();
             return data;
         }
 

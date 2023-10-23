@@ -102,7 +102,7 @@ namespace api.Controllers
         [HttpGet("userTickets")]
         public async Task<List<TicketDetail>> getUserTickets(string? userId)
         {
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.UserId.ToString().Equals(userId)).ToList();
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.UserId.ToString().Equals(userId)).OrderByDescending(s => s.DateIssued).ToList();
             return td;
         }
 
@@ -110,7 +110,7 @@ namespace api.Controllers
         //end point to return tickets within a date range and filter if a status is provided
         [HttpGet("filter")]
         public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? userId, string? userRole)
-        {
+        {  
             DateTime today = DateTime.UtcNow;
 
             //default date range is 1 month
@@ -121,40 +121,27 @@ namespace api.Controllers
 
             DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
 
-            if(userId!=null)
+            var query = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date);
+            
+            if (userId != null)
             {
-                if(userRole == "Staff"){
-
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId)).ToList();
-                        return td;
-                    }
-                }else if (userRole == "Student"){
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();
-                        return td;
-                    }
-                }else{
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
-                        return td;
-                    }
+                if (userRole == "Staff")
+                {
+                    query = query.Where(s => s.DevId.ToString().Equals(userId));
                 }
-                
-            }else{
-                //for the admin side
-                List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
-                return td;
+                else if (userRole == "Student")
+                {
+                    query = query.Where(s => s.UserId.ToString().Equals(userId));
+                }
             }
+            
+            if (status != "All")
+            {
+                query = query.Where(s => s.Status.Equals(status));
+            }
+            
+            List<TicketDetail> td = query.OrderByDescending(s => s.DateIssued).ToList();
+            return td;
             
         }
 
@@ -198,7 +185,7 @@ namespace api.Controllers
         [HttpGet("ticketStatusCount")]
         public async Task<Dictionary<string,int>> getTicketStatusCount()
         {
-            // TODO : Change when the database is updated
+            // TODO : Change when the database is updated status should never be null
             Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status.ToUpper()).ToDictionary(s=>s.Key,s=>s.Count());
             return td;
         }

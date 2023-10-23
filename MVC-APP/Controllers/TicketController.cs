@@ -18,9 +18,15 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
+    // private static HttpClient sharedClient = new()
+    // {
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     public TicketController()
@@ -168,12 +174,16 @@ public class TicketController : Controller
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
+
             
+
             //check if all the fields have been left as default
             if (startDate == null && endDate == null && status == "All")
             {
                 return RedirectToAction("ViewTicket", "Ticket");
             }
+
+            
 
 
             //get the role
