@@ -109,19 +109,22 @@ namespace api.Controllers
 
         //end point to return tickets within a date range and filter if a status is provided
         [HttpGet("filter")]
-        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? userId, string? userRole)
+        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? category,string? userId, string? userRole)
         {  
-            DateTime today = DateTime.UtcNow;
 
-            //default date range is 1 month
-            DateTime defaultStartDate = today.AddMonths(-1).Date;
-            DateTime defaultEndDate = today.Date;
+            var query = _context.TicketDetails.AsQueryable();
 
-            DateTime parsedStartDate = DateTime.Parse(startDate ?? defaultStartDate.Date.ToString("yyyy-MM-dd"));
-
-            DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
-
-            var query = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date);
+            if(startDate != null && endDate != null){
+                DateTime parsedStartDate = DateTime.Parse(startDate);
+                DateTime parsedEndDate = DateTime.Parse(endDate);
+                query = query.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date);
+            }else if(startDate == null && endDate != null){
+                DateTime parsedEndDate = DateTime.Parse(endDate);
+                query = query.Where(s => s.DateIssued.Date <= parsedEndDate.Date);
+            }else if(endDate == null && startDate != null){
+                DateTime parsedStartDate = DateTime.Parse(startDate);
+                query = query.Where(s => s.DateIssued.Date >= parsedStartDate.Date);
+            }
             
             if (userId != null)
             {
@@ -134,11 +137,19 @@ namespace api.Controllers
                     query = query.Where(s => s.UserId.ToString().Equals(userId));
                 }
             }
+
+             Console.WriteLine(query);
             
             if (status != "All")
             {
                 query = query.Where(s => s.Status.Equals(status));
             }
+
+            if (category != "All")
+            {
+                query = query.Where(s => s.CategoryName.Equals(category));
+            }
+
             
             List<TicketDetail> td = query.OrderByDescending(s => s.DateIssued).ToList();
             return td;

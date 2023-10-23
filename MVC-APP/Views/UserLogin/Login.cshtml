@@ -21,17 +21,17 @@
                         <form asp-action="Login" class="login-frm">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group mb-4" style="text-align: start;">
-                                <label class="labels" asp-for="Email" class="control-label">EMAIL</label>
+                                <label class="labels" asp-for="Email" class="control-label">Email</label>
                                 <input asp-for="Email" class="form-control form-control-lg" type="email" required />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                             <div class="form-group mb-4" style="text-align: start;">
-                                <label class="labels" asp-for="Password" class="control-label">PASSWORD</label>
+                                <label class="labels" asp-for="Password" class="control-label">Password</label>
                                 <input asp-for="Password" class="form-control form-control-lg" type="password" required />
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-dark">Login</button>
+                                <button type="submit" class="card-btn" style="width: 45%;">Login</button>
                                 <span class="text-danger"></span>
                             </div>
                         </form>
