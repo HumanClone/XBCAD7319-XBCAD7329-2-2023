@@ -11,15 +11,15 @@ public class DevController:ControllerBase
 
     private readonly ILogger<DevController> _logger;
     
-    // private static HttpClient sharedClient = new()
-    // {
-    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-    // };
-
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("http://localhost:5173/api/"),
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
+
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    // };
 
 
 
