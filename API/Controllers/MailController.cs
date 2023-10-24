@@ -17,11 +17,10 @@ namespace api.Controllers
     public class MailController : ControllerBase
     {
         private readonly IMailService mailService;
-        private readonly StudentSupportXbcadContext _context;
-       
 
+        private readonly XbcadDb2Context _context;
 
-        public MailController(IMailService mailService,StudentSupportXbcadContext context)
+        public MailController(IMailService mailService,XbcadDb2Context context)
         {
             this.mailService = mailService;
             _context = context;
@@ -37,8 +36,8 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3,request.Subject.Length):request.Subject;
-                tr.sender=request.UserId;
-                tr.date=DateTime.UtcNow;
+                tr.Sender=request.UserId;
+                tr.Date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -63,9 +62,11 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.date=DateTime.UtcNow;
+
+                tr.Date=DateTime.UtcNow;
                 // _context.Add(tr);
                 // await _context.SaveChangesAsync();
+
                 return Ok();
             }
             catch (Exception ex)
@@ -117,10 +118,10 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
-                    // _context.Add(td);
-                    // await _context.SaveChangesAsync();
-                    // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-                    // tr.TicketId=tic.TicketId.ToString();
+                    _context.Add(td);
+                    await _context.SaveChangesAsync();
+                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    tr.TicketId=tic.TicketId.ToString();
                     
                     Console.WriteLine(td.ToString());
                 }
@@ -138,11 +139,11 @@ namespace api.Controllers
 
 
                 tr.ResponseMessage=mailReceive.Body;
-                tr.sender=mailReceive.FromEmail;
-                tr.date=DateTime.UtcNow;
-                // _context.Add(tr);
-                // await _context.SaveChangesAsync();
-                // Console.WriteLine(tr.ToString());
+                tr.Sender=mailReceive.FromEmail;
+                tr.Date=DateTime.UtcNow;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+                Console.WriteLine(tr.ToString());
                 
                 // Return a success response
                 return Ok("Email received and processed successfully and ticket created.");
@@ -193,8 +194,8 @@ namespace api.Controllers
 
 
                 tr.ResponseMessage=mailReceive.Body;
-                tr.sender=mailReceive.FromEmail;
-                tr.date=DateTime.UtcNow;
+                tr.Sender=mailReceive.FromEmail;
+                tr.Date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 Console.WriteLine(tr.ToString());

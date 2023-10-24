@@ -13,11 +13,11 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
     {
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
         private readonly IMailService mailService;
 
 
-        public ResponseController(StudentSupportXbcadContext context,IMailService mailService)
+        public ResponseController(XbcadDb2Context context,IMailService mailService)
         {
             _context = context;
             this.mailService = mailService;
@@ -55,12 +55,12 @@ namespace api.Controllers
             }
             try
             {
-                //await mailService.SendEmailAdmin(request);
-                // TicketResponse tr= new TicketResponse();
-                // tr.ResponseMessage=request.Body;
-                // tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                // tr.DevId=request.DevId;
-                // tr.date=DateTime.UtcNow;
+                await mailService.SendEmailAdmin(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.DevId=request.DevId;
+                tr.Date=DateTime.UtcNow;
                 if(!request.Attachments.IsNullOrEmpty())
                 {
                     Console.WriteLine("Admin attachments");
@@ -68,8 +68,9 @@ namespace api.Controllers
                     //tr.links=links;
                 }
 
-                //_context.Add(tr);
-                //await _context.SaveChangesAsync();
+
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
 
                 return Ok();
             }
@@ -88,21 +89,22 @@ namespace api.Controllers
         {
             try
             {
-                // await mailService.SendEmailUser(request);
-                // TicketResponse tr= new TicketResponse();
-                // tr.ResponseMessage=request.Body;
-                // tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                // tr.sender=request.UserId;
-                // tr.date=DateTime.UtcNow;
+                await mailService.SendEmailUser(request);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=request.Body;
+                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
+                tr.Sender=request.UserId;
+                tr.Date=DateTime.UtcNow;
                 if(!request.Attachments.IsNullOrEmpty())
                 {
                     Console.WriteLine("User attachments");
                     string links=await mailService.StoreAttachments(request.Attachments);
                     //tr.links=links;
                 }
+                
 
-                // _context.Add(tr);
-                // await _context.SaveChangesAsync();
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
 
                 return Ok();
             }

@@ -13,10 +13,10 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class TicketController:ControllerBase
     {
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
         private readonly IMailService mailService;
 
-        public TicketController(StudentSupportXbcadContext context,IMailService mailService)
+        public TicketController(XbcadDb2Context context,IMailService mailService)
         {
             _context = context;
             this.mailService = mailService;
@@ -104,22 +104,23 @@ namespace api.Controllers
                 //log.ticket.links=links;
             }
 
-            // _context.Add(log.ticket);
-            // await _context.SaveChangesAsync();
-            // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-            // MailRequest req= new MailRequest();
-            // req.Body=tic.MessageContent;
-            // req.Subject=tic.TicketId.ToString();
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+            var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+            MailRequest req= new MailRequest();
+            req.Body=tic.MessageContent;
+            req.Subject=tic.TicketId.ToString();
             try
             {
-                // await mailService.SendEmailUser(req);
-                // TicketResponse tr= new TicketResponse();
-                // tr.ResponseMessage=req.Body;
-                // tr.sender=tic.UserId.ToString();
-                // tr.TicketId=req.Subject;
-                // tr.date=DateTime.UtcNow;
-                // _context.Add(tr);
-                // await _context.SaveChangesAsync();
+                await mailService.SendEmailUser(req);
+                TicketResponse tr= new TicketResponse();
+                tr.ResponseMessage=req.Body;
+                tr.Sender=tic.UserId.ToString();
+                tr.TicketId=req.Subject;
+                tr.Date=DateTime.UtcNow;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
+
 
 
                 return Ok(ticket);
@@ -287,7 +288,7 @@ namespace api.Controllers
             await _context.SaveChangesAsync();
             if(!ticket.UserId.HasValue)
             {
-                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.sender.IsNullOrEmpty()).FirstOrDefault().sender;
+                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.Sender.IsNullOrEmpty()).FirstOrDefault().Sender;
                 request.ToEmail=sender;
             }
             try
@@ -298,7 +299,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.date=DateTime.UtcNow;
+                tr.Date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
