@@ -118,10 +118,10 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
-                    // _context.Add(td);
-                    // await _context.SaveChangesAsync();
-                    // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-                    // tr.TicketId=tic.TicketId.ToString();
+                    _context.Add(td);
+                    await _context.SaveChangesAsync();
+                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    tr.TicketId=tic.TicketId.ToString();
                     
                     Console.WriteLine(td.ToString());
                 }
@@ -142,9 +142,9 @@ namespace api.Controllers
 
                 tr.ResponseMessage=mailReceive.Body;
                 tr.sender=mailReceive.FromEmail;
-                // tr.date=DateTime.UtcNow;
-                // _context.Add(tr);
-                // await _context.SaveChangesAsync();
+                tr.date=DateTime.UtcNow;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
                 Console.WriteLine(tr.ToString());
                 
                 // Return a success response
