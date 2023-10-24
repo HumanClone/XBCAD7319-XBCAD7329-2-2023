@@ -12,7 +12,7 @@ public partial class TicketResponse
     public string DevId { get; set; }
 
     public string ResponseMessage { get; set; }
-    public string Links {get;set;}
+    public string? Links {get;set;}
 
     public DateTime? Date { get; set; }
 

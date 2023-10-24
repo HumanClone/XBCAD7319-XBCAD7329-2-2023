@@ -12,6 +12,9 @@ namespace MVCAPP.Models
         
         [ForeignKey("TeamDev")]
         public string? DevId {get; set;}
+         public string? Links {get;set;}
+        public string? Notes {get;set;}
+        public int? Priority {get;set;}
 
         [ForeignKey("UserInfo")]
         public int? UserId {get; set;}
