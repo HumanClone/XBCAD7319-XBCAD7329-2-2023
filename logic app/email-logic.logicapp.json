@@ -22,54 +22,160 @@
                 "actions": {
                     "has_attachments": {
                         "actions": {
-                            "For_each": {
+                            "Attachments_request": {
+                                "inputs": {
+                                    "body": {
+                                        "$content-type": "multipart/form-data",
+                                        "$multipart": [
+                                            {
+                                                "body": "@{body('Get_email_details')?['From']}",
+                                                "headers": {
+                                                    "Content-Disposition": "form-data; name=FromEmail;",
+                                                    "Content-Type": "text/plain"
+                                                }
+                                            },
+                                            {
+                                                "body": "@{body('Get_email_details')?['Subject']}",
+                                                "headers": {
+                                                    "Content-Disposition": "form-data; name=Subject;",
+                                                    "Content-Type": "text/plain"
+                                                }
+                                            },
+                                            {
+                                                "body": "@{body('Get_email_details')?['Body']}",
+                                                "headers": {
+                                                    "Content-Disposition": "form-data; name=Body;",
+                                                    "Content-Type": "text/plain"
+                                                }
+                                            },
+                                            {
+                                                "body": "@{outputs('remove_last_letter')}",
+                                                "headers": {
+                                                    "Content-Disposition": "form-data; name=links;",
+                                                    "Content-Type": "text/plain"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "method": "POST",
+                                    "uri": "https://supportsystemapi.azurewebsites.net/api/mail/resAT"
+                                },
+                                "runAfter": {
+                                    "remove_last_letter": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Http"
+                            },
+                            "for_each_attachment": {
                                 "actions": {
-                                    "Append_to_string_variable_2": {
+                                    "Create_SAS_URI_by_path_(V2)": {
                                         "inputs": {
-                                            "name": "files",
-                                            "value": "@outputs('Compose')"
+                                            "body": {
+                                                "AccessProtocol": "HttpsOnly",
+                                                "Permissions": "Read"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/v2/datasets/@{encodeURIComponent('AccountNameFromSettings')}/CreateSharedLinkByPath",
+                                            "queries": {
+                                                "path": "@body('Create_blob_(V2)')?['Path']"
+                                            }
                                         },
                                         "runAfter": {
-                                            "Compose": [
+                                            "Create_blob_(V2)": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ApiConnection"
+                                    },
+                                    "Create_blob_(V2)": {
+                                        "inputs": {
+                                            "body": "@items('for_each_attachment')",
+                                            "headers": {
+                                                "ReadFileMetadataFromServer": true
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files",
+                                            "queries": {
+                                                "folderPath": "/attachments",
+                                                "name": "@items('for_each_attachment')?['Name']",
+                                                "queryParametersSingleEncoded": true
+                                            }
+                                        },
+                                        "runAfter": {},
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "ApiConnection"
+                                    },
+                                    "append_to_files": {
+                                        "inputs": {
+                                            "name": "files",
+                                            "value": "@{body('Create_SAS_URI_by_path_(V2)')?['WebUrl']};"
+                                        },
+                                        "runAfter": {
+                                            "Create_SAS_URI_by_path_(V2)": [
                                                 "Succeeded"
                                             ]
                                         },
                                         "type": "AppendToStringVariable"
-                                    },
-                                    "Compose": {
-                                        "inputs": "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"Attachments\"; filename=\"@{items('For_each')?['Name']}\"\r\nContent-Type: @{items('For_each')?['ContentType']}\r\n\r\n@{base64ToString(items('For_each')?['ContentBytes'])}\r\n",
-                                        "runAfter": {},
-                                        "type": "Compose"
                                     }
                                 },
                                 "foreach": "@triggerBody()?['Attachments']",
                                 "runAfter": {},
                                 "type": "Foreach"
                             },
-                            "HTTP_2": {
-                                "inputs": {
-                                    "body": "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"FromEmail\"\nContent-Type: text/plain\n\n@{body('Get_email_details')?['From']}\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"Subject\"\nContent-Type: text/plain\n\n@{body('Get_email_details')?['Subject']}\n@{parameters('files')}\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"Body\"\nContent-Type: text/plain\n\n@{triggerBody()?['Body']}\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
-                                    "headers": {
-                                        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
-                                    },
-                                    "method": "POST",
-                                    "uri": "https://supportsystemapi.azurewebsites.net/api/mail/res"
-                                },
+                            "remove_last_letter": {
+                                "inputs": "@substring(variables('files'), 0, sub(length(variables('files')), 1))\r\n",
                                 "runAfter": {
-                                    "For_each": [
+                                    "for_each_attachment": [
                                         "Succeeded"
                                     ]
                                 },
-                                "type": "Http"
+                                "type": "Compose"
                             }
                         },
                         "else": {
                             "actions": {
-                                "HTTP_3": {
+                                "Noo_attachment_request": {
                                     "inputs": {
-                                        "body": "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"FromEmail\"\nContent-Type: text/plain\n\n@{body('Get_email_details')?['From']}\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"Subject\"\nContent-Type: text/plain\n\n@{body('Get_email_details')?['Subject']}\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"Body\"\nContent-Type: text/plain\n\n@{triggerBody()?['Body']}\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
-                                        "headers": {
-                                            "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
+                                        "body": {
+                                            "$content-type": "multipart/form-data",
+                                            "$multipart": [
+                                                {
+                                                    "body": "@{body('Get_email_details')?['From']}",
+                                                    "headers": {
+                                                        "Content-Disposition": "form-data; name=FromEmail;",
+                                                        "Content-Type": "text/plain"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "@{body('Get_email_details')?['Subject']}",
+                                                    "headers": {
+                                                        "Content-Disposition": "form-data; name=Subject;",
+                                                        "Content-Type": "text/plain"
+                                                    }
+                                                },
+                                                {
+                                                    "body": "@{body('Get_email_details')?['Body']}",
+                                                    "headers": {
+                                                        "Content-Disposition": "form-data; name=Body;",
+                                                        "Content-Type": "text/plain"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "method": "POST",
                                         "uri": "https://supportsystemapi.azurewebsites.net/api/mail/res"
@@ -97,7 +203,7 @@
                             "Send_email_(V2)": {
                                 "inputs": {
                                     "body": {
-                                        "Body": "<p>Automate Responce</p>",
+                                        "Body": "<p>Automate Responce:&nbsp;message here</p>",
                                         "To": "@body('Get_email_details')?['From']"
                                     },
                                     "host": {
@@ -143,13 +249,13 @@
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable": [
+                    "Initialize_files": [
                         "Succeeded"
                     ]
                 },
                 "type": "If"
             },
-            "Initialize_variable": {
+            "Initialize_files": {
                 "inputs": {
                     "variables": [
                         {
@@ -173,6 +279,10 @@
                 "defaultValue": {},
                 "type": "Object"
             },
+            "base url": {
+                "defaultValue": "https://supportsystemapi.azurewebsites.net/api/mail",
+                "type": "String"
+            },
             "files": {
                 "defaultValue": " ",
                 "type": "String"
@@ -186,7 +296,7 @@
             "When_a_new_email_arrives": {
                 "evaluatedRecurrence": {
                     "frequency": "Minute",
-                    "interval": 3
+                    "interval": 1
                 },
                 "inputs": {
                     "host": {
@@ -197,7 +307,6 @@
                     "method": "get",
                     "path": "/Mail/OnNewEmail",
                     "queries": {
-                        "fetchOnlyWithAttachments": false,
                         "importance": "All",
                         "includeAttachments": true,
                         "label": "INBOX",
@@ -206,7 +315,7 @@
                 },
                 "recurrence": {
                     "frequency": "Minute",
-                    "interval": 3
+                    "interval": 1
                 },
                 "type": "ApiConnection"
             }
@@ -215,6 +324,11 @@
     "parameters": {
         "$connections": {
             "value": {
+                "azureblob": {
+                    "connectionId": "/subscriptions/8e645fa0-124f-421c-9941-638fd6900baf/resourceGroups/WIl-Project/providers/Microsoft.Web/connections/azureblob-1",
+                    "connectionName": "azureblob-1",
+                    "id": "/subscriptions/8e645fa0-124f-421c-9941-638fd6900baf/providers/Microsoft.Web/locations/southafricanorth/managedApis/azureblob"
+                },
                 "gmail_2": {
                     "connectionId": "/subscriptions/8e645fa0-124f-421c-9941-638fd6900baf/resourceGroups/WIl-Project/providers/Microsoft.Web/connections/gmail",
                     "connectionName": "gmail",

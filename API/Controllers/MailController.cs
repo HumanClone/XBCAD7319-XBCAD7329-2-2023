@@ -95,8 +95,7 @@ namespace api.Controllers
 
      
         // gets the information from teh json this will most likely be used by the logic app 
-        //TODO:Test too see if new logic app works
-        [HttpPost("res")]
+        [HttpPost("resAT")]
         public async Task<IActionResult> ReceiveEmail([FromForm] MailReceive mailReceive)
         {
             try
@@ -118,10 +117,10 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
-                    _context.Add(td);
-                    await _context.SaveChangesAsync();
-                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
-                    tr.TicketId=tic.TicketId.ToString();
+                    // _context.Add(td);
+                    // await _context.SaveChangesAsync();
+                    // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    // tr.TicketId=tic.TicketId.ToString();
                     
                     Console.WriteLine(td.ToString());
                 }
@@ -131,21 +130,19 @@ namespace api.Controllers
                     tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
                 }
 
-                if(!mailReceive.Attachments.IsNullOrEmpty())
-                {
+                
                     Console.WriteLine("Attachments Recieved");
-                    string links = await mailService.StoreAttachments(mailReceive.Attachments);
-                    Console.WriteLine(links);
-                }
+                    Console.WriteLine(mailReceive.links);
+                
                 
 
 
                 tr.ResponseMessage=mailReceive.Body;
                 tr.sender=mailReceive.FromEmail;
                 tr.date=DateTime.UtcNow;
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
-                Console.WriteLine(tr.ToString());
+                // _context.Add(tr);
+                // await _context.SaveChangesAsync();
+                // Console.WriteLine(tr.ToString());
                 
                 // Return a success response
                 return Ok("Email received and processed successfully and ticket created.");
