@@ -90,9 +90,6 @@ namespace api.Controllers
             ticket.Status="pending";
             ticket.CategoryName=log.CategoryName;
 
-
-            ticket.DevId=1.ToString();
-
             if(!log.Attachments.IsNullOrEmpty())
             {
                 Console.WriteLine("ticket attachments");
@@ -113,7 +110,7 @@ namespace api.Controllers
                 tr.ResponseMessage=req.Body;
                 tr.Sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
-                tr.Date=DateTime.UtcNow;
+                tr.Date=DateTime.Now;
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();

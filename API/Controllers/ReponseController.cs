@@ -60,7 +60,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.Date=DateTime.UtcNow;
+                tr.Date=DateTime.Now;
                 if(!request.Attachments.IsNullOrEmpty())
                 {
                     Console.WriteLine("Admin attachments");
@@ -94,7 +94,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.Sender=request.UserId;
-                tr.Date=DateTime.UtcNow;
+                tr.Date=DateTime.Now;
                 if(!request.Attachments.IsNullOrEmpty())
                 {
                     Console.WriteLine("User attachments");
