@@ -9,7 +9,7 @@ public partial class TicketDetail
 
     public string CategoryId { get; set; }
 
-    public string DevId { get; set; }
+    public string? DevId { get; set; }
 
     public DateTime DateIssued { get; set; }
 
