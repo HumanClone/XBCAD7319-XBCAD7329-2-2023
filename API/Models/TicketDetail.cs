@@ -7,7 +7,7 @@ public partial class TicketDetail
 {
     public int TicketId { get; set; }
 
-    public string CategoryId { get; set; }
+    public string? CategoryId { get; set; }
 
     public string? DevId { get; set; }
 
@@ -21,7 +21,7 @@ public partial class TicketDetail
 
     public string? Status { get; set; }
 
-    public string CategoryName { get; set; }
+    public string? CategoryName { get; set; }
 
     public int? UserId { get; set; }
 }
