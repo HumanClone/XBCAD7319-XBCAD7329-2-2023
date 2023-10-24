@@ -152,12 +152,12 @@ public class MailService :IMailService
                 await blobClient.UploadAsync(stream, true);
 
                 Uri blobUri = blobClient.Uri;
-                links += blobUri + "\n"; // Added newline for better formatting
+                links += blobUri + ";"; // Added newline for better formatting
                 Console.WriteLine($"Attachment saved: {blobName}");
                 Console.WriteLine($"Link to attachment: {blobUri}");
             }
         }
-        
+        links=links.Substring(0,links.Length-1);
         return links;
     }
 

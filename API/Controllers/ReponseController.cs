@@ -45,7 +45,7 @@ namespace api.Controllers
 
 
         //calls the send method to send the email 
-
+        //TODO:TEst
         [HttpPost("Admin")]
         public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
@@ -82,6 +82,7 @@ namespace api.Controllers
                 
         }
 
+        //TODO:TEst
         [HttpPost("sendUser")]
         public async Task<IActionResult> SendMailuser([FromForm]MailRequest request)
         {
