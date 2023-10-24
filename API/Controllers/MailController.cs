@@ -93,6 +93,7 @@ namespace api.Controllers
         }
 
 
+     
         // gets the information from teh json this will most likely be used by the logic app 
         //TODO:Test too see if new logic app works
         [HttpPost("res")]
@@ -121,10 +122,12 @@ namespace api.Controllers
                     // await _context.SaveChangesAsync();
                     // var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
                     // tr.TicketId=tic.TicketId.ToString();
+                    
                     Console.WriteLine(td.ToString());
                 }
                 else
                 {
+                    
                     tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
                 }
 
@@ -142,6 +145,61 @@ namespace api.Controllers
                 // tr.date=DateTime.UtcNow;
                 // _context.Add(tr);
                 // await _context.SaveChangesAsync();
+                Console.WriteLine(tr.ToString());
+                
+                // Return a success response
+                return Ok("Email received and processed successfully and ticket created.");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
+         //TODO:Test too see if new logic app works
+        [HttpPost("res")]
+        public async Task<IActionResult> ReceiveEmailnoAT([FromBody] MailReceive mailReceive)
+        {
+            try
+            {
+                // Process form fields (ToEmail, Subject, Body)
+                // Handle attachments (List<IFormFile> attachments)
+                string updatedBody = Regex.Replace(mailReceive.Body, "<.*?>", string.Empty);
+                updatedBody = updatedBody.Replace("\\r\\n", " ");
+                updatedBody = updatedBody.Replace(@"&nbsp;", " ");
+
+                TicketResponse tr= new TicketResponse();
+                var ids=_context.TicketDetails.Select(S=>S.TicketId);
+                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(2):mailReceive.Subject;
+                bool posID=int.TryParse(pID,out int result);
+                bool exist=ids.Contains(result);
+                if(!posID && !exist)
+                {
+                    TicketDetail td=new TicketDetail();
+                    td.DateIssued=DateTime.UtcNow;
+                    td.MessageContent=updatedBody;
+                    td.Status="Needs attention";
+                    _context.Add(td);
+                    await _context.SaveChangesAsync();
+                    var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+                    tr.TicketId=tic.TicketId.ToString();
+                    Console.WriteLine(td.ToString());
+                }
+                else
+                {
+                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                }
+
+                
+
+
+                tr.ResponseMessage=mailReceive.Body;
+                tr.sender=mailReceive.FromEmail;
+                tr.date=DateTime.UtcNow;
+                _context.Add(tr);
+                await _context.SaveChangesAsync();
                 Console.WriteLine(tr.ToString());
                 
                 // Return a success response
