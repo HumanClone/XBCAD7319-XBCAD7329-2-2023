@@ -9,10 +9,16 @@ namespace MVCAPP.Controllers
     public class UserLoginController : Controller
     {
 
-        private static HttpClient sharedClient = new()
-        {
-            BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),           
-        };
+       // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
+    private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("http://localhost:5173/api/"),
+    };
+
 
      
 

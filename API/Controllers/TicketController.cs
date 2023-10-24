@@ -73,22 +73,15 @@ namespace api.Controllers
         //     }    
         // }
 
-        //TODO:TEst
+        //TODO:Test adding response
         [HttpPost("createuserticket")]
         public async Task<IActionResult> createTicketUser([FromForm]TicketVM log)
         {
-            // var Ticket = new TicketDetail()
-            //     {
-                    
-            //         CategoryId = log.CategoryId.ToString(),
-            //         UserId = log.UserId,
-            //         DevId = null,
-            //         DateIssued = DateTime.UtcNow,
-            //         MessageContent =log.MessageContent,
-            //         Status = "pending",
-            //         CategoryName = log.CategoryName,
-                    
-            //     };
+           
+            Console.WriteLine("here is the category id:"+log.CategoryId);
+            Console.WriteLine("here is the USer id "+log.UserId);
+            Console.WriteLine("here is the MEssage "+log.MessageContent);
+            Console.WriteLine("here is the Category Name :"+log.CategoryName);
             var ticket=new TicketDetail();
             ticket.CategoryId=log.CategoryId;
             ticket.UserId=log.UserId;
@@ -97,11 +90,14 @@ namespace api.Controllers
             ticket.Status="pending";
             ticket.CategoryName=log.CategoryName;
 
+
+            ticket.DevId=1.ToString();
+
             if(!log.Attachments.IsNullOrEmpty())
             {
                 Console.WriteLine("ticket attachments");
                 string links=await mailService.StoreAttachments(log.Attachments);
-                //log.ticket.links=links;
+                ticket.Links=links;
             }
 
             _context.Add(ticket);
@@ -118,6 +114,7 @@ namespace api.Controllers
                 tr.Sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
                 tr.Date=DateTime.UtcNow;
+
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
@@ -130,7 +127,7 @@ namespace api.Controllers
             {
 
                 Console.WriteLine("HellO\n\n"+ex);
-                return BadRequest(ex);
+                return BadRequest();
 
             }    
         }

@@ -24,7 +24,7 @@ public class ResponseController : Controller
     //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     // };
 
-private static HttpClient sharedClient = new()
+    private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("http://localhost:5173/api/"),
     };

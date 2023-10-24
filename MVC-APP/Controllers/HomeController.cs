@@ -9,9 +9,14 @@ namespace mvc_app.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     public HomeController(ILogger<HomeController> logger)

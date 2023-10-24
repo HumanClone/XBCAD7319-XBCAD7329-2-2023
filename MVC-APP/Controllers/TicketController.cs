@@ -49,7 +49,7 @@ public class TicketController : Controller
         var categoryId = await sharedClient.GetFromJsonAsync<int>($"category/getcategoryid?categoryName={categoryName}");     
         var userId = HttpContext.Session.GetInt32("UserId");
         ticketDetail.UserId = userId;
-
+        Console.WriteLine("Category:"+categoryId);
         try
         {
             if (ModelState.IsValid)
@@ -73,10 +73,10 @@ public class TicketController : Controller
                 // StringContent jsonContentString = new StringContent(jsonContent, Encoding.UTF8, MediaTypeNames.Application.Json); 
                 // multipartContent.Add(jsonContentString, "ticket");
                 // Console.WriteLine(jsonContent);
-                multipartContent.Add(new StringContent(Ticket.CategoryId,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategorId");
+                multipartContent.Add(new StringContent(Ticket.CategoryId,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategoryId");
                 multipartContent.Add(new StringContent(Ticket.UserId+"",Encoding.UTF8, MediaTypeNames.Text.Plain),"UserId");
                 multipartContent.Add(new StringContent(Ticket.MessageContent,Encoding.UTF8, MediaTypeNames.Text.Plain),"MessageContent");
-                multipartContent.Add(new StringContent(Ticket.CategoryName,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategorName");
+                multipartContent.Add(new StringContent(Ticket.CategoryName,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategoryName");
 
                 Console.WriteLine(files.Count.ToString());
                
