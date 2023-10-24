@@ -54,6 +54,7 @@ public class AdminController : Controller
             {
                 jsonTicketContent= await response.Content.ReadAsStringAsync();
                 ticketList = JsonConvert.DeserializeObject<List<TicketDetail>>(jsonTicketContent);
+                ticketList = ticketList.OrderByDescending(t => t.DateIssued).ToList();
                 Console.WriteLine("Pull success");
             }
             else{

@@ -59,7 +59,7 @@ namespace MVCAPP.Controllers
                             HttpContext.Session.SetString("Email", dev.Email);
 
                             HttpContext.Session.SetString("Role", "Staff");
-                            return RedirectToAction("ViewTicket", "Ticket");   
+                            return RedirectToAction("Index", "Admin");   
                         }
                         HttpContext.Session.SetInt32("UserId", user.UserId);
                         HttpContext.Session.SetString("Name", user.Name);
@@ -80,20 +80,20 @@ namespace MVCAPP.Controllers
                         HttpContext.Session.SetString("Email", user.Email);
 
                         HttpContext.Session.SetString("Role", "Staff");
-                        return RedirectToAction("ViewTicket", "Ticket");
+                        return RedirectToAction("Index", "Admin");
                     }
                 }
                 else
                 { 
                     Console.WriteLine($"Request failed with status code: {response.StatusCode}");
-                    ViewBag.Notification = "Password or Username Incorrect";
+                    ModelState.AddModelError("Password", "Invalid username or password.");
                     return View();
                 
                 }
             }
             catch (HttpRequestException ex)
             {
-                ViewBag.Notification = "Error ocured try again";
+                ModelState.AddModelError("Password", "An error occurred please try again.");
                 Console.WriteLine($"Request error: {ex.Message}");
                 return View();
             }
