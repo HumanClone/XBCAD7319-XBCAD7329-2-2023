@@ -77,28 +77,10 @@ public class AdminController : Controller
             }
 
 
-            //get the role
-            var role = HttpContext.Session.GetString("Role");
-            Console.WriteLine(role);
-
-            //if the user is an employee
-            if (role == "Staff")
-            {
-               var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
-               Console.WriteLine(devIdString);
-               var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
-              return RedirectToAction("ViewAdminTicket", "Admin");
-            }
-            else if (role == "Student")
-            {
-                var studentIdString = HttpContext.Session.GetInt32("UserId").ToString();
-                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={studentIdString}&userRole={role}").Result;               
-                //redirect to view ticket action and pass the filtered tickets
-                return RedirectToAction("ViewAdminTicket", "Admin");
-            }
-          
+            var role = "Admin";
+            var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
+            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
             return RedirectToAction("ViewAdminTicket", "Admin");
-
         }
 
     private async Task<List<string>> PopulateStatusList()

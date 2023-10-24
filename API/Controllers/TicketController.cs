@@ -130,7 +130,7 @@ namespace api.Controllers
             {
                 if (userRole == "Staff")
                 {
-                    query = query.Where(s => s.DevId.ToString().Equals(userId));
+                    query = query.Where(s => s.DevId == userId);
                 }
                 else if (userRole == "Student")
                 {
