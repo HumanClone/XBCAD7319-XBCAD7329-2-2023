@@ -13,9 +13,9 @@ namespace api.Controllers
     public class UsersController:ControllerBase
     {
         
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
 
-        public UsersController(StudentSupportXbcadContext context)
+        public UsersController(XbcadDb2Context context)
         {
             _context = context;
             
@@ -27,7 +27,7 @@ namespace api.Controllers
         public async Task<IActionResult> addUser([FromBody]UserInfo user)
         {
             //check if the email already exists in the userlogin table
-            var email = _context.UserLogin.Where(x=>x.Email==user.Email).FirstOrDefault();
+            var email = _context.UserLogins.Where(x=>x.Email==user.Email).FirstOrDefault();
             if(email!=null)
             {
                 return BadRequest("Email already exists");
@@ -35,7 +35,7 @@ namespace api.Controllers
             else
             {
                 //add the user to the userlogin table
-                _context.UserInfo.Add(user);
+                _context.UserInfos.Add(user);
                 _context.SaveChanges();
                 return Ok("User added");
             }
@@ -52,7 +52,7 @@ namespace api.Controllers
         public async Task<IActionResult> addCredentials([FromBody]UserLogin user)
         {
             //check if the email already exists in the userlogin table
-            var email = _context.UserLogin.Where(x=>x.Email==user.Email).FirstOrDefault();
+            var email = _context.UserLogins.Where(x=>x.Email==user.Email).FirstOrDefault();
             if(email!=null)
             {
                 return BadRequest("Email already exists");
@@ -62,7 +62,7 @@ namespace api.Controllers
                 //hash the password
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 //add the user to the userlogin table
-                _context.UserLogin.Add(user);
+                _context.UserLogins.Add(user);
                 _context.SaveChanges();
                 return Ok("User added");
             }
@@ -77,7 +77,7 @@ namespace api.Controllers
             var dev = _context.TeamDevs.Where(x=>x.Email==cred.Email).FirstOrDefault();
             if(dev!=null)
             {
-                var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                var password = _context.UserLogins.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
                 if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
                 {
                         //return the user object
@@ -90,10 +90,10 @@ namespace api.Controllers
             }
             else
             {
-                var user = _context.UserInfo.Where(x=>x.Email==cred.Email).FirstOrDefault();
+                var user = _context.UserInfos.Where(x=>x.Email==cred.Email).FirstOrDefault();
                 if(user!=null)
                 {
-                    var password = _context.UserLogin.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
+                    var password = _context.UserLogins.Where(x=>x.Email==cred.Email).FirstOrDefault().Password;
                     //check if the password matches the hash
                     if(BCrypt.Net.BCrypt.Verify(cred.Password, password))
                     {
@@ -118,12 +118,12 @@ namespace api.Controllers
         public async Task<IActionResult> removeUser(int? userID)
         {
             //get the users email from the userlogin table
-            var user = _context.UserInfo.Where(x=>x.UserId==userID).FirstOrDefault();
+            var user = _context.UserInfos.Where(x=>x.UserId==userID).FirstOrDefault();
             string email = user.Email;
 
             //remove the user from the userlogin table
-            _context.UserLogin.Remove(_context.UserLogin.Where(x=>x.Email==email).FirstOrDefault());
-            _context.UserInfo.Remove(user);
+            _context.UserLogins.Remove(_context.UserLogins.Where(x=>x.Email==email).FirstOrDefault());
+            _context.UserInfos.Remove(user);
             _context.SaveChanges();
             return Ok("User removed");
         }
@@ -131,7 +131,7 @@ namespace api.Controllers
         [HttpGet("users")]
         public async Task<List<UserInfo>> users()
         {
-            return _context.UserInfo.ToList<UserInfo>();
+            return _context.UserInfos.ToList<UserInfo>();
         }
 
 

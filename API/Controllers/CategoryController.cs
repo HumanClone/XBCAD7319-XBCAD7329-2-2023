@@ -13,9 +13,9 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class CategoryController:ControllerBase
     {
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
 
-        public CategoryController(StudentSupportXbcadContext context)
+        public CategoryController(XbcadDb2Context context)
         {
             _context = context;           
         }
