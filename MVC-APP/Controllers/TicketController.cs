@@ -197,11 +197,13 @@ public class TicketController : Controller
 
             //get the role
             var role = HttpContext.Session.GetString("Role");
+            Console.WriteLine(role);
 
             //if the user is an employee
             if (role == "Staff")
             {
                var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
+               Console.WriteLine(devIdString);
                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
                return View("ViewTicket",filteredTickets);
             }

@@ -216,6 +216,15 @@ body {
   color: #5D7894;
 }
 
+/* Admin dashboard */
+
+
+.dashboard-cards{
+  background-color: #5D7894;
+  color: white;
+}
+
+
 /* Reporting Page */
 
 .status-count-card {
