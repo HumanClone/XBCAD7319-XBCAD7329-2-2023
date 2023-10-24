@@ -15,11 +15,11 @@ public partial class TicketDetail
 
     public string MessageContent { get; set; }
 
-    public string Links {get;set;}
-    public string Notes {get;set;}
-    public int Priority {get;set;}
+    public string? Links {get;set;}
+    public string? Notes {get;set;}
+    public int? Priority {get;set;}
 
-    public string Status { get; set; }
+    public string? Status { get; set; }
 
     public string CategoryName { get; set; }
 

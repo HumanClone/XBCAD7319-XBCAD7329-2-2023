@@ -9,7 +9,8 @@ namespace MVCAPP.Models
         [Required]
         [ForeignKey("TicketDetail")]
         public string TicketId {get; set;}
-        
+         public string? Links {get;set;}
+         
         [ForeignKey("TeamDev")]
         public string? DevId {get; set;}
         public string? sender {get; set;}
