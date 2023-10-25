@@ -33,6 +33,7 @@ namespace api.Controllers
             try
             {
                 await mailService.SendEmailUser(request);
+
                 return Ok();
             }
             catch (Exception ex)
