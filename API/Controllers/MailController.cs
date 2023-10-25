@@ -118,6 +118,7 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
+                    td.Priority=(int)Priority.Low;
                     _context.Add(td);
                     await _context.SaveChangesAsync();
                     var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
@@ -179,6 +180,7 @@ namespace api.Controllers
                     td.DateIssued=DateTime.UtcNow;
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
+                    td.Priority=(int)Priority.Low;
                     _context.Add(td);
                     await _context.SaveChangesAsync();
                     var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
