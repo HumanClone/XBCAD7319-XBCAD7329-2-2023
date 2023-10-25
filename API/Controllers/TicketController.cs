@@ -14,10 +14,10 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class TicketController:ControllerBase
     {
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
         private readonly IMailService mailService;
 
-        public TicketController(StudentSupportXbcadContext context,IMailService mailService)
+        public TicketController(XbcadDb2Context context,IMailService mailService)
         {
             _context = context;
             this.mailService = mailService;
@@ -42,10 +42,62 @@ namespace api.Controllers
         }
 
 
-        //endpoint the creates a ticket from the user side and sends emai 
+        //endpoint the creates a ticket from the user side and sends email 
+        // [HttpPost("createuserticket")]
+        // public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        // {
+        //     _context.Add(ticket);
+        //     await _context.SaveChangesAsync();
+        //     var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
+        //     MailRequest req= new MailRequest();
+        //     req.Body=tic.MessageContent;
+        //     req.Subject=tic.TicketId.ToString();
+        //     try
+        //     {
+        //         await mailService.SendEmailUser(req);
+        //         TicketResponse tr= new TicketResponse();
+        //         tr.ResponseMessage=req.Body;
+        //         tr.sender=tic.UserId.ToString();
+        //         tr.TicketId=req.Subject;
+        //         tr.date=DateTime.UtcNow;
+        //         _context.Add(tr);
+        //         await _context.SaveChangesAsync();
+
+
+        //         return Ok(tic);
+
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest();
+
+        //     }    
+        // }
+
+        //TODO:Test adding response
         [HttpPost("createuserticket")]
-        public async Task<IActionResult> createTicketUser([FromBody]TicketDetail ticket)
+        public async Task<IActionResult> createTicketUser([FromForm]TicketVM log)
         {
+           
+            Console.WriteLine("here is the category id:"+log.CategoryId);
+            Console.WriteLine("here is the USer id "+log.UserId);
+            Console.WriteLine("here is the MEssage "+log.MessageContent);
+            Console.WriteLine("here is the Category Name :"+log.CategoryName);
+            var ticket=new TicketDetail();
+            ticket.CategoryId=log.CategoryId;
+            ticket.UserId=log.UserId;
+            ticket.DateIssued=DateTime.Now;
+            ticket.MessageContent=log.MessageContent;
+            ticket.Status="pending";
+            ticket.CategoryName=log.CategoryName;
+
+            if(!log.Attachments.IsNullOrEmpty())
+            {
+                Console.WriteLine("ticket attachments");
+                string links=await mailService.StoreAttachments(log.Attachments);
+                ticket.Links=links;
+            }
+
             _context.Add(ticket);
             await _context.SaveChangesAsync();
             var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
@@ -57,22 +109,27 @@ namespace api.Controllers
                 await mailService.SendEmailUser(req);
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=req.Body;
-                tr.sender=tic.UserId.ToString();
+                tr.Sender=tic.UserId.ToString();
                 tr.TicketId=req.Subject;
-                tr.date=DateTime.UtcNow;
+                tr.Date=DateTime.Now;
+
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
 
 
-                return Ok(tic);
+
+                return Ok(ticket);
 
             }
             catch (Exception ex)
             {
+
+                Console.WriteLine("HellO\n\n"+ex);
                 return BadRequest();
 
             }    
         }
+
 
         //endpoint to return a list of tickets 
         [HttpGet("getalltickets")]
@@ -253,7 +310,7 @@ namespace api.Controllers
             await _context.SaveChangesAsync();
             if(!ticket.UserId.HasValue)
             {
-                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.sender.IsNullOrEmpty()).FirstOrDefault().sender;
+                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.Sender.IsNullOrEmpty()).FirstOrDefault().Sender;
                 request.ToEmail=sender;
             }
             try
@@ -264,7 +321,7 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=ticket.TicketId.ToString();
                 tr.DevId=request.DevId;
-                tr.date=DateTime.UtcNow;
+                tr.Date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
