@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using MVCAPP.Data;
 using MVCAPP.Models;
 
 namespace MVCAPP.Controllers

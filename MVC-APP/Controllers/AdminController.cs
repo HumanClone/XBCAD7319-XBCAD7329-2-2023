@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Json;
-using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +41,8 @@ public class AdminController : Controller
                 jsonTicketContent= await response.Content.ReadAsStringAsync();
                 ticketList = JsonConvert.DeserializeObject<List<TicketDetail>>(jsonTicketContent);
                 Console.WriteLine("Pull success");
+                int num=0;
+            
             }
             else{
                 Console.WriteLine("pull failed");
