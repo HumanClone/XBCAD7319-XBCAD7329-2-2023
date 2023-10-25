@@ -34,35 +34,41 @@ var currentPage = 1;
 function updatePagination() {
   paginationContainer.innerHTML = '';
 
-  // Create the previous button
-  var previousButton = document.createElement('button');
-  previousButton.textContent = 'Previous';
-  previousButton.classList.add('page-link');
-  previousButton.disabled = (currentPage === 1);
-  previousButton.addEventListener('click', function() {
-    currentPage--;
-    showCards(currentPage);
-    updatePagination();
-  });
-  paginationContainer.appendChild(previousButton);
+  // Calculate the total number of pages
+  var totalPages = Math.ceil(cards.length / cardsPerPage);
 
-  // Create the label for the current page
-  var pageLabel = document.createElement('span');
-  pageLabel.textContent = 'Page ' + currentPage + ' of ' + totalPages;
-  pageLabel.style.margin = '10px';
-  paginationContainer.appendChild(pageLabel);
+  // Only display pagination if there are cards
+  if (totalPages > 0) {
+    // Create the previous button
+    var previousButton = document.createElement('button');
+    previousButton.textContent = 'Previous';
+    previousButton.classList.add('page-link');
+    previousButton.disabled = (currentPage === 1);
+    previousButton.addEventListener('click', function() {
+      currentPage--;
+      showCards(currentPage);
+      updatePagination();
+    });
+    paginationContainer.appendChild(previousButton);
 
-  // Create the next button
-  var nextButton = document.createElement('button');
-  nextButton.classList.add('page-link');
-  nextButton.textContent = 'Next';
-  nextButton.disabled = (currentPage === totalPages);
-  nextButton.addEventListener('click', function() {
-    currentPage++;
-    showCards(currentPage);
-    updatePagination();
-  });
-  paginationContainer.appendChild(nextButton);
+    // Create the label for the current page
+    var pageLabel = document.createElement('span');
+    pageLabel.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+    pageLabel.style.margin = '10px';
+    paginationContainer.appendChild(pageLabel);
+
+    // Create the next button
+    var nextButton = document.createElement('button');
+    nextButton.classList.add('page-link');
+    nextButton.textContent = 'Next';
+    nextButton.disabled = (currentPage === totalPages);
+    nextButton.addEventListener('click', function() {
+      currentPage++;
+      showCards(currentPage);
+      updatePagination();
+    });
+    paginationContainer.appendChild(nextButton);
+  }
 }
 
 // Show the cards for the first page initially
