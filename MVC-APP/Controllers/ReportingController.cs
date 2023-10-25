@@ -16,8 +16,7 @@ public class ReportingController : Controller{
 
     private static HttpClient sharedClient = new()
     {
-        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        BaseAddress = new Uri("http://localhost:5173/api/"),
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
     
@@ -64,21 +63,18 @@ public class ReportingController : Controller{
 
     private List<DateTime> getDatesForWeek()
     {
-        // DateTime today = DateTime.Today;
-        // int currentDayOfWeek = (int)today.DayOfWeek;
-        // int startOfWeek = (int)DayOfWeek.Monday;
-        // DateTime startDate = today.AddDays(-currentDayOfWeek + startOfWeek);
-        // DateTime endDate = startDate.AddDays(6);
+        DateTime today = DateTime.Today;
+        int currentDayOfWeek = (int)today.DayOfWeek;
+        int startOfWeek = (int)DayOfWeek.Monday;
+        DateTime startDate = today.AddDays(-currentDayOfWeek + startOfWeek);
+        DateTime endDate = startDate.AddDays(6);
         
-        // List<DateTime> weekDates = new List<DateTime>();
-        // for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-        // {
-        //     weekDates.Add(date);
-        // }
+        List<DateTime> weekDates = new List<DateTime>();
+        for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+        {
+            weekDates.Add(date);
+        }
 
-        // TODO : Change to currentdates
-        DateTime startDate = new DateTime(2023, 9, 5); // Set the start date to September 5th, 2023
-        DateTime endDate = new DateTime(2023, 9, 11); // Set the end date to September 11th, 2023
         
         List<DateTime> weekDates = new List<DateTime>();
         for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))

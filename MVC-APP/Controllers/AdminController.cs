@@ -18,15 +18,9 @@ namespace mvc_app.Controllers;
 
 public class AdminController : Controller
 {
-    // private static HttpClient sharedClient = new()
-    // {
-    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-    // };
-
     private static HttpClient sharedClient = new()
     {
-        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        BaseAddress = new Uri("http://localhost:5173/api/"),
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
 
