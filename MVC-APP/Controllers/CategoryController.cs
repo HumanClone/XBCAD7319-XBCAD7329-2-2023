@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using MVCAPP.Data;
 using MVCAPP.Models;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
@@ -10,9 +9,14 @@ public class CategoryController : Controller
 {
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),       
+        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
- 
+
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    // };
+
      
     List<Category> listCategories = new List<Category>();
 
