@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Json;
-using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ namespace mvc_app.Controllers;
 
 public class AdminController : Controller
 {
-    private static HttpClient sharedClient = new()
+   private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
@@ -50,6 +49,8 @@ public class AdminController : Controller
                 ticketList = JsonConvert.DeserializeObject<List<TicketDetail>>(jsonTicketContent);
                 ticketList = ticketList.OrderByDescending(t => t.DateIssued).ToList();
                 Console.WriteLine("Pull success");
+                int num=0;
+            
             }
             else{
                 Console.WriteLine("pull failed");

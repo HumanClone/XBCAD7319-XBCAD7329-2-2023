@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace api.Models
+namespace api.Models;
+
+public partial class TeamDev
 {
-    public class TeamDev{
-        [Key]
-        public int DevId {get; set;}
-        
-        [ForeignKey("UserLogin")]
-        public string? Email {get; set;}
-        public string? Name {get; set;}
-        public string? Surname {get; set;}
-    }
+    public int DevId { get; set; }
+
+    public string Name { get; set; }
+
+    public string Surname { get; set; }
+
+    public string Email { get; set; }
 }
