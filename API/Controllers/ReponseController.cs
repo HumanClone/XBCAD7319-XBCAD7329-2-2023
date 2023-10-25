@@ -1,20 +1,23 @@
 using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace api.Controllers
 {
 
+
+//var blobServiceClient = new BlobServiceClient(connectionString);
     [ApiController]
     [Route("api/[controller]")]
     public class ResponseController:ControllerBase
     {
-        private readonly StudentSupportXbcadContext _context;
+        private readonly XbcadDb2Context _context;
         private readonly IMailService mailService;
 
 
-        public ResponseController(StudentSupportXbcadContext context,IMailService mailService)
+        public ResponseController(XbcadDb2Context context,IMailService mailService)
         {
             _context = context;
             this.mailService = mailService;
@@ -42,10 +45,14 @@ namespace api.Controllers
 
 
         //calls the send method to send the email 
-
+        //TODO:TEst
         [HttpPost("Admin")]
-        public async Task<IActionResult> SendMail([FromBody]MailRequest request)
+        public async Task<IActionResult> SendMail([FromForm]MailRequest request)
         {
+            if(request.ToEmail.Equals("."))
+            {
+                request.ToEmail=null;
+            }
             try
             {
                 await mailService.SendEmailAdmin(request);
@@ -53,7 +60,14 @@ namespace api.Controllers
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
                 tr.DevId=request.DevId;
-                tr.date=DateTime.UtcNow;
+                tr.Date=DateTime.Now;
+                if(!request.Attachments.IsNullOrEmpty())
+                {
+                    Console.WriteLine("Admin attachments");
+                    string links=await mailService.StoreAttachments(request.Attachments);
+                    //tr.links=links;
+                }
+
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
@@ -62,16 +76,16 @@ namespace api.Controllers
             }
             catch (Exception ex)
             {
-
-
+                Console.WriteLine(ex);
                 return BadRequest();
 
             }
                 
         }
 
+        //TODO:TEst
         [HttpPost("sendUser")]
-        public async Task<IActionResult> SendMailuser([FromBody]MailRequest request)
+        public async Task<IActionResult> SendMailuser([FromForm]MailRequest request)
         {
             try
             {
@@ -79,8 +93,15 @@ namespace api.Controllers
                 TicketResponse tr= new TicketResponse();
                 tr.ResponseMessage=request.Body;
                 tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                tr.sender=request.UserId;
-                tr.date=DateTime.UtcNow;
+                tr.Sender=request.UserId;
+                tr.Date=DateTime.Now;
+                if(!request.Attachments.IsNullOrEmpty())
+                {
+                    Console.WriteLine("User attachments");
+                    string links=await mailService.StoreAttachments(request.Attachments);
+                    //tr.links=links;
+                }
+                
 
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
@@ -90,7 +111,7 @@ namespace api.Controllers
             catch (Exception ex)
             {
 
-
+                Console.WriteLine(ex);
                 return BadRequest();
 
             }

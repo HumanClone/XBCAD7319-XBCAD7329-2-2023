@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Json;
-using MVCAPP.Data;
 using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +17,16 @@ namespace mvc_app.Controllers;
 
 public class AdminController : Controller
 {
-    private static HttpClient sharedClient = new()
+   private static HttpClient sharedClient = new()
     {
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
+
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    // };
+
     
     //Gets all tickerts from API for the admin
       [HttpGet]
@@ -36,6 +41,8 @@ public class AdminController : Controller
                 jsonTicketContent= await response.Content.ReadAsStringAsync();
                 ticketList = JsonConvert.DeserializeObject<List<TicketDetail>>(jsonTicketContent);
                 Console.WriteLine("Pull success");
+                int num=0;
+            
             }
             else{
                 Console.WriteLine("pull failed");

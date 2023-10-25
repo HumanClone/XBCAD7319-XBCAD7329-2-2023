@@ -2,14 +2,22 @@
 
 #nullable disable
 
-namespace mvcapp.Migrations
+namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTicketDetailTables : Migration
+    public partial class nullabelupdate3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "sender",
+                table: "TicketResponses",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AlterColumn<string>(
                 name: "DevId",
                 table: "TicketResponses",
@@ -17,17 +25,9 @@ namespace mvcapp.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
-                
-            migrationBuilder.AlterColumn<string>(
-                name: "DevId",
-                table: "TicketDetails",
-                type: "nvarchar(max)",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
 
             migrationBuilder.AlterColumn<string>(
-                name: "CategoryId",
+                name: "DevId",
                 table: "TicketDetails",
                 type: "nvarchar(max)",
                 nullable: true,
@@ -39,6 +39,16 @@ namespace mvcapp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
+                name: "sender",
+                table: "TicketResponses",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "DevId",
                 table: "TicketResponses",
                 type: "nvarchar(max)",
@@ -50,16 +60,6 @@ namespace mvcapp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "DevId",
-                table: "TicketDetails",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "CategoryId",
                 table: "TicketDetails",
                 type: "nvarchar(max)",
                 nullable: false,

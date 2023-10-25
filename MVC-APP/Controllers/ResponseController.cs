@@ -3,13 +3,15 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Json;
-using MVCAPP.Data;
 using MVCAPP.Models;
+using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Http.Features;
 
 
 namespace mvc_app.Controllers;
@@ -21,6 +23,10 @@ public class ResponseController : Controller
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    // };
 
 
     [HttpGet]
@@ -82,7 +88,9 @@ public class ResponseController : Controller
 
     [HttpPost]
     //[Route("/Response/mail")]
-    public async Task<IActionResult> SendResponse(string subject,string body,string toemail)
+    //TODO:GET the Files
+    //https://code-maze.com/aspnetcore-multipart-form-data-in-httpclient/
+    public async Task<IActionResult> SendResponse(string subject,string body,string toemail,List<IFormFile> files)
     {
         Mail model=new Mail();
         model.Subject=subject;
@@ -94,26 +102,56 @@ public class ResponseController : Controller
             Console.WriteLine(HttpContext.Session.GetInt32("DevId"));
             Console.WriteLine(model.Subject);
             Console.WriteLine(model.Body);
+            Console.WriteLine(files.Count.ToString());
             var mr = new MailRequest
             {
-                
                 Subject =model.Subject,
                 Body = model.Body,
                 DevId = ""+HttpContext.Session.GetInt32("DevId"),
-                ToEmail = (model.Toemail.IsNullOrEmpty()) ? "" : model.Toemail
-            
+                ToEmail = (model.Toemail.IsNullOrEmpty()) ? "." : model.Toemail,
+                Attachments=files
             };
+
+            using MultipartFormDataContent multipartContent = new();
+            multipartContent.Add(new StringContent(mr.Subject,Encoding.UTF8, MediaTypeNames.Text.Plain),"Subject");
+            multipartContent.Add(new StringContent(mr.Body,Encoding.UTF8, MediaTypeNames.Text.Plain),"Body");
+            if(!mr.ToEmail.IsNullOrEmpty())
+            {
+                multipartContent.Add(new StringContent(mr.ToEmail,Encoding.UTF8, MediaTypeNames.Text.Plain),"ToEmail");
+            }
             
+            multipartContent.Add(new StringContent(mr.DevId,Encoding.UTF8, MediaTypeNames.Text.Plain),"DevId");
+
+            if(!mr.Attachments.IsNullOrEmpty())
+            {
+                foreach(var file in mr.Attachments)
+                {
+                    var streamContent = new StreamContent(file.OpenReadStream());
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType.ToString());
+                    streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "Attachments",
+                        FileName = file.FileName
+                    };
+                    multipartContent.Add(streamContent, "Attachments");
+                }
+            }
+                foreach(var item in multipartContent)
+                {
+                    Console.WriteLine(item.Headers.ToString());
+                }
+
             try
             {
-
-                HttpResponseMessage response = await sharedClient.PostAsJsonAsync<MailRequest>("response/Admin",mr);
+                Console.WriteLine("before request");
+                var response = await sharedClient.PostAsync("response/Admin",multipartContent);
                 
                 string responseContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseContent);
                 if(response.IsSuccessStatusCode)
                 {
-                    var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
+                    Console.WriteLine($": {response.RequestMessage.ToString()}");
+
                     Console.WriteLine($"Response sent {response.StatusCode}");
                     return RedirectToAction("ViewTicket","Ticket");
                 }
@@ -125,8 +163,9 @@ public class ResponseController : Controller
                     return View("Create");
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                Console.WriteLine(ex);
                 return RedirectToAction("ViewTicket","Ticket");
                 throw;
             }
@@ -141,21 +180,47 @@ public class ResponseController : Controller
                 Subject =model.Subject,
                 Body = model.Body,
                 UserId = ""+HttpContext.Session.GetInt32("UserId"),
-                ToEmail = ""
+                ToEmail = " ",
+                Attachments=files
             
             };
+            Console.WriteLine("object created");
+            using MultipartFormDataContent multipartContent = new();
+            multipartContent.Add(new StringContent(mr.Subject,Encoding.UTF8, MediaTypeNames.Text.Plain),"Subject");
+            multipartContent.Add(new StringContent(mr.Body,Encoding.UTF8, MediaTypeNames.Text.Plain),"Body");
+            multipartContent.Add(new StringContent(mr.UserId,Encoding.UTF8, MediaTypeNames.Text.Plain),"UserId");
 
+            if(!mr.Attachments.IsNullOrEmpty())
+            {
+                foreach(var file in mr.Attachments)
+                {
+                    var streamContent = new StreamContent(file.OpenReadStream());
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType.ToString());
+                    streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "Attachments",
+                        FileName = file.FileName
+                    };
+                    multipartContent.Add(streamContent, "Attachments");
+
+                }
+
+                foreach(var item in multipartContent)
+                {
+                    Console.WriteLine(item.Headers.ToString());
+                }
+            }
             try
             {
                 Console.WriteLine(model.Subject);
                 Console.WriteLine(model.Body);
                 Console.WriteLine(HttpContext.Session.GetInt32("UserId")+"");
 
-                HttpResponseMessage response = await sharedClient.PostAsJsonAsync("response/sendUser", mr);
+                var response = await sharedClient.PostAsync("response/sendUser", multipartContent);
 
                 if(response.IsSuccessStatusCode)
                 {
-                    var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
+                    //var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
                     Console.WriteLine($"Response sent {response.StatusCode}");
                     return RedirectToAction("ViewTicket","Ticket");
                 }
@@ -163,6 +228,7 @@ public class ResponseController : Controller
                 {
                     Console.WriteLine($"Request failed with status code: {response.StatusCode}");
                     return View("Create");
+                    
                 }
             }
             catch (System.Exception)

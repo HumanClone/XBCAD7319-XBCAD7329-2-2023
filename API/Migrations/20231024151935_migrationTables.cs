@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace mvcapp.Migrations
+namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class Adddatabasetables : Migration
+    public partial class migrationTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,13 +31,14 @@ namespace mvcapp.Migrations
                     DevId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TeamDevs", x => x.DevId);
                 });
-                
+
             migrationBuilder.CreateTable(
                 name: "TicketDetails",
                 columns: table => new
@@ -47,8 +48,13 @@ namespace mvcapp.Migrations
                     CategoryId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DevId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateIssued = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Links = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -63,8 +69,10 @@ namespace mvcapp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TicketId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DevId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ResponseMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ResponseMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Links = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    sender = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,8 +86,8 @@ namespace mvcapp.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

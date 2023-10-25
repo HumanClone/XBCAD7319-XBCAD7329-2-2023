@@ -9,4 +9,8 @@ public interface IMailService
 
     Task SendEmailAdmin(MailRequest mailRequest);
 
+    Task SendEmailAsync(MailRequest mailRequest);
+
+    Task<string> StoreAttachments(List<IFormFile> files);
+
 }

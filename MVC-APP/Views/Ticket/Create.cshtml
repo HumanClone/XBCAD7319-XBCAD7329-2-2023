@@ -2,7 +2,7 @@
 @model MVCAPP.Models.TicketDetail;
 
 
-<form action="Create" method="post" class="ticket-form">
+<form action="Create" enctype="multipart/form-data" method="post" class="ticket-form">
     <h3 class="ticket-headings">Student Information</h3>
     <hr/>
      <div class="row">
@@ -22,6 +22,7 @@
         </div>
     </div>
 
+<input type="file" name="Files" class="multiple" multiple /> 
         <div class="d-grid">
             <input type="submit" class="ticket-submit-btn"/>
         </div>

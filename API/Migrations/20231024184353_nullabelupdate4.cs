@@ -2,39 +2,47 @@
 
 #nullable disable
 
-namespace mvcapp.Migrations
+namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class TeamDevTableUpdate : Migration
+    public partial class nullabelupdate4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Name",
-                table: "TeamDevs",
+                name: "CategoryName",
+                table: "TicketDetails",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Email",
-                table: "TeamDevs",
+            migrationBuilder.AlterColumn<string>(
+                name: "CategoryId",
+                table: "TicketDetails",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Email",
-                table: "TeamDevs");
+            migrationBuilder.AlterColumn<string>(
+                name: "CategoryName",
+                table: "TicketDetails",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
-                name: "Name",
-                table: "TeamDevs",
+                name: "CategoryId",
+                table: "TicketDetails",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",
