@@ -33,14 +33,6 @@ namespace api.Controllers
             try
             {
                 await mailService.SendEmailUser(request);
-                TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=request.Body;
-                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3,request.Subject.Length):request.Subject;
-                tr.Sender=request.UserId;
-                tr.Date=DateTime.UtcNow;
-                _context.Add(tr);
-                await _context.SaveChangesAsync();
-
                 return Ok();
             }
             catch (Exception ex)
@@ -58,15 +50,6 @@ namespace api.Controllers
             try
             {
                 await mailService.SendEmailAdmin(request);
-                TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=request.Body;
-                tr.TicketId=(request.Subject.StartsWith("Re:"))? request.Subject.Substring(3):request.Subject;
-                tr.DevId=request.DevId;
-
-                tr.Date=DateTime.UtcNow;
-                // _context.Add(tr);
-                // await _context.SaveChangesAsync();
-
                 return Ok();
             }
             catch (Exception ex)
