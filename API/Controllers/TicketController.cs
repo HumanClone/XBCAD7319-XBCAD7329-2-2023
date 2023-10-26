@@ -1,3 +1,4 @@
+using System;
 using api.email;
 using api.Models;
 using Microsoft.AspNetCore.Diagnostics;
@@ -158,59 +159,57 @@ namespace api.Controllers
         [HttpGet("userTickets")]
         public async Task<List<TicketDetail>> getUserTickets(string? userId)
         {
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.UserId.ToString().Equals(userId)).ToList();
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.UserId.ToString().Equals(userId)).OrderByDescending(s => s.DateIssued).ToList();
             return td;
         }
 
 
         //end point to return tickets within a date range and filter if a status is provided
         [HttpGet("filter")]
-        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? userId, string? userRole)
-        {
-            DateTime today = DateTime.UtcNow;
+        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? category,string? userId, string? userRole)
+        {  
 
-            //default date range is 1 month
-            DateTime defaultStartDate = today.AddMonths(-1).Date;
-            DateTime defaultEndDate = today.Date;
+            var query = _context.TicketDetails.AsQueryable();
 
-            DateTime parsedStartDate = DateTime.Parse(startDate ?? defaultStartDate.Date.ToString("yyyy-MM-dd"));
-
-            DateTime parsedEndDate = DateTime.Parse(endDate ?? defaultEndDate.Date.ToString("yyyy-MM-dd"));
-
-            if(userId!=null)
-            {
-                if(userRole == "Staff"){
-
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.DevId.ToString().Equals(userId)).ToList();
-                        return td;
-                    }
-                }else if (userRole == "Student"){
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId) && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.UserId.ToString().Equals(userId)).ToList();
-                        return td;
-                    }
-                }else{
-                    if(status != "All"){
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date && s.Status.Equals(status)).ToList();
-                        return td;
-                    }else{
-                        List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
-                        return td;
-                    }
-                }
-                
-            }else{
-                //for the admin side
-                List<TicketDetail> td = _context.TicketDetails.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date).ToList();
-                return td;
+            if(startDate != null && endDate != null){
+                DateTime parsedStartDate = DateTime.Parse(startDate);
+                DateTime parsedEndDate = DateTime.Parse(endDate);
+                query = query.Where(s => s.DateIssued.Date >= parsedStartDate.Date && s.DateIssued.Date <= parsedEndDate.Date);
+            }else if(startDate == null && endDate != null){
+                DateTime parsedEndDate = DateTime.Parse(endDate);
+                query = query.Where(s => s.DateIssued.Date <= parsedEndDate.Date);
+            }else if(endDate == null && startDate != null){
+                DateTime parsedStartDate = DateTime.Parse(startDate);
+                query = query.Where(s => s.DateIssued.Date >= parsedStartDate.Date);
             }
+            
+            if (userId != null)
+            {
+                if (userRole == "Staff")
+                {
+                    query = query.Where(s => s.DevId == userId);
+                }
+                else if (userRole == "Student")
+                {
+                    query = query.Where(s => s.UserId.ToString().Equals(userId));
+                }
+            }
+
+             Console.WriteLine(query);
+            
+            if (status != "All")
+            {
+                query = query.Where(s => s.Status.Equals(status));
+            }
+
+            if (category != "All")
+            {
+                query = query.Where(s => s.CategoryName.Equals(category));
+            }
+
+            
+            List<TicketDetail> td = query.OrderByDescending(s => s.DateIssued).ToList();
+            return td;
             
         }
 
@@ -248,6 +247,35 @@ namespace api.Controllers
         {
             List<string> td = _context.TicketDetails.Select(s=>s.Status).Distinct().ToList();
             return td;
+        }
+
+        //get the number of tickets for each status that is not null, return a dictionary where the key is the status and the value is the number of tickets
+        [HttpGet("ticketStatusCount")]
+        public async Task<Dictionary<string,int>> getTicketStatusCount()
+        {
+            // TODO : Change when the database is updated status should never be null
+            Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status.ToUpper()).ToDictionary(s=>s.Key,s=>s.Count());
+            return td;
+        }
+
+        [HttpGet]
+        [Route("countByStatusAndDate")]
+        public async Task<TicketData> GetTicketCountByStatusAndDate()
+        {
+            var status = Request.Query["status"];
+            var date = DateTime.Parse(Request.Query["date"]);
+            
+            var tickets = await getTickets();
+        
+            // Filter the tickets based on the specified status and date
+            int count = tickets.Count(ticket => ticket.Status != null && ticket.Status.ToUpper() == status && ticket.DateIssued.Date == date.Date);
+            var data = new TicketData
+            {
+                Date = date,
+                Count = count
+            };
+        
+            return data;
         }
 
 

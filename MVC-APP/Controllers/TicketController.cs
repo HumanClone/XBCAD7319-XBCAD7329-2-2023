@@ -19,9 +19,15 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
+    // private static HttpClient sharedClient = new()
+    // {
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     // private static HttpClient sharedClient = new()
@@ -161,6 +167,9 @@ public class TicketController : Controller
 
             var tickets = new List<TicketDetail>();
 
+            var categories = await PopulateCategoryList();
+            ViewData["CategoryList"] = categories;
+
             var role = HttpContext.Session.GetString("Role");
             if(role == "Student")
             {
@@ -206,13 +215,23 @@ public class TicketController : Controller
             return statusList;
         }
 
-        public async Task<IActionResult> Filter(string startDate, string endDate, string status)
+        private async Task<List<string>> PopulateCategoryList()
+        {
+            var categoryList = await sharedClient.GetFromJsonAsync<List<string>>("category/getcategoryNames");
+            categoryList.Insert(0, "All");
+            return categoryList;
+        }
+
+        public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category)
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
-            
+
+            var categories = await PopulateCategoryList();
+            ViewData["CategoryList"] = categories;
+
             //check if all the fields have been left as default
-            if (startDate == null && endDate == null && status == "All")
+            if (startDate == null && endDate == null && status == "All" && category == "All")
             {
                 return RedirectToAction("ViewTicket", "Ticket");
             }
@@ -220,18 +239,20 @@ public class TicketController : Controller
 
             //get the role
             var role = HttpContext.Session.GetString("Role");
+            Console.WriteLine(role);
 
             //if the user is an employee
             if (role == "Staff")
             {
                var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
-               var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&userId={devIdString}&userRole={role}").Result; 
+               Console.WriteLine(devIdString);
+               var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
                return View("ViewTicket",filteredTickets);
             }
             else if (role == "Student")
             {
                 var studentIdString = HttpContext.Session.GetInt32("UserId").ToString();
-                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&userId={studentIdString}&userRole={role}").Result;               
+                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={studentIdString}&userRole={role}").Result;               
                 //redirect to view ticket action and pass the filtered tickets
                 return View("ViewTicket",filteredTickets);
             }
