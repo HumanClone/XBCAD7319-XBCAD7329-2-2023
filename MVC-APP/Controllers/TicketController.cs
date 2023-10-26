@@ -19,16 +19,16 @@ namespace mvc_app.Controllers;
 
 public class TicketController : Controller
 {
-    // private static HttpClient sharedClient = new()
-    // {
-    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-    // };
-
     private static HttpClient sharedClient = new()
     {
-        // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        BaseAddress = new Uri("http://localhost:5173/api/"),
+         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
+
+    // private static HttpClient sharedClient = new()
+    // {
+    //     // TODO REPLACE WHEN DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    // };
 
     // private static HttpClient sharedClient = new()
     // {
@@ -59,13 +59,20 @@ public class TicketController : Controller
         {
             if (ModelState.IsValid)
             {
+                using MultipartFormDataContent multipartContent = new();
+                if(HttpContext.Session.GetString("DevId")!=null)
+                {
+                    var devId = HttpContext.Session.GetInt32("DevId");
+                    multipartContent.Add(new StringContent(devId+"",Encoding.UTF8, MediaTypeNames.Text.Plain),"DevId");
+                }
+                else{
+                    multipartContent.Add(new StringContent(userId+"",Encoding.UTF8, MediaTypeNames.Text.Plain),"UserId");
+                }
                 var Ticket = new TicketDetail()
                 {
                     
                     TicketId = ticketDetail.TicketId,
                     CategoryId = categoryId.ToString(),
-                    UserId = ticketDetail.UserId,
-                    DevId = "1",
                     DateIssued = DateTime.UtcNow,
                     MessageContent = ticketDetail.MessageContent,
                     Status = ticketDetail.Status,
@@ -73,11 +80,7 @@ public class TicketController : Controller
                     
                 };
 
-                using MultipartFormDataContent multipartContent = new();
-                // string jsonContent = JsonConvert.SerializeObject(Ticket);
-                // StringContent jsonContentString = new StringContent(jsonContent, Encoding.UTF8, MediaTypeNames.Application.Json); 
-                // multipartContent.Add(jsonContentString, "ticket");
-                // Console.WriteLine(jsonContent);
+                
                 multipartContent.Add(new StringContent(Ticket.CategoryId,Encoding.UTF8, MediaTypeNames.Text.Plain),"CategoryId");
                 multipartContent.Add(new StringContent(Ticket.UserId+"",Encoding.UTF8, MediaTypeNames.Text.Plain),"UserId");
                 multipartContent.Add(new StringContent(Ticket.MessageContent,Encoding.UTF8, MediaTypeNames.Text.Plain),"MessageContent");

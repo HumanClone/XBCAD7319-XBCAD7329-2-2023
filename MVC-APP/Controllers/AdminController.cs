@@ -76,7 +76,7 @@ public class AdminController : Controller
             var role = "Admin";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
             var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
-            return RedirectToAction("ViewAdminTicket", "Admin");
+            return View("ViewAdminTicket", filteredTickets);
         }
 
     private async Task<List<string>> PopulateStatusList()

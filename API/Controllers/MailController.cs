@@ -46,7 +46,7 @@ namespace api.Controllers
 
 
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
+        public async Task<IActionResult> SendMailAdmin([FromBody]MailRequest request)//might need to be from Body
         {
             try
             {
@@ -143,7 +143,7 @@ namespace api.Controllers
 
          //TODO:Test too see if new logic app works
         [HttpPost("res")]
-        public async Task<IActionResult> ReceiveEmailnoAT([FromBody] MailReceive mailReceive)
+        public async Task<IActionResult> ReceiveEmailnoAT([FromForm] MailReceive mailReceive)
         {
             try
             {
