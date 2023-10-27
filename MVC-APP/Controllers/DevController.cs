@@ -122,7 +122,7 @@ public class DevController:Controller
             var role = "Staff";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
             var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
-            return RedirectToAction("MyTickets", "Dev");
+            return View("MyTickets", filteredTickets);
         }
 
     private async Task<List<string>> PopulateStatusList()
@@ -378,7 +378,35 @@ public class DevController:Controller
             //return View();
         }
 
+
+
+
     }
+
+    public async Task<IActionResult> Search(string ticketId)
+        {
+            var statuses = await PopulateStatusList();
+            ViewData["StatusList"] = statuses;
+
+            var categories = await PopulateCategoryList();
+            ViewData["CategoryList"] = categories;
+
+            Console.WriteLine(ticketId);
+            try
+            {
+                var ticket= await  sharedClient.GetFromJsonAsync<TicketDetail>("ticket/ticket?ticketId="+ticketId);
+                List<TicketDetail> tickets= new List<TicketDetail>();
+                tickets.Add(ticket); 
+                
+                return View("MyTickets",tickets);
+            }
+            catch(Exception ex)
+            {
+                var tickets = new List<TicketDetail>();
+                return View("MyTickets",tickets);
+            }
+
+        }
 
     
 
