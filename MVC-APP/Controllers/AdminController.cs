@@ -90,10 +90,28 @@ public class AdminController : Controller
 
         }
 
+
         public async Task<IActionResult> Assign(string devId,string ticketId)
         {
+            string jsonTicketContent;
             Console.WriteLine(devId);
             Console.WriteLine(ticketId);
+        
+            var response = await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+            var ticket = await response.Content.ReadFromJsonAsync<TicketDetail>();
+
+            ticket.DevId = devId;
+            ticket.Status = "In Progress"; 
+
+            var res = await sharedClient.PostAsJsonAsync("ticket/editTicket", ticket);
+            Console.WriteLine(res.StatusCode);
+
+            var mail = new MailRequest();
+            mail.ToEmail = "yusraadnan24@gmail.com";
+            mail.Subject = ticketId;
+            mail.Body = "Hello "+ mail.ToEmail + " you have been assigned for responding to the ticket";
+            var re= await sharedClient.PostAsJsonAsync("mail/adminSend", mail);
+           
             return RedirectToAction("ViewAdminTicket", "Admin");
 
 
