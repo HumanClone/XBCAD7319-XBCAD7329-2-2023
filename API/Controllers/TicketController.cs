@@ -83,13 +83,38 @@ namespace api.Controllers
             Console.WriteLine("here is the USer id "+log.UserId);
             Console.WriteLine("here is the MEssage "+log.MessageContent);
             Console.WriteLine("here is the Category Name :"+log.CategoryName);
+
             var ticket=new TicketDetail();
+
+            // Calculate the time passed since the ticket was issued
+            TimeSpan timePassed = DateTime.Now - ticket.DateIssued;
+
+            // Calculate the priority based on time criteria
+            Priority priority;
+            if (timePassed.TotalHours >= 9) // Confused about the timespans****
+            {
+                priority = Priority.Low;
+            }
+            else if (timePassed.TotalHours >= 6)
+            {
+                priority = Priority.Medium;
+            }
+            else if(timePassed.TotalHours >= 3)
+            {
+                priority = Priority.High;
+            }
+            else
+            {
+                priority = Priority.Very_High;
+            }
+
             ticket.CategoryId=log.CategoryId;
             ticket.UserId=log.UserId;
             ticket.DateIssued=DateTime.Now;
             ticket.MessageContent=log.MessageContent;
             ticket.Status="pending";
             ticket.CategoryName=log.CategoryName;
+            ticket.Priority = (int)priority;
 
             if(!log.Attachments.IsNullOrEmpty())
             {
