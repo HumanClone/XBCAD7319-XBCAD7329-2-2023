@@ -77,9 +77,11 @@
                             <p class="card-text">@ticketDetail.MessageContent</p>  
                             <a class="view-response-btn" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a>
                             <div class="col-md-4">
-                                <form asp-controller="Admin" asp-action="Assign" class="filter-frms">
 
-                                    <label for="emails" class="control-label">Assigned</label>
+                                <form asp-controller="Admin" asp-action="Assign" class="filter-frms" >
+                                              
+                                    <label for="emails" class="control-label">Assign to:</label>
+
                                     <select class="form-control" id='emaillist' name='devId'>
                                         <option value="">No Dev has been assigned yet </option>
                                         @foreach (var email in emails)

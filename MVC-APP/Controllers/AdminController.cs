@@ -91,10 +91,42 @@ public class AdminController : Controller
 
         }
 
+
         public async Task<IActionResult> Assign(string devId,string ticketId)
         {
+            string JsonDevContent;
             Console.WriteLine(devId);
             Console.WriteLine(ticketId);
+        
+            List<TeamDev> DevList = new List<TeamDev>();
+            var response = await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+            var ticket = await response.Content.ReadFromJsonAsync<TicketDetail>();
+
+            ticket.DevId = devId;
+            ticket.Status = "In Progress"; 
+
+            var res = await sharedClient.PostAsJsonAsync("ticket/editTicket", ticket);
+            Console.WriteLine(res.StatusCode);
+
+            HttpResponseMessage devResponse = await sharedClient.GetAsync("Users/devs");
+            if(devResponse.IsSuccessStatusCode)
+            {
+                JsonDevContent= await devResponse.Content.ReadAsStringAsync();
+                DevList = JsonConvert.DeserializeObject<List<TeamDev>>(JsonDevContent);
+                Console.WriteLine("Pull of devs success", DevList);
+            }
+            else
+            {
+                Console.WriteLine("Pull of devs failed");
+            }
+            var DevEmail = DevList.Where(dev => dev.DevId == int.Parse(devId)).Select(dev => dev.Email).FirstOrDefault();
+            Console.WriteLine(DevEmail);
+            var mail = new MailRequest();
+            mail.ToEmail = DevEmail;
+            mail.Subject = ticketId;
+            mail.Body = "Hello "+ mail.ToEmail + " you have been assigned for responding to ticket no." + mail.Subject;
+            var re= await sharedClient.PostAsJsonAsync("mail/adminSend", mail);
+           
             return RedirectToAction("ViewAdminTicket", "Admin");
 
 
