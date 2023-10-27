@@ -88,6 +88,7 @@ public class AdminController : Controller
 
             return View("ViewAdminTicket", filteredTickets);
 
+
         }
 
         public async Task<IActionResult> Assign(string devId,string ticketId)
@@ -98,6 +99,7 @@ public class AdminController : Controller
 
 
         }
+
 
 
     private async Task<List<string>> PopulateStatusList()
@@ -127,6 +129,35 @@ public class AdminController : Controller
             .ToList();  
            
             return selectListItems;
+        }
+
+
+
+        public async Task<IActionResult> Search(string ticketId)
+        {
+            var statuses = await PopulateStatusList();
+            ViewData["StatusList"] = statuses;
+
+            var categories = await PopulateCategoryList();
+            ViewData["CategoryList"] = categories;
+
+             var emails=await PopulateEmails();
+             ViewData["Emails"]=emails;
+            Console.WriteLine(ticketId);
+            try
+            {
+                var ticket= await  sharedClient.GetFromJsonAsync<TicketDetail>("ticket/ticket?ticketId="+ticketId);
+                List<TicketDetail> tickets= new List<TicketDetail>();
+                tickets.Add(ticket); 
+                
+                return View("ViewAdminTicket",tickets);
+            }
+            catch(Exception ex)
+            {
+                var tickets = new List<TicketDetail>();
+                return View("ViewAdminTicket",tickets);
+            }
+
         }
 
         

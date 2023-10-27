@@ -9,6 +9,19 @@
 
 <div class="container">
 <div class="row" style="margin-top: 25px">
+    <form asp-controller="Admin" asp-action="Search" class="filter-frm">
+        <div class="form-group row justify-content-right">
+            <div class="col-md-2" >
+                <label for="ticketId" class="control-label">Search</label>
+                <input id="ticketId" name="ticketId" class="form-control" type="text" />
+            </div>
+            <div class="col-md-1" style="margin-top: 25px; text-align: center">
+            <input type="submit" value="Search" class="submit-filter" />
+        </div>
+        </div>
+    </form>
+</div>
+<div class="row" style="margin-top: 25px">
 <form asp-controller="Admin" asp-action="Filter" class="filter-frm">
     <div class="form-group row justify-content-center">
         <div class="col-md-2" >
@@ -49,7 +62,7 @@
     </div>
 </form>
 </div>
-    <div class="row justify-content-center mt-4">
+    <div class="row justify-content-center mt-2">
             @if (Model != null && Model.Any())
             {
                 @foreach (var ticketDetail in Model)
@@ -64,8 +77,8 @@
                             <p class="card-text">@ticketDetail.MessageContent</p>  
                             <a class="view-response-btn" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a>
                             <div class="col-md-4">
-                                <form asp-controller="Admin" asp-action="Assign" class="filter-frms" >
-                                              
+                                <form asp-controller="Admin" asp-action="Assign" class="filter-frms">
+
                                     <label for="emails" class="control-label">Assigned</label>
                                     <select class="form-control" id='emaillist' name='devId'>
                                         <option value="">No Dev has been assigned yet </option>
@@ -78,7 +91,9 @@
                                             }
 
                                     </select> 
-                                     <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+
+                                        <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+
                                     <div class="col-md-1" style="margin-top: 25px; text-align: center">
                                         <input type="submit" value="Assign" class="submit-filter" />
                                     </div>
