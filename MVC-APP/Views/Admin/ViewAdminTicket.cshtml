@@ -1,8 +1,10 @@
 @model List<MVCAPP.Models.TicketDetail>
 
+
 @{
     var statuses = ViewData["StatusList"] as List<string>;
     var categories = ViewData["CategoryList"] as List<string>;
+    var emails=ViewData["Emails"] as List<SelectListItem>;
 }
 
 <div class="container">
@@ -59,9 +61,31 @@
                         <div class="card-body">
                             <h5 class="card-title">@ticketDetail.CategoryName</h5>
                             <h6 class="card-text">@ticketDetail.DateIssued</h6>
-                            <p class="card-text">@ticketDetail.MessageContent</p>                            
+                            <p class="card-text">@ticketDetail.MessageContent</p>  
                             <a class="view-response-btn" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a>
+                            <div class="col-md-4">
+                                <form asp-controller="Admin" asp-action="Assign" class="filter-frms" >
+                                              
+                                    <label for="emails" class="control-label">Assigned</label>
+                                    <select class="form-control" id='emaillist' name='devId'>
+                                        <option value="">No Dev has been assigned yet </option>
+                                        @foreach (var email in emails)
+                                            {
+                                                <option value="@email.Value" 
+                                                        selected="@(email.Value == ticketDetail.DevId)">
+                                                    @email.Text
+                                                </option>
+                                            }
+
+                                    </select> 
+                                     <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+                                    <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                                        <input type="submit" value="Assign" class="submit-filter" />
+                                    </div>
+                                </form> 
+                            </div>
                         </div>
+
                     </div>
 
                 }

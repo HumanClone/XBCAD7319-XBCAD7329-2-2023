@@ -7,10 +7,11 @@ using MVCAPP.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Intrinsics.X86;
 
 
 namespace mvc_app.Controllers;
@@ -38,6 +39,9 @@ public class AdminController : Controller
 
             var categories = await PopulateCategoryList();
             ViewData["CategoryList"] = categories;
+            
+            var emails=await PopulateEmails();
+            ViewData["Emails"]=emails;
 
             string jsonTicketContent;
             List<TicketDetail> ticketList = new List<TicketDetail>();
@@ -66,6 +70,10 @@ public class AdminController : Controller
             var categories = await PopulateCategoryList();
             ViewData["CategoryList"] = categories;
 
+             var emails=await PopulateEmails();
+             ViewData["Emails"]=emails;
+            
+
             //check if all the fields have been left as default
             if (startDate == null && endDate == null && status == "All" && category == "All")
             {
@@ -76,8 +84,19 @@ public class AdminController : Controller
             var role = "Admin";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
             var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
+
             return View("ViewAdminTicket", filteredTickets);
+
         }
+
+        public async Task<IActionResult> Assign(string devId,string ticketId)
+        {
+            Console.WriteLine(devId);
+            Console.WriteLine(ticketId);
+            return RedirectToAction("ViewAdminTicket", "Admin");
+
+        }
+
 
     private async Task<List<string>> PopulateStatusList()
         {
@@ -92,4 +111,21 @@ public class AdminController : Controller
             categoryList.Insert(0, "All");
             return categoryList;
         }
+
+        private async Task<List<SelectListItem>> PopulateEmails()
+        {
+            var devslist=await sharedClient.GetFromJsonAsync<List<TeamDev>>("users/devs");
+
+            var selectListItems = devslist
+            .Select(dev => new SelectListItem
+            {
+                Text = dev.Email,
+                Value = dev.DevId.ToString()
+            })
+            .ToList();  
+           
+            return selectListItems;
+        }
+
+        
 }
