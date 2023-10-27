@@ -85,6 +85,7 @@ public class AdminController : Controller
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
             var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
 
+
             return View("ViewAdminTicket", filteredTickets);
 
         }
@@ -94,6 +95,7 @@ public class AdminController : Controller
             Console.WriteLine(devId);
             Console.WriteLine(ticketId);
             return RedirectToAction("ViewAdminTicket", "Admin");
+
 
         }
 
