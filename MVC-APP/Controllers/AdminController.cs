@@ -88,6 +88,7 @@ public class AdminController : Controller
 
             return View("ViewAdminTicket", filteredTickets);
 
+
         }
 
         public async Task<IActionResult> Assign(string devId,string ticketId)
@@ -98,6 +99,7 @@ public class AdminController : Controller
 
 
         }
+
 
 
     private async Task<List<string>> PopulateStatusList()
@@ -130,6 +132,7 @@ public class AdminController : Controller
         }
 
 
+
         public async Task<IActionResult> Search(string ticketId)
         {
             var statuses = await PopulateStatusList();
@@ -156,5 +159,6 @@ public class AdminController : Controller
             }
 
         }
+
         
 }
