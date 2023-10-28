@@ -34,7 +34,7 @@ public class AdminController : Controller
         return View();
     }
 
-    public Boolean checkPriority(TicketDetail ticket, INotyfService notyf)
+    public Boolean checkPriority(TicketDetail ticket)
     {
         // Calculate the expected time threshold based on the priority
         double timeThreshold;
@@ -61,13 +61,14 @@ public class AdminController : Controller
         // Calculate the time remaining before the ticket reaches the threshold
         TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
 
-        if (timeRemaining.TotalHours < (0.9 * timeThreshold))
+        //if (timeRemaining.TotalHours < (0.9 * timeThreshold))
+        if (timeRemaining.TotalHours == 0)
         {
             return true;
         }
-        else if(timeRemaining.TotalHours < 0)
+        else if (timeRemaining.TotalHours < 0)
         {
-            return false;
+            return true;
         }
         return false;
     }
@@ -103,16 +104,16 @@ public class AdminController : Controller
                 Console.WriteLine("pull failed");
             }
 
-            foreach (var ticket in ticketList)
-            {
-                bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
+        //foreach (var ticket in ticketList)
+        //{
+        //    bool isCloseToPriorityAllowance = checkPriority(ticket);
 
-                if (isCloseToPriorityAllowance == true)
-                {
-                    // Notify the dev that the ticket is close to its priority allowance
-                    _notyf.Success($"Ticket {ticket.TicketId} is close to its priority allowance.");
-                }
-            }
+        //    if (isCloseToPriorityAllowance == true)
+        //    {
+        //        // Notify the dev that the ticket is close to its priority allowance
+        //        _notyf.Success($"Ticket {ticket.TicketId} is close to its priority allowance.");
+        //    }
+        //}
 
         return View(ticketList);
         }

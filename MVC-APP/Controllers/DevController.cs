@@ -50,7 +50,8 @@ public class DevController:Controller
         // Calculate the time remaining before the ticket reaches the threshold
         TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
 
-        if (timeRemaining.TotalHours < (0.9 * timeThreshold))
+        //if (timeRemaining.TotalHours < (0.9 * timeThreshold))
+        if (timeRemaining.TotalHours == 0)
         {
             return true;
         }
