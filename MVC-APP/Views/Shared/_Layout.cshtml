@@ -22,42 +22,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1" style="direction:rtl;">
                         
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
-                        </li>
-
                         @* <li class="nav-item">
-                            <a class="nav-link text-dark">YOUR PROFILE</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark">CONTACT US</a>
-                        </li>
-
-                        <li class="nav-item">
-
-                            <a class="nav-link text-dark" >FAQ</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
                         </li> *@
-                        @if(Context.Session.GetString("UserId") != null )
-                        {
-                            <li class="nav-item">
-                            
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="ReadCategory">LOG A TICKET</a>
-                            </li>
-                        }
-                        @if(Context.Session.GetString("DevId") != null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN</a>
-                            </li>
-                         
-                        }
-                       
-                        
 
 
                         @if(Context.Session.GetString("UserId") != null || Context.Session.GetString("DevId") != null)
                         {
+
+                            <li class="nav-item">
+                            
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="ReadCategory">LOG A TICKET</a>
+                            </li>
+                            @if(Context.Session.GetString("DevId") != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN</a>
+                                </li>
+                            
+                            }
+                         
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="ViewTicket">YOUR TICKETS</a>
@@ -68,7 +52,13 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="UserLogin" asp-action="Logout">LOGOUT</a>
                             </li>
-                        }                 
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
+                            </li>
+                        }              
                     </ul>
                 </div>
             </div>

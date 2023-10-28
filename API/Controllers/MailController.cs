@@ -46,7 +46,7 @@ namespace api.Controllers
 
 
         [HttpPost("adminSend")]
-        public async Task<IActionResult> SendMailAdmin([FromForm]MailRequest request)//might need to be from Body
+        public async Task<IActionResult> SendMailAdmin([FromBody]MailRequest request)//might need to be from Body
         {
             try
             {
@@ -103,6 +103,7 @@ namespace api.Controllers
                     td.MessageContent=updatedBody;
                     td.Status="Needs attention";
                     td.Priority=(int)Priority.Low;
+                    td.Links=mailReceive.links;
                     _context.Add(td);
                     await _context.SaveChangesAsync();
                     var tic=_context.TicketDetails.OrderBy(s=>s.TicketId).LastOrDefault();
@@ -126,6 +127,7 @@ namespace api.Controllers
                 tr.ResponseMessage=mailReceive.Body;
                 tr.Sender=mailReceive.FromEmail;
                 tr.Date=DateTime.UtcNow;
+                tr.Links=mailReceive.links;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 Console.WriteLine(tr.ToString());
@@ -143,7 +145,7 @@ namespace api.Controllers
 
          //TODO:Test too see if new logic app works
         [HttpPost("res")]
-        public async Task<IActionResult> ReceiveEmailnoAT([FromBody] MailReceive mailReceive)
+        public async Task<IActionResult> ReceiveEmailnoAT([FromForm] MailReceive mailReceive)
         {
             try
             {

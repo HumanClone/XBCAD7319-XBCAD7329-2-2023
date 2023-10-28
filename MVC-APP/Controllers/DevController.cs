@@ -122,7 +122,7 @@ public class DevController:Controller
             var role = "Staff";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
             var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
-            return RedirectToAction("MyTickets", "Dev");
+            return View("MyTickets", filteredTickets);
         }
 
     private async Task<List<string>> PopulateStatusList()
@@ -378,7 +378,93 @@ public class DevController:Controller
             //return View();
         }
 
+
+
+
     }
+
+    public async Task<IActionResult> Search(string ticketId)
+        {
+            var statuses = await PopulateStatusList();
+            ViewData["StatusList"] = statuses;
+
+            var categories = await PopulateCategoryList();
+            ViewData["CategoryList"] = categories;
+
+            Console.WriteLine(ticketId);
+            try
+            {
+                var ticket= await  sharedClient.GetFromJsonAsync<TicketDetail>("ticket/ticket?ticketId="+ticketId);
+                List<TicketDetail> tickets= new List<TicketDetail>();
+                tickets.Add(ticket); 
+                
+                return View("MyTickets",tickets);
+            }
+            catch(Exception ex)
+            {
+                var tickets = new List<TicketDetail>();
+                return View("MyTickets",tickets);
+            }
+
+        }
+
+
+
+        public async Task<List<TicketResponse>> PopulateResponses(string ticketId)
+        {
+            try
+            {
+                Console.WriteLine("Before Request");
+                HttpResponseMessage response = await sharedClient.GetAsync("response/ticket/?ticketID="+ticketId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Success");
+                    List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
+                    Console.WriteLine("After");
+                    return responses;
+                    
+                }
+                else
+                {
+                    Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+                    return null;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Request error: {ex.Message}");
+                return null;
+            }
+        
+        }
+
+//TODO:change as needed to match with a view model and view itself
+        public async Task<IActionResult>Notes(string ticketId,string notes)
+        {
+            try{
+
+            
+                HttpResponseMessage response= await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+
+                if(response.IsSuccessStatusCode)
+                {
+                    var ticket= await  response.Content.ReadFromJsonAsync<TicketDetail>();
+                    ticket.Notes=notes;
+                    var res = await sharedClient.PostAsJsonAsync("ticket/editTicket", ticket);
+                    return View(ticket);
+                }
+                else{
+                    return View();
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return View();
+            }
+        }
+
 
     
 
