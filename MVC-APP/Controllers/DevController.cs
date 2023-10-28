@@ -18,54 +18,57 @@ public class DevController:Controller
     };
 
     private readonly INotyfService _notyf;
-    public DevController(INotyfService notyf)
+
+    public DevController(ILogger<DevController> logger, INotyfService notyf)
     {
+        _logger = logger;
         _notyf = notyf;
     }
 
     public Boolean checkPriority(TicketDetail ticket, INotyfService notyf)
     {
         // Calculate the expected time threshold based on the priority
-        double timeThreshold;
+        double timeThreshold = 0;
 
-        switch ((Priority)ticket.Priority)
-        {
-            case Priority.Very_High:
-                timeThreshold = 10;
-                break;
-            case Priority.High:
-                timeThreshold = 24;
-                break;
-            case Priority.Medium:
-                timeThreshold = 72;
-                break;
-            case Priority.Low:
-                timeThreshold = 168;
-                break;
-            default:
-                timeThreshold = 0;
-                break;
-        }
+        if(ticket.Priority != null)
+            {
+                switch ((Priority)ticket.Priority)
+                {
+                    
+                    case Priority.Very_High:
+                        timeThreshold = 10;
+                        break;
+                    case Priority.High:
+                        timeThreshold = 24;
+                        break;
+                    case Priority.Medium:
+                        timeThreshold = 72;
+                        break;
+                    case Priority.Low:
+                        timeThreshold = 168;
+                        break;
+                    default:
+                        timeThreshold = 0;
+                        break;
+                }
+            }
 
         // Calculate the time remaining before the ticket reaches the threshold
-        TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
+        double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).Hours;
 
-        //if (timeRemaining.TotalHours < (0.9 * timeThreshold))
-        if (timeRemaining.TotalHours == 0)
+        
+        Console.WriteLine(timeRemaining);
+        if (timeRemaining < (0.1 * timeThreshold))
         {
+            Console.WriteLine("Notify");
+            Console.WriteLine(timeThreshold);
             return true;
         }
-        else if (timeRemaining.TotalHours < 0)
+        else if (timeRemaining < 0)
         {
             return false;
         }
         return false;
-    }
-
-
-    public DevController(ILogger<DevController> logger)
-    {
-        _logger = logger;
     }
 
     // public IActionResult Index()
@@ -139,7 +142,7 @@ public class DevController:Controller
                     if (isCloseToPriorityAllowance == true)
                     {
                         // Notify the dev that the ticket is close to its priority allowance
-                        _notyf.Success($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                        _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
                     }
                 }
 
