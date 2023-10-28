@@ -153,9 +153,6 @@ public class TicketController : Controller
         }
     }
 
-
-
-
         [HttpGet]
         public async Task<IActionResult> ViewTicket()
         {
@@ -203,48 +200,13 @@ public class TicketController : Controller
                         Status = ticket.Status
                     };
 
-                    // Calculate the expected time threshold based on the priority
-                    double timeThreshold;
-
-                    switch ((Priority)ticket.Priority)
-                    {
-                        case Priority.Very_High:
-                            timeThreshold = 10;  // Needs to be adjusted, confused about time***
-                            break;
-                        case Priority.High:
-                            timeThreshold = 20;  // Needs to be adjusted, confused about time***
-                            break;
-                        case Priority.Medium:
-                            timeThreshold = 30;  // Needs to be adjusted, confused about time***
-                            break;
-                        case Priority.Low:
-                            timeThreshold = 40;  // Needs to be adjusted, confused about time***
-                            break;
-                        default:
-                            timeThreshold = 0;
-                            break;
-                    }
-
-                    // Calculate the time remaining before the ticket reaches the threshold
-                    TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
-
-                    if (timeRemaining.TotalHours < 1)
-                    {
-                        // Notify the dev that the ticket is close to its priority allowance
-                        // Use a notification or send an email?
-                        // For now, just written in console
-                        Console.WriteLine($"Ticket {ticket.TicketId} is close to its priority allowance.");
-                    }
-
                     ticketList.Add(ticketDetail);
                 }
 
                 return View(ticketList);
             }
-            
-            
         }
-
+        
         private async Task<List<string>> PopulateStatusList()
         {
             var statusList = await sharedClient.GetFromJsonAsync<List<string>>("ticket/ticketstatuses");
