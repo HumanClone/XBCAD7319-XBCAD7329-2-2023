@@ -7,6 +7,10 @@
     var emails=ViewData["Emails"] as List<SelectListItem>;
 }
 
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await Component.InvokeAsync("Notyf")
+@RenderSection("Scripts", required: false)
+
 <div class="container">
 <div class="row" style="margin-top: 25px">
 <form asp-controller="Admin" asp-action="Filter" class="filter-frm">

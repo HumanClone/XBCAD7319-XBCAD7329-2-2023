@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Models;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 
 namespace mvc_app.Controllers;
@@ -16,44 +17,49 @@ public class DevController:Controller
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
+    private readonly INotyfService _notyf;
+    public DevController(INotyfService notyf)
+    {
+        _notyf = notyf;
+    }
 
-public Boolean checkPriority(TicketDetail ticket)
+    public Boolean checkPriority(TicketDetail ticket, INotyfService notyf)
+    {
+        // Calculate the expected time threshold based on the priority
+        double timeThreshold;
+
+        switch ((Priority)ticket.Priority)
         {
-            // Calculate the expected time threshold based on the priority
-            double timeThreshold;
+            case Priority.Very_High:
+                timeThreshold = 10;
+                break;
+            case Priority.High:
+                timeThreshold = 24;
+                break;
+            case Priority.Medium:
+                timeThreshold = 72;
+                break;
+            case Priority.Low:
+                timeThreshold = 168;
+                break;
+            default:
+                timeThreshold = 0;
+                break;
+        }
 
-            switch ((Priority)ticket.Priority)
-            {
-                case Priority.Very_High:
-                    timeThreshold = 10;  // Needs to be adjusted, confused about time***
-                    break;
-                case Priority.High:
-                    timeThreshold = 24;  // Needs to be adjusted, confused about time***
-                    break;
-                case Priority.Medium:
-                    timeThreshold = 72;  // Needs to be adjusted, confused about time***
-                    break;
-                case Priority.Low:
-                    timeThreshold = 168;  // Needs to be adjusted, confused about time***
-                    break;
-                default:
-                    timeThreshold = 0;
-                    break;
-            }
+        // Calculate the time remaining before the ticket reaches the threshold
+        TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
 
-            // Calculate the time remaining before the ticket reaches the threshold
-            TimeSpan timeRemaining = TimeSpan.FromHours(timeThreshold) - (DateTime.Now - ticket.DateIssued);
-
-            if (timeRemaining.TotalHours < (0.9 * timeThreshold))
-            {
-                // Notify the dev that the ticket is close to its priority allowance
-                // Use a notification
-                // For now, just written in console
-                Console.WriteLine($"Ticket {ticket.TicketId} is close to its priority allowance.");
-                return true;
-            }
+        if (timeRemaining.TotalHours < (0.9 * timeThreshold))
+        {
+            return true;
+        }
+        else if (timeRemaining.TotalHours < 0)
+        {
             return false;
         }
+        return false;
+    }
 
 
     public DevController(ILogger<DevController> logger)
@@ -124,6 +130,18 @@ public Boolean checkPriority(TicketDetail ticket)
             {
                 var tickets = await response.Content.ReadFromJsonAsync<List<TicketDetail>>();
                 Console.WriteLine($"All tickets gotten  {response.StatusCode}");
+
+                foreach (var ticket in tickets)
+                {
+                    bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
+
+                    if (isCloseToPriorityAllowance == true)
+                    {
+                        // Notify the dev that the ticket is close to its priority allowance
+                        _notyf.Success($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                    }
+                }
+
                 return View(tickets);
             }
             else
