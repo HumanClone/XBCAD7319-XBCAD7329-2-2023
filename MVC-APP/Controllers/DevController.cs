@@ -11,9 +11,14 @@ public class DevController:Controller
 
     private readonly ILogger<DevController> _logger;
     
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
 
@@ -79,6 +84,9 @@ public class DevController:Controller
             var categories = await PopulateCategoryList();
             ViewData["CategoryList"] = categories;
 
+            var priorities = await PopulatePriorityList();
+            ViewData["PriorityList"] = priorities;
+
             var devId = HttpContext.Session.GetInt32("DevId");
 
             var response = await sharedClient.GetAsync("ticket/devTickets/?DevID="+devId);
@@ -104,7 +112,7 @@ public class DevController:Controller
         }
     }
 
-    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category)
+    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category, string? priority)
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
@@ -112,8 +120,11 @@ public class DevController:Controller
             var categories = await PopulateCategoryList();
             ViewData["CategoryList"] = categories;
 
+            var priorities = await PopulatePriorityList();
+            ViewData["PriorityList"] = priorities;
+
             //check if all the fields have been left as default
-            if (startDate == null && endDate == null && status == "All" && category == "All")
+            if (startDate == null && endDate == null && status == "All" && category == "All" && priority == "All")
             {
                 return RedirectToAction("MyTickets", "Dev");
             }
@@ -121,7 +132,7 @@ public class DevController:Controller
 
             var role = "Staff";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
-            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
+            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&priority={priority}&userId={devIdString}&userRole={role}").Result; 
             return View("MyTickets", filteredTickets);
         }
 
@@ -137,6 +148,14 @@ public class DevController:Controller
             var categoryList = await sharedClient.GetFromJsonAsync<List<string>>("category/getcategoryNames");
             categoryList.Insert(0, "All");
             return categoryList;
+        }
+        
+    
+    private async Task<List<string>> PopulatePriorityList()
+        {
+            var priorityList = await sharedClient.GetFromJsonAsync<List<string>>("ticket/getAllPriorityNames");
+            priorityList.Insert(0, "All");
+            return priorityList;
         }
 
 
@@ -251,7 +270,7 @@ public class DevController:Controller
             {
                 var ticket = await response.Content.ReadFromJsonAsync<TicketDetail>();
                 Console.WriteLine($"Ticket created {response.StatusCode}");
-                return null;
+                return View("MyTickets", ticket);
                 //return ticket;
                 //return(ticket);
             }
@@ -390,6 +409,9 @@ public class DevController:Controller
 
             var categories = await PopulateCategoryList();
             ViewData["CategoryList"] = categories;
+
+            var priorities = await PopulatePriorityList();
+            ViewData["PriorityList"] = priorities;
 
             Console.WriteLine(ticketId);
             try
