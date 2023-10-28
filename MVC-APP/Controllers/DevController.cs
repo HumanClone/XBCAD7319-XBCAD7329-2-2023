@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVCAPP.Models;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 
 namespace mvc_app.Controllers;
@@ -16,12 +17,58 @@ public class DevController:Controller
         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     };
 
+    private readonly INotyfService _notyf;
 
-
-
-    public DevController(ILogger<DevController> logger)
+    public DevController(ILogger<DevController> logger, INotyfService notyf)
     {
         _logger = logger;
+        _notyf = notyf;
+    }
+
+    public Boolean checkPriority(TicketDetail ticket, INotyfService notyf)
+    {
+        // Calculate the expected time threshold based on the priority
+        double timeThreshold = 0;
+
+        if(ticket.Priority != null)
+            {
+                switch ((Priority)ticket.Priority)
+                {
+                    
+                    case Priority.Very_High:
+                        timeThreshold = 10;
+                        break;
+                    case Priority.High:
+                        timeThreshold = 24;
+                        break;
+                    case Priority.Medium:
+                        timeThreshold = 72;
+                        break;
+                    case Priority.Low:
+                        timeThreshold = 168;
+                        break;
+                    default:
+                        timeThreshold = 0;
+                        break;
+                }
+            }
+
+        // Calculate the time remaining before the ticket reaches the threshold
+        double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).Hours;
+
+        
+        Console.WriteLine(timeRemaining);
+        if (timeRemaining < (0.1 * timeThreshold))
+        {
+            Console.WriteLine("Notify");
+            Console.WriteLine(timeThreshold);
+            return true;
+        }
+        else if (timeRemaining < 0)
+        {
+            return false;
+        }
+        return false;
     }
 
     // public IActionResult Index()
@@ -87,6 +134,18 @@ public class DevController:Controller
             {
                 var tickets = await response.Content.ReadFromJsonAsync<List<TicketDetail>>();
                 Console.WriteLine($"All tickets gotten  {response.StatusCode}");
+
+                foreach (var ticket in tickets)
+                {
+                    bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
+
+                    if (isCloseToPriorityAllowance == true)
+                    {
+                        // Notify the dev that the ticket is close to its priority allowance
+                        _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                    }
+                }
+
                 return View(tickets);
             }
             else

@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 60; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -24,6 +28,8 @@ if (!app.Environment.IsDevelopment())
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseNotyf();
 
 app.UseRouting();
 

@@ -149,9 +149,6 @@ public class TicketController : Controller
         }
     }
 
-
-
-
         [HttpGet]
         public async Task<IActionResult> ViewTicket()
         {
@@ -198,15 +195,14 @@ public class TicketController : Controller
                         DateIssued = ticket.DateIssued,
                         Status = ticket.Status
                     };
+
                     ticketList.Add(ticketDetail);
                 }
 
                 return View(ticketList);
             }
-            
-            
         }
-
+        
         private async Task<List<string>> PopulateStatusList()
         {
             var statusList = await sharedClient.GetFromJsonAsync<List<string>>("ticket/ticketstatuses");

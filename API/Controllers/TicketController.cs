@@ -83,13 +83,16 @@ namespace api.Controllers
             Console.WriteLine("here is the USer id "+log.UserId);
             Console.WriteLine("here is the MEssage "+log.MessageContent);
             Console.WriteLine("here is the Category Name :"+log.CategoryName);
+
             var ticket=new TicketDetail();
+
             ticket.CategoryId=log.CategoryId;
             ticket.UserId=log.UserId;
             ticket.DateIssued=DateTime.Now;
             ticket.MessageContent=log.MessageContent;
             ticket.Status="pending";
             ticket.CategoryName=log.CategoryName;
+            ticket.Priority = (int)Priority.Low;
 
             if(!log.Attachments.IsNullOrEmpty())
             {
