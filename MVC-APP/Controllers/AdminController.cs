@@ -110,13 +110,17 @@ public class AdminController : Controller
             
                 foreach (var ticket in ticketList)
                 {
-                    bool isCloseToPriorityAllowance = checkPriority(ticket);
-
-                    if (isCloseToPriorityAllowance == true)
+                    if(!ticket.Status.Equals("closed"))
                     {
-                        // Notify the dev that the ticket is close to its priority allowance
-                        _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                        bool isCloseToPriorityAllowance = checkPriority(ticket);
+
+                        if (isCloseToPriorityAllowance == true)
+                        {
+                            // Notify the dev that the ticket is close to its priority allowance
+                            _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                        }
                     }
+                    
                 }
             }
             else{
