@@ -17,7 +17,7 @@
 
         <div class="mb-3">
             <label class="form-label">Message</label>
-            <textarea class="form-control ticket-content" asp-for="MessageContent" rows="4" cols="50" required></textarea>
+            <textarea maxlength="300" class="form-control ticket-content" asp-for="MessageContent" rows="4" cols="50" required></textarea>
             <span asp-validation-for="MessageContent" class="text-danger"></span>
         </div>
     </div>

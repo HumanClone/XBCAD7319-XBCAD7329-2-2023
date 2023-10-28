@@ -253,9 +253,37 @@ namespace api.Controllers
         [HttpGet("ticketStatusCount")]
         public async Task<Dictionary<string,int>> getTicketStatusCount()
         {
-            // TODO : Change when the database is updated status should never be null
             Dictionary<string,int> td = _context.TicketDetails.Where(s=>s.Status!=null).GroupBy(s=>s.Status.ToUpper()).ToDictionary(s=>s.Key,s=>s.Count());
             return td;
+        }
+
+        [HttpGet("ticketPriorityCount")]
+        public async Task<Dictionary<string,int>> getTicketPriorityCount()
+        {
+            Dictionary<string, int> priorityCounts = new Dictionary<string, int>();
+            
+            var ticketDetails = await getTickets();
+                
+            foreach (var ticket in ticketDetails)
+            {
+                string priorityName = GetPriorityName(ticket.Priority);
+                if (priorityCounts.ContainsKey(priorityName))
+                {
+                    priorityCounts[priorityName]++;
+                }
+                else
+                {
+                    priorityCounts[priorityName] = 1;
+                }
+            }
+            
+            return priorityCounts;           
+        }
+
+        private string GetPriorityName(int? priority)
+        {
+            string priorityName = Enum.GetName(typeof(Priority), priority);
+            return priorityName.ToUpper().Replace("_", " ");
         }
 
         [HttpGet]
