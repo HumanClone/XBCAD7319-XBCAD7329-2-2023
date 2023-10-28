@@ -408,6 +408,64 @@ public class DevController:Controller
 
         }
 
+
+
+        public async Task<List<TicketResponse>> PopulateResponses(string ticketId)
+        {
+            try
+            {
+                Console.WriteLine("Before Request");
+                HttpResponseMessage response = await sharedClient.GetAsync("response/ticket/?ticketID="+ticketId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Success");
+                    List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
+                    Console.WriteLine("After");
+                    return responses;
+                    
+                }
+                else
+                {
+                    Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+                    return null;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Request error: {ex.Message}");
+                return null;
+            }
+        
+        }
+
+//TODO:change as needed to match with a view model and view itself
+        public async Task<IActionResult>Notes(string ticketId,string notes)
+        {
+            try{
+
+            
+                HttpResponseMessage response= await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+
+                if(response.IsSuccessStatusCode)
+                {
+                    var ticket= await  response.Content.ReadFromJsonAsync<TicketDetail>();
+                    ticket.Notes=notes;
+                    var res = await sharedClient.PostAsJsonAsync("ticket/editTicket", ticket);
+                    return View(ticket);
+                }
+                else{
+                    return View();
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return View();
+            }
+        }
+
+
     
 
 
