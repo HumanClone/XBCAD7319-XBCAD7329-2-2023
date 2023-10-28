@@ -137,12 +137,15 @@ public class DevController:Controller
 
                 foreach (var ticket in tickets)
                 {
-                    bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
-
-                    if (isCloseToPriorityAllowance == true)
+                    if(!ticket.Status.Equals("closed"))
                     {
-                        // Notify the dev that the ticket is close to its priority allowance
-                        _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                        bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
+
+                        if (isCloseToPriorityAllowance == true)
+                        {
+                            // Notify the dev that the ticket is close to its priority allowance
+                            _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
+                        }
                     }
                 }
 

@@ -303,32 +303,42 @@ namespace api.Controllers
         }
 
         //endpoint to close a ticket
-        [HttpPost("closeTicket")]
-        public async Task<IActionResult> closeTicket(string? ticketID,[FromBody] MailRequest request)
+        [HttpGet("closeTicket")]
+        public async Task<IActionResult> closeTicket(string? ticketID)
         {
             var ticket=_context.TicketDetails.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID)).FirstOrDefault();
+            MailRequest rq=new MailRequest();
             Console.WriteLine("here");
             ticket.Status="closed";
             _context.Update(ticket);
             await _context.SaveChangesAsync();
             if(!ticket.UserId.HasValue)
             {
-                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId.ToString().Equals(ticketID) && !s.Sender.IsNullOrEmpty()).FirstOrDefault().Sender;
-                request.ToEmail=sender;
+                var id =int.Parse(ticketID);
+                var sender=_context.TicketResponses.Select(s=>s).Where(s=>s.TicketId==ticketID && s.Sender!=null).FirstOrDefault().Sender;
+                rq.ToEmail=sender;
+            }
+            else
+            {
+                rq.ToEmail=_context.UserInfos.Where(user=>user.UserId==ticket.UserId).Select(s=>s.Email).First();
             }
             try
             {
-
-                await mailService.SendEmailAdmin(request);
+                
+                rq.Subject="Re:"+ticketID;
+                rq.Body="Your ticket has been close";
+                await mailService.SendEmailAdmin(rq);
                 TicketResponse tr= new TicketResponse();
-                tr.ResponseMessage=request.Body;
+                tr.Date=DateTime.Now;
+                tr.ResponseMessage=rq.Body;
                 tr.TicketId=ticket.TicketId.ToString();
-                tr.DevId=request.DevId;
+                tr.DevId=ticket.DevId;
                 tr.Date=DateTime.UtcNow;
                 _context.Add(tr);
                 await _context.SaveChangesAsync();
                 
-                return Ok(tr);
+                
+                return Ok();
             }
             catch (Exception ex)
             {
