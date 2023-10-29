@@ -137,7 +137,9 @@ public class DevController : Controller
 
                 foreach (var ticket in tickets)
                 {
-                    if (!ticket.Status.Equals("closed"))
+
+                    if(!ticket.Status.Equals("closed"))
+
                     {
                         bool isCloseToPriorityAllowance = checkPriority(ticket, _notyf);
 

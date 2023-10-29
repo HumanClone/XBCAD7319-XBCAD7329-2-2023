@@ -44,9 +44,18 @@
 
 </div>
 
-<div style="padding: 0 15%; margin: 2rem 0;text-align: end;">
-    <a class="view-response-btn" asp-area="" asp-controller="Ticket" asp-action="ViewTicket" >Back To Tickets</a>
-</div>
+ @if(Context.Session.GetString("DevId") != null)
+ {
+    <div style="padding: 0 15%; margin: 2rem 0;text-align: end;">
+    <a class="view-response-btn" asp-area="" asp-controller="Dev" asp-action="MyTickets" >Back To Tickets</a>
+    </div>
+ }
+ else{
+    <div style="padding: 0 15%; margin: 2rem 0;text-align: end;">
+        <a class="view-response-btn" asp-area="" asp-controller="Ticket" asp-action="ViewTicket" >Back To Tickets</a>
+    </div>
+ }
+
 
 </div>
 
