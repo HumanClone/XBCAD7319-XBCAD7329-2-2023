@@ -529,4 +529,26 @@ public class DevController : Controller
         }
     }
 
+    [HttpPost]
+    public ActionResult CloseTicket(int ticketID)
+    {
+        // Call the API to close the ticket using the ticketID
+        bool success = CloseTicketUsingApi(ticketID);
+
+        if (success)
+        {
+            TempData["Message"] = "Ticket closed successfully.";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Failed to close the ticket.";
+        }
+
+        // Redirect back to the "My Tickets" view
+        return RedirectToAction("MyTickets");
+    }
+
+    private bool CloseTicketUsingApi(int ticketID)
+    {
+        return true;
 }
