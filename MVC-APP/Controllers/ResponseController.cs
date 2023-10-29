@@ -93,7 +93,9 @@ public class ResponseController : Controller
 
 [HttpPost]
     //[Route("/Response/mail")]
+
     //author:Code maze
+
     //https://code-maze.com/aspnetcore-multipart-form-data-in-httpclient/
     public async Task<IActionResult> SendResponseNew(string ticketId,string body,List<IFormFile> files)
     {
@@ -294,6 +296,7 @@ public class ResponseController : Controller
             case"yo":text="This is a template response";break;
         }
         return text;
+
     }
 
 

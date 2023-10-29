@@ -7,62 +7,65 @@
 
 <div class="container">
     <div class="row" style="margin-top: 25px">
-    <form asp-controller="Dev" asp-action="Search" class="filter-frm">
-        <div class="form-group row justify-content-right">
-            <div class="col-md-2" >
-                <label for="ticketId" class="control-label">Search</label>
-                <input id="ticketId" name="ticketId" class="form-control" type="text" />
+        <form asp-controller="Dev" asp-action="Search" class="filter-frm">
+            <div class="form-group row justify-content-right">
+                <div class="col-md-2">
+                    <label for="ticketId" class="control-label">Search</label>
+                    <input id="ticketId" name="ticketId" class="form-control" type="text" />
+                </div>
+                <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                    <input type="submit" value="Search" class="submit-filter" />
+                </div>
             </div>
-            <div class="col-md-1" style="margin-top: 25px; text-align: center">
-            <input type="submit" value="Search" class="submit-filter" />
-        </div>
-        </div>
-    </form>
-</div>
-<div class="row" style="margin-top: 25px">
-<form asp-controller="Admin" asp-action="Filter" class="filter-frm">
-    <div class="form-group row justify-content-center">
-        <div class="col-md-2" >
-            <label for="StartDate" class="control-label">Start Date</label>
-            <input id="start-date" name="startDate" class="form-control" type="date" value="@DateTime.Now" />
-        </div>
-        <div class="col-md-2">
-            <label for="EndDate" class="control-label">End Date</label>
-            <input id="end-date" name="endDate" class="form-control" type="date" value="@DateTime.Now" />
-        </div>
-        <div class="col-md-2" >
-            <label for="status" class="control-label">Status</label>
-            <select name="status" class="form-control">
-                @if (statuses != null)
-                {
-                    @foreach (var item in statuses)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label for="category" class="control-label">Category</label>
-            <select name="category" class="form-control">
-                @if (categories != null)
-                {
-                    @foreach (var item in categories)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-1" style="margin-top: 25px; text-align: center">
-            <input type="submit" value="Filter" class="submit-filter" />
-        </div>
+        </form>
     </div>
-</form>
-</div>
+    <div class="row" style="margin-top: 25px">
+        <form asp-controller="Admin" asp-action="Filter" class="filter-frm">
+            <div class="form-group row justify-content-center">
+                <div class="col-md-2">
+                    <label for="StartDate" class="control-label">Start Date</label>
+                    <input id="start-date" name="startDate" class="form-control" type="date" value="@DateTime.Now" />
+                </div>
+                <div class="col-md-2">
+                    <label for="EndDate" class="control-label">End Date</label>
+                    <input id="end-date" name="endDate" class="form-control" type="date" value="@DateTime.Now" />
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="control-label">Status</label>
+                    <select name="status" class="form-control">
+                        @if (statuses != null)
+                        {
+                            @foreach (var item in statuses)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="category" class="control-label">Category</label>
+                    <select name="category" class="form-control">
+                        @if (categories != null)
+                        {
+                            @foreach (var item in categories)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                    <input type="submit" value="Filter" class="submit-filter" />
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="row justify-content-center mt-4">
-            @if (Model != null && Model.Any())
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var ticketDetail in Model)
             {
+
                 @foreach (var ticketDetail in Model)
                 {
                     <div class="card ticket-card">
@@ -86,17 +89,14 @@
                         }
                         </div>
                     </div>
-                  
-                    
-
-                }
+   
             }
-            else
-            {
-                <h1>No tickets found</h1>
-            }
-
-    </div>
+        }
+        else
+        {
+            <h1>No tickets found</h1>
+        }
+  </div>
 </div>
 
 <div id="pagination-container" class="pagination justify-content-center"></div>
