@@ -551,4 +551,5 @@ public class DevController : Controller
     private bool CloseTicketUsingApi(int ticketID)
     {
         return true;
+    }
 }

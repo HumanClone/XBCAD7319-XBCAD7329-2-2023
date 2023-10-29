@@ -84,21 +84,21 @@
             <h1>No tickets found</h1>
         }
     </div>
-    @Model List<Ticket> // Assuming you have a list of tickets to display
-    @foreach (var ticket in Model)
-    {
-        <div>
-            @Html.DisplayFor(modelItem => ticket.TicketId) <!-- Display Ticket ID -->
-            <!-- Display other ticket information -->
-            @using (Html.BeginForm("CloseTicket", "Ticket", FormMethod.Post))
-            {
-                @Html.Hidden("TicketID", ticket.TicketId) <!-- Hidden input for Ticket ID -->
-                <input type="submit" value="Submit" /> <!-- Submit button -->
-                <button type="submit" formaction="@Url.Action("CloseTicket", "Ticket", new { id = ticket.TicketId })">Close Ticket</button> <!-- Close ticket button -->
-            }
-        </div>
-    }
-
+    @Model List<Ticket>
+        // Assuming you have a list of tickets to display
+        @foreach (var ticket in Model)
+        {
+            <div>
+                @Html.DisplayFor(modelItem => ticket.TicketId) <!-- Display Ticket ID -->
+                <!-- Display other ticket information -->
+                @using (Html.BeginForm("CloseTicket", "Ticket", FormMethod.Post))
+                {
+                    @Html.Hidden("TicketID", ticket.TicketId) <!-- Hidden input for Ticket ID -->
+                    <input type="submit" value="Submit" /> <!-- Submit button -->
+                    <button type="submit" formaction="@Url.Action("CloseTicket", "Ticket", new { id = ticket.TicketId })">Close Ticket</button> <!-- Close ticket button -->
+                }
+            </div>
+        }
 </div>
 
 <div id="pagination-container" class="pagination justify-content-center"></div>
