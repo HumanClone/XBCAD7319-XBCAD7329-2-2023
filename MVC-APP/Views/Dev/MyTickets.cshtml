@@ -74,8 +74,20 @@
                             <h6 class="card-text">@ticketDetail.DateIssued</h6>
                             <p class="card-text">@ticketDetail.MessageContent</p>                            
                             <a class="view-response-btn" asp-controller="Response" asp-action="Index"  asp-route-id="@ticketDetail.TicketId">Responses</a>
+                            @if(!@ticketDetail.Status.Equals("closed"))
+                        {
+                        <form asp-controller="Ticket" asp-action="CloseTicket" class="filter-frms">
+                            <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+
+                            <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                                <input type="submit" value="Close Ticket" class="submit-filter" />
+                            </div>
+                        </form>
+                        }
                         </div>
                     </div>
+                  
+                    
 
                 }
             }

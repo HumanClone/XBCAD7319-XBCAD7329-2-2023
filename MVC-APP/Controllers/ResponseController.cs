@@ -12,23 +12,29 @@ using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing.Template;
 
 
 namespace mvc_app.Controllers;
 
 public class ResponseController : Controller
 {
+    //  private static HttpClient sharedClient = new()
+    //  {
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    //  };
+
      private static HttpClient sharedClient = new()
      {
          BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
      };
 
-
-
     [HttpGet]
     public IActionResult Create(string? id)
     {
         ViewBag.TicketID = id;
+        ViewData["Temp"]=PopulateTemplates();
         return View();
     }
 
@@ -37,6 +43,7 @@ public class ResponseController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(string? id)
     {
+        Console.WriteLine(id);
         try
         {
             Console.WriteLine("Before Request");
@@ -82,21 +89,47 @@ public class ResponseController : Controller
 
 
 
-    [HttpPost]
+    
+
+[HttpPost]
     //[Route("/Response/mail")]
-    //TODO:GET the Files
+
+    //author:Code maze
+
     //https://code-maze.com/aspnetcore-multipart-form-data-in-httpclient/
-    public async Task<IActionResult> SendResponse(string subject,string body,string toemail,List<IFormFile> files)
+    public async Task<IActionResult> SendResponseNew(string ticketId,string body,List<IFormFile> files)
     {
+        ViewBag.TicketID=ticketId;
         Mail model=new Mail();
-        model.Subject=subject;
+        model.Subject="Re:"+ticketId;
         model.Body=body;
-        model.Toemail=toemail;
+        
         if(HttpContext.Session.GetInt32("UserId")==null)
         {
+            var res= await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+            var ticket=await res.Content.ReadFromJsonAsync<TicketDetail>();
+            HttpResponseMessage respo = await sharedClient.GetAsync("response/ticket/?ticketID="+ticketId);
+            List<TicketResponse> resp = await respo.Content.ReadFromJsonAsync<List<TicketResponse>>();
+            var send=resp.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
+
+            if(ticket.UserId==null)
+            {
+                Console.WriteLine("Not from system");
+                model.Toemail=send;
+            }
+            else
+            {
+                var re= await sharedClient.GetAsync("users/user?userId="+ticket.UserId);
+                var user=await re.Content.ReadFromJsonAsync<UserInfo>();
+                var email=user.Email;
+                Console.WriteLine("Email is "+ email);
+                model.Toemail=email;
+            }
+        
             Console.WriteLine("Dev");
             Console.WriteLine(HttpContext.Session.GetInt32("DevId"));
             Console.WriteLine(model.Subject);
+            Console.WriteLine(model.Toemail);
             Console.WriteLine(model.Body);
             Console.WriteLine(files.Count.ToString());
             var mr = new MailRequest
@@ -180,7 +213,6 @@ public class ResponseController : Controller
                 Attachments=files
             
             };
-            Console.WriteLine("object created");
             using MultipartFormDataContent multipartContent = new();
             multipartContent.Add(new StringContent(mr.Subject,Encoding.UTF8, MediaTypeNames.Text.Plain),"Subject");
             multipartContent.Add(new StringContent(mr.Body,Encoding.UTF8, MediaTypeNames.Text.Plain),"Body");
@@ -235,57 +267,44 @@ public class ResponseController : Controller
            
         }
     }
-    //email temp response
 
-    [HttpGet]
-    public IActionResult CreateResponse(string? id)
+
+
+
+    public async Task<IActionResult> LoadTemplate(string choice,string ticketId)
     {
-        ViewBag.TicketID = id;
-        var templateNames = new List<string>
-        {
-            "Template 1",
-            "Template 2"
-            // Add more template names here
-        };
-
-        ViewBag.TemplateList = new SelectList(templateNames);
-
-        return View();
+        Console.WriteLine(ticketId);
+        Console.WriteLine(choice);
+        
+        ViewBag.TicketID = ticketId;
+        ViewData["Temp"]=PopulateTemplates();
+        ViewData["Body"]=getTemplate(choice);
+        return View("Create");
     }
 
-    [HttpPost]
-    public IActionResult CreateResponse(string templateName, string response)
+    public List<SelectListItem> PopulateTemplates()
     {
-        // Handle form submission to insert the selected template into the response
-        if (!string.IsNullOrEmpty(templateName) && EmailTemplates.Template1 == templateName)
+        var templates=new List<SelectListItem>();
+        templates.Add(new SelectListItem(value:"yo",text:"First Option"));
+        return templates;
+    }
+
+    public string getTemplate(string value)
+    {
+        Console.WriteLine("get");
+        string text="";
+        switch(value)
         {
-            response += "\n\n" + EmailTemplates.Template1;
+            case"yo":text="This is a template response";break;
         }
-        else if (!string.IsNullOrEmpty(templateName) && EmailTemplates.Template2 == templateName)
-        {
-            response += "\n\n" + EmailTemplates.Template2;
-        }
-        // Add more conditions for additional templates
+        return text;
 
-        ViewBag.TemplateList = new SelectList(templateNames);
-        ViewBag.TicketID = id;
-        ViewBag.Response = response;
-
-        return View();
-    }
-    [HttpPost]
-public IActionResult CreateResponse(YourViewModelType model)
-{
-    if (ModelState.IsValid)
-    {
-        string responseText = model.Response; // This contains the text with the template
-
-        // Add code to send the response, for example, by email or to a database
-
-        return RedirectToAction("Success"); // Redirect to a success page
     }
 
-    return View(model); // If there's a validation error, return to the form
+
+
+
+
 }
 
 

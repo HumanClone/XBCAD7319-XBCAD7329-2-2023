@@ -134,6 +134,22 @@ namespace api.Controllers
             return _context.UserInfos.ToList<UserInfo>();
         }
 
+        [HttpGet("user")]
+        public async Task<UserInfo> user(string? userId)
+        {
+            int id=int.Parse(userId);
+            var user =  _context.UserInfos.Where(user => user.UserId==id).First();
+            return user;
+        }
+
+
+        [HttpGet("userEmail")]
+        public async Task<UserInfo> userEmail(string? email)
+        {
+            var user =  _context.UserInfos.Where(user => user.Email==email).First();
+            return user;
+        }
+
 
         [HttpGet("devs")]
         public async Task<List<TeamDev>> devs()

@@ -39,14 +39,19 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN</a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Dev" asp-action="MyTickets">YOUR TICKETS</a>
+                                </li>
                             
                             }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="ViewTicket">YOUR TICKETS</a>
+                                </li>
+                            }
                          
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Ticket" asp-action="ViewTicket">YOUR TICKETS</a>
-                            </li>
-                            
                             
 
                             <li class="nav-item">
@@ -74,6 +79,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+     @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
