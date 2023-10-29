@@ -269,8 +269,6 @@ public class ResponseController : Controller
     }
 
 
-
-
     public async Task<IActionResult> LoadTemplate(string choice,string ticketId)
     {
         Console.WriteLine(ticketId);
@@ -304,9 +302,4 @@ public class ResponseController : Controller
 
 
 
-
 }
-
-
-}
-
