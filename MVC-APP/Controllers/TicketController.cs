@@ -28,7 +28,7 @@ public class TicketController : Controller
 
     // private static HttpClient sharedClient = new()
     // {
-    //     BaseAddress = new Uri("http://localhost:5173/api/"),
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     // };
 
     public TicketController()
@@ -256,6 +256,23 @@ public class TicketController : Controller
 
         }
         
+
+        public async Task<IActionResult> CloseTicket(string ticketId)
+        {
+           Console.WriteLine(ticketId);
+
+            
+            var response= await sharedClient.GetAsync("ticket/closeTicket?ticketID="+ticketId);
+            if(response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Ticket Successfully closed");
+            }
+            else{
+                Console.WriteLine($"Request failed with status code: {response.RequestMessage}");
+                Console.WriteLine($"Request failed with status code: {response.ToString}");
+            }
+            return RedirectToAction("MyTickets", "Dev");
+        }
 
         
 
