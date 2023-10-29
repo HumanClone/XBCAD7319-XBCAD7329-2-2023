@@ -1,7 +1,7 @@
-@model List<MVCAPP.Models.TicketResponse>
+@model MVCAPP.Models.ResponseViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Ticket Details";
 }
 
 <head>
@@ -9,19 +9,31 @@
 </head>
 
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center" style="padding: 0 15%; margin: 2rem 0;">
-        <div>
-            <h1 style="color: #5D7894; font-family: 'Montserrat', sans-serif; font-weight:400;">Responses</h1>
-        </div>
-        <div>
-            <a class="view-response-btn" asp-area="" asp-controller="Response" asp-action="Create" asp-route-id="@ViewBag.TicketID">New Response</a>
-        </div>
-    </div>
 
 <div class="row justify-content-center mt-4">
-            @if (Model != null && Model.Any())
+    <div class="card ticket-card">
+        <div class="card-header ticket-card-header">
+            Ticket Reference @Model.Ticket.TicketId      @Model.Ticket.Status
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Ticket.CategoryName</h5>
+            @if(Context.Session.GetString("DevId") != null)
             {
-                @foreach (var response in Model)
+                <h5 class="card-title text-danger">@Model.Priority</h5>               
+                            
+            }           
+            <h6 class="card-text">@Model.Ticket.DateIssued</h6>
+            <p class="card-text">@Model.Ticket.MessageContent</p>
+            <p class="card-text">Attachments</p>
+            <a class="card-text">@Model.Ticket.Links</a>
+        </div>
+    </div>
+ </div>   
+
+<div class="row justify-content-center mt-4">
+            @if (Model.Responses != null && Model.Responses.Any())
+            {
+                @foreach (var response in Model.Responses)
                 {
                     <div class="card ticket-card">
                         <div class="card-header ticket-card-header">

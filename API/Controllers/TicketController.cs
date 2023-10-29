@@ -166,7 +166,7 @@ namespace api.Controllers
 
         //end point to return tickets within a date range and filter if a status is provided
         [HttpGet("filter")]
-        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? category,string? userId, string? userRole)
+        public async Task<List<TicketDetail>> filter(string? startDate,string? endDate, string? status, string? category,string? priority,string? userId, string? userRole)
         {  
 
             var query = _context.TicketDetails.AsQueryable();
@@ -205,6 +205,13 @@ namespace api.Controllers
             if (category != "All")
             {
                 query = query.Where(s => s.CategoryName.Equals(category));
+            }
+
+            if (priority != "All")
+            {
+                Priority parsedPriority = (Priority)Enum.Parse(typeof(Priority), priority);
+                int priorityValue = (int)parsedPriority;
+                query = query.Where(s => s.Priority == priorityValue);
             }
 
             
@@ -280,10 +287,17 @@ namespace api.Controllers
             return priorityCounts;           
         }
 
-        private string GetPriorityName(int? priority)
+        [HttpGet("getPriorityName")]
+        public string GetPriorityName(int? priority)
         {
             string priorityName = Enum.GetName(typeof(Priority), priority);
             return priorityName.ToUpper().Replace("_", " ");
+        }
+
+        [HttpGet("getAllPriorityNames")]
+        public IEnumerable<string> GetAllPriorityNames()
+        {
+            return Enum.GetNames(typeof(Priority));
         }
 
         [HttpGet]

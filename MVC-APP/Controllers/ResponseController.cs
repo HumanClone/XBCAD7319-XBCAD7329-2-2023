@@ -18,10 +18,15 @@ namespace mvc_app.Controllers;
 
 public class ResponseController : Controller
 {
-     private static HttpClient sharedClient = new()
-     {
-         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-     };
+    //  private static HttpClient sharedClient = new()
+    //  {
+    //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    //  };
+
+    private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("http://localhost:5173/api/"),
+    };
 
 
 
@@ -48,6 +53,20 @@ public class ResponseController : Controller
                 List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
                 ViewBag.TicketID = id;
                 Console.WriteLine("After");
+
+                var ticket = await sharedClient.GetAsync("ticket/ticket?ticketID="+id);
+                var viewTicket = await ticket.Content.ReadFromJsonAsync<TicketDetail>();
+
+                var priority = await sharedClient.GetAsync("ticket/getPriorityName?priority="+viewTicket.Priority);
+                var priorityName = await priority.Content.ReadAsStringAsync();
+
+                ResponseViewModel res = new ResponseViewModel
+                {
+                    Ticket = viewTicket,
+                    Responses = responses,
+                    Priority = priorityName
+                };
+
                 try
                 {
                     var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
@@ -56,13 +75,14 @@ public class ResponseController : Controller
                 }
                 catch(System.ArgumentNullException ex)
                 {
-                    return View(responses);
+                    return View(res);
                 }
                 catch (System.InvalidOperationException ex)
                 {
-                    return View(responses);
-                }
-                return View(responses);
+                    return View(res);
+                }           
+
+                return View(res);
                 
             }
             else
