@@ -235,4 +235,59 @@ public class ResponseController : Controller
            
         }
     }
+    //email temp response
+
+    [HttpGet]
+    public IActionResult CreateResponse(string? id)
+    {
+        ViewBag.TicketID = id;
+        var templateNames = new List<string>
+        {
+            "Template 1",
+            "Template 2"
+            // Add more template names here
+        };
+
+        ViewBag.TemplateList = new SelectList(templateNames);
+
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult CreateResponse(string templateName, string response)
+    {
+        // Handle form submission to insert the selected template into the response
+        if (!string.IsNullOrEmpty(templateName) && EmailTemplates.Template1 == templateName)
+        {
+            response += "\n\n" + EmailTemplates.Template1;
+        }
+        else if (!string.IsNullOrEmpty(templateName) && EmailTemplates.Template2 == templateName)
+        {
+            response += "\n\n" + EmailTemplates.Template2;
+        }
+        // Add more conditions for additional templates
+
+        ViewBag.TemplateList = new SelectList(templateNames);
+        ViewBag.TicketID = id;
+        ViewBag.Response = response;
+
+        return View();
+    }
+    [HttpPost]
+public IActionResult CreateResponse(YourViewModelType model)
+{
+    if (ModelState.IsValid)
+    {
+        string responseText = model.Response; // This contains the text with the template
+
+        // Add code to send the response, for example, by email or to a database
+
+        return RedirectToAction("Success"); // Redirect to a success page
+    }
+
+    return View(model); // If there's a validation error, return to the form
 }
+
+
+}
+

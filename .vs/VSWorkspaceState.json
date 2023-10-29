@@ -2,10 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\MVC-APP",
-    "\\MVC-APP\\Views",
-    "\\MVC-APP\\Views\\Login",
-    "\\MVC-APP\\wwwroot"
+    "\\MVC-APP\\Controllers"
   ],
-  "SelectedNode": "\\MVC-APP\\Views\\Login",
+  "SelectedNode": "\\MVC-APP\\Controllers\\AdminController.cs",
   "PreviewInSolutionExplorer": false
 }
