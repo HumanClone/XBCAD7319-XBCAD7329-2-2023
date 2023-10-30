@@ -283,7 +283,9 @@ public class ResponseController : Controller
     public List<SelectListItem> PopulateTemplates()
     {
         var templates=new List<SelectListItem>();
-        templates.Add(new SelectListItem(value:"yo",text:"First Option"));
+        templates.Add(new SelectListItem(value:"0",text:"Request for more information"));
+        templates.Add(new SelectListItem(value:"1",text:"Following up"));
+        templates.Add(new SelectListItem(value:"2",text:"Escalating the Ticket"));
         return templates;
     }
 
@@ -293,7 +295,9 @@ public class ResponseController : Controller
         string text="";
         switch(value)
         {
-            case"yo":text="This is a template response";break;
+            case"0":text="Hello [Student's Name],\n\nThis is [Name], and I'm here to help you with your issue. In order to assist you effectively, could you please provide me with the following information:\n\n1. A detailed description of the problem.\n2. Any error messages or codes you encountered.\n3. The steps you've already taken to resolve the issue.\n\nThank you for your cooperation, and we'll do our best to resolve this issue promptly.\n\nBest regards,\n[Name]\n[Title]\n";break;
+            case"1":text="Hello [Student's Name],\n\nI hope this message finds you well. We have been working on resolving your reported issue. I wanted to check in and ask if the problem has been fixed on your end. If it has, please let us know, and if not, provide any additional details or feedback on the progress.\n\nYour feedback is valuable, and we're committed to ensuring your satisfaction.\n\nBest regards,\n[Name]\n[Title]";break;
+            case"2":text="Hello [Student's Name],\n\nI hope you're well. We have reviewed your issue and have decided to escalate its priority due to its critical nature. Our team will be working diligently to resolve this issue as quickly as possible.\n\nWe understand the urgency, and your satisfaction is our top priority. We'll keep you updated on our progress.\n\nBest regards,\n[Name]\n[Title]";break;
         }
         return text;
 
