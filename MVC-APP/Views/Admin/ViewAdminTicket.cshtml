@@ -5,6 +5,7 @@
     var statuses = ViewData["StatusList"] as List<string>;
     var categories = ViewData["CategoryList"] as List<string>;
     var emails=ViewData["Emails"] as List<SelectListItem>;
+    var priority=ViewData["Priority"] as List<SelectListItem>;
 }
 
 <div class="container">
@@ -84,7 +85,7 @@
                                     <label for="emails" class="control-label">Assign to:</label>
 
                                     <select class="form-control" id='emaillist' name='devId'>
-                                        <option value="">No Dev has been assigned yet </option>
+                                        <option value="">No Dev Has been Assigned Yet </option>
                                         @foreach (var email in emails)
                                             {
                                                 <option value="@email.Value" 
@@ -101,6 +102,42 @@
                                         <input type="submit" value="Assign" class="submit-filter" />
                                     </div>
                                 </form> 
+
+                                 <form asp-controller="Admin" asp-action="PriAS" class="filter-frms" >
+                                              
+                                    <label for="priority" class="control-label">Priority:</label>
+
+                                    <select class="form-control" name='priority'>
+                                        <option value="">No Priority  has Been assigned </option>
+                                        @foreach (var pri in priority)
+                                            {
+                                                <option value="@pri.Value" 
+                                                        selected="@(pri.Value == ticketDetail.Priority+"")">
+                                                    @pri.Text
+                                                </option>
+                                            }
+
+                                    </select> 
+
+                                        <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+
+                                    <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                                        <input type="submit" value="Change Priority" class="submit-filter" />
+                                    </div>
+                                </form> 
+                                
+                                @if(!@ticketDetail.Status.Equals("closed"))
+                                {
+                                    <form asp-controller="Ticket" asp-action="CloseTicket" class="filter-frms">
+                                        <input type="hidden" id="ticketId" name="ticketId" value="@ticketDetail.TicketId" />
+
+                                        <div class="col-md-1" style="margin-top: 25px; text-align: center">
+                                            <input type="submit" value="Close Ticket" class="submit-filter" />
+                                        </div>
+                                    </form>
+                                }
+                                
+                                
                             </div>
                         </div>
 
