@@ -5,6 +5,7 @@
     var statuses = ViewData["StatusList"] as List<string>;
     var categories = ViewData["CategoryList"] as List<string>;
     var emails=ViewData["Emails"] as List<SelectListItem>;
+    var priority=ViewData["Priority"] as List<selectedListItem>;
 }
 
 <div class="container">
@@ -101,6 +102,34 @@
                                         <input type="submit" value="Assign" class="submit-filter" />
                                     </div>
                                 </form> 
+                           
+                           <form asp-controller="Admin" asp-action="PriAS" class="filter-frms"
+                           >
+
+                           <label for ="priority" class="control-label"> priority:
+                           </label>
+                           <select class="form-control" name='priotity'>
+                            <option value=""> No Dev has been assigned yet
+                            </option>
+                            @foreach(var pri in priority)
+                            {
+                                <option value="@pri.value"
+                                selected="@(pri.Value == ticketDetail.
+                                Priority+"")">
+                                @pri.text
+                                </option>
+                            }
+                             </select>
+                             
+                             <input type="hidden" id="ticketId" name="ticketId"
+                             value="@ticketDetail.TicketId" />
+
+                             <div class="col-md-1" style="margin-top: 25px; text-align:
+                             center" > 
+                             <input type="submit" value="Change Priotity"
+                             class="submit-filter"/> 
+                             </div>
+                           </form>
                             </div>
                         </div>
 
