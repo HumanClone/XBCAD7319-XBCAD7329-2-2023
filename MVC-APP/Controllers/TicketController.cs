@@ -217,7 +217,7 @@ public class TicketController : Controller
             return categoryList;
         }
 
-        public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category)
+        public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category, string priority)
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
@@ -226,7 +226,7 @@ public class TicketController : Controller
             ViewData["CategoryList"] = categories;
 
             //check if all the fields have been left as default
-            if (startDate == null && endDate == null && status == "All" && category == "All")
+            if (startDate == null && endDate == null && status == "All" && category == "All" && priority == "All")
             {
                 return RedirectToAction("ViewTicket", "Ticket");
             }
@@ -241,13 +241,13 @@ public class TicketController : Controller
             {
                var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
                Console.WriteLine(devIdString);
-               var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
+               var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&priority={priority}&userId={devIdString}&userRole={role}").Result; 
                return View("ViewTicket",filteredTickets);
             }
             else if (role == "Student")
             {
                 var studentIdString = HttpContext.Session.GetInt32("UserId").ToString();
-                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={studentIdString}&userRole={role}").Result;               
+                var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&priority=&userId={studentIdString}&userRole={role}").Result;               
                 //redirect to view ticket action and pass the filtered tickets
                 return View("ViewTicket",filteredTickets);
             }

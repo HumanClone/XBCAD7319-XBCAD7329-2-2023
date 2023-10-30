@@ -14,6 +14,7 @@ using System.Net.Mime;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing.Template;
+using MVCAPP.Templates;
 
 
 namespace mvc_app.Controllers;
@@ -27,21 +28,20 @@ public class ResponseController : Controller
 
      private static HttpClient sharedClient = new()
      {
-         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+         BaseAddress = new Uri("http://localhost:5173/api/"),
      };
 
     [HttpGet]
     public IActionResult Create(string? id)
     {
         ViewBag.TicketID = id;
-        ViewData["Temp"]=PopulateTemplates();
         return View();
     }
 
 
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? id)
+    public async Task<IActionResult> Index(string? id, string? selectTemplate, string? notes, string? responseBody)
     {
         Console.WriteLine(id);
         try
@@ -55,6 +55,57 @@ public class ResponseController : Controller
                 List<TicketResponse> responses = await response.Content.ReadFromJsonAsync<List<TicketResponse>>();
                 ViewBag.TicketID = id;
                 Console.WriteLine("After");
+
+                var ticket = await sharedClient.GetAsync("ticket/ticket?ticketID="+id);
+                var viewTicket = await ticket.Content.ReadFromJsonAsync<TicketDetail>();
+
+                ResponseViewModel res = new ResponseViewModel();
+                res.Ticket = viewTicket;
+                res.Responses = responses;
+
+                if(viewTicket.Links!=null){
+                    res.Links = viewTicket.Links.Split(";").ToList();
+                } 
+
+                foreach(var userResponse in responses)
+                {
+                    if(userResponse.DevId!=null){
+                        var devEmail = await sharedClient.GetAsync("users/devEmail?devId="+userResponse.DevId);
+                        var email = await devEmail.Content.ReadAsStringAsync();
+                        userResponse.sender = email;                      
+                    }else if(userResponse.sender!=null){
+                        var userEmail = await sharedClient.GetAsync("users/user?userId="+userResponse.sender);
+                        var user = await userEmail.Content.ReadFromJsonAsync<UserInfo>();
+                        var email = user.Email;
+                        userResponse.sender = email;
+                    }
+                }               
+
+
+                if(HttpContext.Session.GetInt32("DevId")!=null){
+                    var priority = await sharedClient.GetAsync("ticket/getPriorityName?priority="+viewTicket.Priority);
+                    var priorityName = await priority.Content.ReadAsStringAsync();
+                    res.Priority = priorityName;
+
+                    var templateService = new TemplateService();
+                    var templateNames = templateService.GetTemplateNames();
+
+                    ViewData["TemplateNames"] = templateNames;
+               
+                    ViewData["Template"] = selectTemplate;
+
+                    if(viewTicket.Notes == null){
+                        viewTicket.Notes = "";
+                    }else if(notes != null){
+                        viewTicket.Notes = notes;
+                    }
+
+                    if(responseBody != null){
+                        ViewData["Template"] = responseBody;
+                    }
+                }
+                
+
                 try
                 {
                     var send=responses.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
@@ -63,13 +114,14 @@ public class ResponseController : Controller
                 }
                 catch(System.ArgumentNullException ex)
                 {
-                    return View(responses);
+                    return View(res);
                 }
                 catch (System.InvalidOperationException ex)
                 {
-                    return View(responses);
-                }
-                return View(responses);
+                    return View(res);
+                }           
+
+                return View(res);
                 
             }
             else
@@ -182,7 +234,7 @@ public class ResponseController : Controller
                     Console.WriteLine($": {response.RequestMessage.ToString()}");
 
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return RedirectToAction("ViewTicket","Ticket");
+                    return RedirectToAction("Index", "Response", new { id = ticketId});
                 }
                 else
                 {
@@ -195,7 +247,7 @@ public class ResponseController : Controller
             catch (System.Exception ex)
             {
                 Console.WriteLine(ex);
-                return RedirectToAction("ViewTicket","Ticket");
+                return RedirectToAction("MyTickets","Dev");
                 throw;
             }
         }
@@ -250,7 +302,7 @@ public class ResponseController : Controller
                 {
                     //var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return RedirectToAction("ViewTicket","Ticket");
+                    return RedirectToAction("Index", "Response", new { id = ticketId});
                 }
                 else
                 {
@@ -269,41 +321,35 @@ public class ResponseController : Controller
     }
 
 
-    public async Task<IActionResult> LoadTemplate(string choice,string ticketId)
+    public async Task<IActionResult> LoadTemplate(string selectTemplate,string ticketId,string? notes)
     {
-        Console.WriteLine(ticketId);
-        Console.WriteLine(choice);
-        
-        ViewBag.TicketID = ticketId;
-        ViewData["Temp"]=PopulateTemplates();
-        ViewData["Body"]=getTemplate(choice);
-        return View("Create");
+        var templateService = new TemplateService();
+        var chosenTemplate = templateService.GetTemplateContent(selectTemplate);;
+        return RedirectToAction("Index", "Response", new { id = ticketId, selectTemplate = chosenTemplate, notes = notes });
     }
 
-    public List<SelectListItem> PopulateTemplates()
+    public async Task<IActionResult> AddNotes(string notes, string ticketId, string? response)
     {
-        var templates=new List<SelectListItem>();
-        templates.Add(new SelectListItem(value:"0",text:"Request for more information"));
-        templates.Add(new SelectListItem(value:"1",text:"Following up"));
-        templates.Add(new SelectListItem(value:"2",text:"Escalating the Ticket"));
-        return templates;
-    }
-
-    public string getTemplate(string value)
-    {
-        Console.WriteLine("get");
-        string text="";
-        switch(value)
+        var ticket = await sharedClient.GetAsync("ticket/ticket?ticketID=" + ticketId);
+        var viewTicket = await ticket.Content.ReadFromJsonAsync<TicketDetail>();
+        viewTicket.Notes = notes;
+    
+        var jsonContent = JsonConvert.SerializeObject(viewTicket);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+    
+        var editResponse = await sharedClient.PostAsync("ticket/editTicket", content);
+    
+        if (editResponse.IsSuccessStatusCode)
         {
-            case"0":text="Hello [Student's Name],\n\nThis is [Name], and I'm here to help you with your issue. In order to assist you effectively, could you please provide me with the following information:\n\n1. A detailed description of the problem.\n2. Any error messages or codes you encountered.\n3. The steps you've already taken to resolve the issue.\n\nThank you for your cooperation, and we'll do our best to resolve this issue promptly.\n\nBest regards,\n[Name]\n[Title]\n";break;
-            case"1":text="Hello [Student's Name],\n\nI hope this message finds you well. We have been working on resolving your reported issue. I wanted to check in and ask if the problem has been fixed on your end. If it has, please let us know, and if not, provide any additional details or feedback on the progress.\n\nYour feedback is valuable, and we're committed to ensuring your satisfaction.\n\nBest regards,\n[Name]\n[Title]";break;
-            case"2":text="Hello [Student's Name],\n\nI hope you're well. We have reviewed your issue and have decided to escalate its priority due to its critical nature. Our team will be working diligently to resolve this issue as quickly as possible.\n\nWe understand the urgency, and your satisfaction is our top priority. We'll keep you updated on our progress.\n\nBest regards,\n[Name]\n[Title]";break;
+            Console.WriteLine("Notes updated successfully");
+            return RedirectToAction("Index", "Response", new { id = ticketId, notes = notes, responseBody = response });
         }
-        return text;
-
+        else
+        {
+            Console.WriteLine($"Request failed with status code: {editResponse.StatusCode}");
+            return RedirectToAction("MyTickets", "Dev");
+        }
     }
-
-
 
 
 }

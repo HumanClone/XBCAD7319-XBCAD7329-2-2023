@@ -1,27 +1,27 @@
 @model List<MVCAPP.Models.Category>
-@{
+    @{
     ViewData["Title"] = "Categories";
-}
+    }
 
-<h3 class="category-headings" style="font-weight: 600">Log a Ticket</h3>
-<h4 class="category-headings">Please select a category for your query to continue</h4>
+    <h3 class="category-headings" style="font-weight: 600">Log a Ticket</h3>
+    <h4 class="category-headings">Please select a category for your query to continue</h4>
 
-<div class="category-grid">   
-       <div class="row">
-       @if (Model != null && Model.Any())
+    <div class="category-grid">
+        <div class="row">
+            @if (Model != null && Model.Any())
         {
             foreach(var category in Model){
-                <div class="col-md-4 mb-3">
-                    <div id="category-cards" class="card">
-                        @* <img class="img-fluid" alt="100%x280" src="..."> *@
-                            <div id="categories-card-body" class="card-body">
-                                <h4 class="category-card-title card-title">@category.CategoryName</h4>
-                                <a asp-controller="Ticket" asp-action="Create" asp-route-categoryName="@category.CategoryName" class="category-btn btn">LOG</a>
-                            </div>
+            <div class="col-md-4 mb-3">
+                <div id="category-cards" class="card">
+                    @* <img class="img-fluid" alt="100%x280" src="..."> *@
+                    <div id="categories-card-body" class="card-body">
+                        <h4 class="category-card-title card-title">@category.CategoryName</h4>
+                        <a asp-controller="Ticket" asp-action="Create" asp-route-categoryName="@category.CategoryName" class="category-btn btn">LOG</a>
                     </div>
                 </div>
+            </div>
             }
-        
+
         }
         else
         {
@@ -35,7 +35,7 @@
                 </div>
             </div>
         }
-        </div> 
-</div>
+        </div>
+    </div>
 
 

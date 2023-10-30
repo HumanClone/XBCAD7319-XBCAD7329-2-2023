@@ -13,9 +13,14 @@ namespace mvc_app.Controllers;
 public class ReportingController : Controller{
 
 
+    // private static HttpClient sharedClient = new()
+    // {
+    //     BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+    // };
+
     private static HttpClient sharedClient = new()
     {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+        BaseAddress = new Uri("http://localhost:5173/api/"),
     };
 
     
@@ -55,7 +60,12 @@ public class ReportingController : Controller{
             ticketStatuses.Add(ticketPoints);
         }
 
-        model.TicketStatuses = ticketStatuses;    
+        model.TicketStatuses = ticketStatuses;   
+
+        var priorityCounts = sharedClient.GetFromJsonAsync<Dictionary<string, int>>("ticket/ticketPriorityCount").Result;
+        model.PriorityCounts = priorityCounts;
+
+
         return View(model);
     }
 

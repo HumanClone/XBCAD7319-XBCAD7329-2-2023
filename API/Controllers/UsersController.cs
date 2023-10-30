@@ -157,6 +157,15 @@ namespace api.Controllers
             return _context.TeamDevs.ToList();
         }
 
+        //Get dev email with id
+        [HttpGet("devEmail")]
+        public async Task<string> devEmail(string? devId)
+        {
+            int id=int.Parse(devId);
+            var dev =  _context.TeamDevs.Where(dev => dev.DevId==id).First();
+            return dev.Email;
+        }
+
     }
 
 }

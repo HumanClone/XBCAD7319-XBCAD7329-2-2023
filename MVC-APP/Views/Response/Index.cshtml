@@ -1,64 +1,217 @@
-@model List<MVCAPP.Models.TicketResponse>
+@model MVCAPP.Models.ResponseViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Ticket Details";
+    var templateNames = ViewData["TemplateNames"] as List<string>;
+    var template = ViewData["Template"] as string;
 }
 
-<head>
 
-</head>
-
+@if(Context.Session.GetString("DevId") != null)
+{
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center" style="padding: 0 15%; margin: 2rem 0;">
-        <div>
-            <h1 style="color: #5D7894; font-family: 'Montserrat', sans-serif; font-weight:400;">Responses</h1>
-        </div>
-        <div>
-            <a class="view-response-btn" asp-area="" asp-controller="Response" asp-action="Create" asp-route-id="@ViewBag.TicketID">New Response</a>
+
+    <div class="row justify-content-center mt-4">
+        <div class="card ticket-card">
+            <div class="card-header ticket-card-header">
+                Ticket Reference @Model.Ticket.TicketId         @Model.Ticket.Status
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Ticket.CategoryName</h5>
+                <h5 class="card-title text-danger">@Model.Priority Priority</h5>
+                <h6 class="card-text">@Model.Ticket.DateIssued</h6>
+                <p class="card-text">@Model.Ticket.MessageContent</p>
+
+                @if(Model.Links != null){
+                <p class="card-text">Attachments</p>
+                int i = 1;
+                @foreach (var link in Model.Links){
+                <a href="@link">Attachment @i</a>
+                <br />
+                    i++;
+                }
+            }else{
+                <p>No Attachments</p>
+            }
+            </div>
         </div>
     </div>
 
-<div class="row justify-content-center mt-4">
-            @if (Model != null && Model.Any())
+    <div class="dev-container">
+        <div class="justify-content-start " style="width: 45%!important;">
+            <h2 class="justify-content-start mt-4" style="font-weight: normal;margin-bottom: 1rem;">Responses</h2>
+            <div class="scroll-div">
+                @if (Model.Responses != null && Model.Responses.Any())
             {
-                @foreach (var response in Model)
+                @foreach (var response in Model.Responses)
                 {
-                    <div class="card ticket-card">
-                        <div class="card-header ticket-card-header">
-                            Response Reference @response.ResponseId
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-text">@response.date</h6>
-                            @* TODO : Add When db updates *@
-                            @* <p class="card-text">@response.sender</p> *@
-                            <p class="card-text">@response.ResponseMessage</p>
-                        </div>
-                    </div>                   
+                <div class="card ticket-card" style="width:90%;">
+                    <div class="card-header ticket-card-header">
+                        Response Reference @response.ResponseId
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">@response.date</h6>
+                        <p class="card-text">@response.sender</p>
+                        <p class="card-text">@response.ResponseMessage</p>
+
+                        @if(!string.IsNullOrEmpty(response.Links))
+                        {
+                            <p class="card-text">Attachments</p>
+                            int i = 1;
+                            @foreach (var link in response.Links.Split(';')){
+                                <a href="@link">Attachment @i</a>
+                                <br />
+                                i++;
+                            }
+                        }else{
+                            <p>No Attachments</p>
+                        }
+
+                    </div>
+                </div>
                 }
 
             }
             else
             {
-                <h1>No tickets found</h1>
+                <h2 style="font-weight: normal">No responses found</h2>
             }
+            </div>
+        </div>
 
-</div>
+        <div class="sidebar">
+            <h2 class="justify-content-start mt-4" style="font-weight: normal; margin-bottom: 1rem;">Notes</h2>
+            <form asp-controller="Response" asp-action="AddNotes" style="display: flex;flex-direction: column;">
+                <input type="hidden" name="ticketId" value="@Model.Ticket.TicketId" />
+                <input type="hidden" name="response" id="responseInput" />
+                <textarea id="notesTextArea" name="notes" class="form-control ticket-content" style="resize:none; margin-bottom: 1rem; border: 1px solid;" rows="4" cols="50">@Model.Ticket.Notes</textarea>
+                <input id="addNotesBtn" class="view-response-btn" style="align-self: flex-end;margin-bottom: 2rem; width:15%; text-align: center;" type="submit" value="Save" />
+            </form>
 
- @if(Context.Session.GetString("DevId") != null)
- {
-    <div style="padding: 0 15%; margin: 2rem 0;text-align: end;">
-    <a class="view-response-btn" asp-area="" asp-controller="Dev" asp-action="MyTickets" >Back To Tickets</a>
+            <div class="select-container mt-4">
+                <h2 class="justify-content-start" style="font-weight: normal; margin-bottom: 1rem; margin-right: 2rem;">Response Body</h2>
+                <form asp-controller="Response" asp-action="LoadTemplate">
+                    <input type="hidden" name="notes" id="notesInput" />
+                    <input type="hidden" name="ticketId" value="@Model.Ticket.TicketId" />
+                    <select name="selectTemplate" style="padding:5px;">
+                        @if (templateNames != null)
+                        {
+                            @foreach (var item in templateNames)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    </select>
+                    <input id="loadTemplateBtn" type="submit" value="Load" class="view-response-btn" />
+                </form>
+            </div>
+            <form asp-controller="Response" asp-action="SendResponseNew" asp-route-ticketId="@Model.Ticket.TicketId" enctype="multipart/form-data" style="display: flex;flex-direction: column;">
+                <textarea id="responseTextArea" name="body" class="form-control ticket-content" style="resize:none; border: 1px solid;margin-bottom: 1rem;" rows="4" cols="50">@template</textarea>
+                <input type="file" name="Files" class="multiple" multiple />
+                <input type="submit" value="Send" class="view-response-btn" style="align-self: flex-end;margin-bottom: 2rem; width:15%; text-align: center;" />
+            </form>
+        </div>
+
     </div>
+</div>
+} else{
+<div class="container">
+
+    <div class="row justify-content-center mt-4">
+        <div class="card ticket-card">
+            <div class="card-header ticket-card-header">
+                Ticket Reference @Model.Ticket.TicketId             @Model.Ticket.Status
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Ticket.CategoryName</h5>
+                <h6 class="card-text">@Model.Ticket.DateIssued</h6>
+                <p class="card-text">@Model.Ticket.MessageContent</p>
+
+                @if(Model.Links != null){
+                <p class="card-text">Attachments</p>
+                int i = 1;
+                @foreach (var link in Model.Links){
+                <a href="@link">Attachment @i</a>
+                <br />
+                    i++;
+                }
+            }else{
+                <p>No Attachments</p>
+            }
+            </div>
+        </div>
+    </div>
+
+    <div class="dev-container">
+        <div class="justify-content-start " style="width: 45%!important;">
+            <h2 class="justify-content-start mt-4" style="font-weight: normal;margin-bottom: 1rem;">Responses</h2>
+            <div class="scroll-div">
+                @if (Model.Responses != null && Model.Responses.Any())
+            {
+                @foreach (var response in Model.Responses)
+                {
+                <div class="card ticket-card" style="width:90%;">
+                    <div class="card-header ticket-card-header">
+                        Response Reference @response.ResponseId
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">@response.date</h6>
+                        <p class="card-text">@response.sender</p>
+                        <p class="card-text">@response.ResponseMessage</p>
+
+                        @if(!string.IsNullOrEmpty(response.Links))
+                        {
+                            <p class="card-text">Attachments</p>
+                            int i = 1;
+                            @foreach (var link in response.Links.Split(';')){
+                                <a href="@link">Attachment @i</a>
+                                <br />
+                                i++;
+                            }
+                        }else{
+                            <p>No Attachments</p>
+                        }
+
+                    </div>
+                </div>
+                }
+
+            }
+            else
+            {
+                <h2 style="font-weight: normal">No responses found</h2>
+            }
+            </div>
+        </div>
+
+        <div class="sidebar mt-4"> 
+              <h2 class="justify-content-start" style="font-weight: normal; margin-bottom: 1rem; margin-right: 2rem;">Response Body</h2>
+            <form asp-controller="Response" asp-action="SendResponseNew" asp-route-ticketId="@Model.Ticket.TicketId" enctype="multipart/form-data" style="display: flex;flex-direction: column;">
+                <textarea id="responseTextArea" name="body" class="form-control ticket-content" style="resize:none; border: 1px solid;margin-bottom: 1rem;" rows="4" cols="50"></textarea>
+                <input type="file" name="Files" class="multiple" multiple />
+                <input type="submit" value="Send" class="view-response-btn" style="align-self: flex-end;margin-bottom: 2rem; width:15%; text-align: center;" />
+            </form>
+        </div>
+
+    </div>
+</div>
+}
+
+@if(Context.Session.GetString("DevId") != null)
+ {
+<div style="margin: 2rem 0;text-align: end;">
+    <a class="view-response-btn" asp-area="" asp-controller="Dev" asp-action="MyTickets">Back To Tickets</a>
+</div>
  }
  else{
-    <div style="padding: 0 15%; margin: 2rem 0;text-align: end;">
-        <a class="view-response-btn" asp-area="" asp-controller="Ticket" asp-action="ViewTicket" >Back To Tickets</a>
-    </div>
+<div style="margin: 2rem 0;text-align: end;">
+    <a class="view-response-btn" asp-area="" asp-controller="Ticket" asp-action="ViewTicket">Back To Tickets</a>
+</div>
  }
 
 
-</div>
 
-<div id="pagination-container" class="pagination justify-content-center"></div>
+
+
 
 

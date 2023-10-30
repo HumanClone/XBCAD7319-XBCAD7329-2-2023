@@ -2,6 +2,7 @@ namespace MVCAPP.Models {
     public class ReportingViewModel {
         public Dictionary<string, int> StatusCounts { get; set; }
         public List<TicketStatus> TicketStatuses { get; set; }
+        public Dictionary<string, int> PriorityCounts { get; set; }
     }
 
     public class TicketStatus {

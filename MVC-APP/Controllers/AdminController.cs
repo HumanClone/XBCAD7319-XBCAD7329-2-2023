@@ -18,10 +18,10 @@ namespace mvc_app.Controllers;
 
 public class AdminController : Controller
 {
-   private static HttpClient sharedClient = new()
-    {
-        BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
-    };
+//    private static HttpClient sharedClient = new()
+//     {
+//         BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
+//     };
 
     private readonly INotyfService _notyf;
 
@@ -30,6 +30,11 @@ public class AdminController : Controller
         _notyf = notyf;
     }
 
+
+    private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("http://localhost:5173/api/"),
+    };
 
     public IActionResult Index()
     {
@@ -96,6 +101,9 @@ public class AdminController : Controller
             var emails=await PopulateEmails();
             ViewData["Emails"]=emails;
 
+            var priorities = await PopulatePriorityList();
+             ViewData["PriorityList"] = priorities;
+
             var priority=PopulatePri();
             ViewData["Priority"]=priority; 
 
@@ -132,7 +140,7 @@ public class AdminController : Controller
             return View(ticketList);
         }
 
-    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category)
+    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category, string? priority)
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
@@ -143,12 +151,15 @@ public class AdminController : Controller
              var emails=await PopulateEmails();
              ViewData["Emails"]=emails;
 
-             var priority= PopulatePri();
-             ViewData["Priority"]=priority;
+             var priorities = await PopulatePriorityList();
+             ViewData["PriorityList"] = priorities;
+
+             var priorityAssign= PopulatePri();
+             ViewData["Priority"]=priorityAssign;
             
 
             //check if all the fields have been left as default
-            if (startDate == null && endDate == null && status == "All" && category == "All")
+            if (startDate == null && endDate == null && status == "All" && category == "All" && priority == "All")
             {
                 return RedirectToAction("ViewAdminTicket", "Admin");
             }
@@ -156,7 +167,7 @@ public class AdminController : Controller
 
             var role = "Admin";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
-            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
+            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&priority={priority}&userId={devIdString}&userRole={role}").Result; 
 
 
             return View("ViewAdminTicket", filteredTickets);
@@ -233,6 +244,13 @@ public class AdminController : Controller
             return categoryList;
         }
 
+        private async Task<List<string>> PopulatePriorityList()
+        {
+            var priorityList = await sharedClient.GetFromJsonAsync<List<string>>("ticket/getAllPriorityNames");
+            priorityList.Insert(0, "All");
+            return priorityList;
+        }
+
         private async Task<List<SelectListItem>> PopulateEmails()
         {
             var devslist=await sharedClient.GetFromJsonAsync<List<TeamDev>>("users/devs");
@@ -260,6 +278,10 @@ public class AdminController : Controller
 
              var emails=await PopulateEmails();
              ViewData["Emails"]=emails;
+
+             var priorities = await PopulatePriorityList();
+             ViewData["PriorityList"] = priorities;
+
             Console.WriteLine(ticketId);
             try
             {

@@ -3,39 +3,35 @@
     var text=ViewData["Body"] as string;
     var template=ViewData["temp"] as List<SelectListItem>;
 }
-
-<!DOCTYPE html>
-<html lang="en">
 <h2>Response</h2>
 <form asp-controller="Response" asp-action="LoadTemplate">
-        <input type="hidden" name="ticketId" value="@ViewBag.TicketId">
-        <label for="choice" class="control-label">Assign to:</label>
+    <input type="hidden" name="ticketId" value="@ViewBag.TicketId">
+    <label for="choice" class="control-label">Assign to:</label>
 
-        <select class="form-control" id='emaillist' name='choice'>
-            <option value="">Pick a Template </option>
-            @foreach (var tem in template)
+    <select class="form-control" id='emaillist' name='choice'>
+        <option value="">Pick a Template </option>
+        @foreach (var tem in template)
                 {
-                    <option value="@tem.Value" 
-                            >
-                        @tem.Text
-                    </option>
+        <option value="@tem.Value">
+            @tem.Text
+        </option>
                 }
 
-        </select> 
-        <div class="col-md-1" style="margin-top: 25px; text-align: center">
-            <input type="submit" value="Load Template" class="submit-filter" />
-        </div>
-    </form>
-<form asp-controller="Response" enctype="multipart/form-data" asp-action="SendResponseNew"  method="post">
+    </select>
+    <div class="col-md-1" style="margin-top: 25px; text-align: center">
+        <input type="submit" value="Load Template" class="submit-filter" />
+    </div>
+</form>
+<form asp-controller="Response" enctype="multipart/form-data" asp-action="SendResponseNew" method="post">
 
-<input type="file" name="Files" class="multiple" multiple /> 
+    <input type="file" name="Files" class="multiple" multiple />
     <div class="form-group">
         <label for="body">Body:</label>
         <textarea class="form-control" id="body" name="body" rows="8" required>@text</textarea>
     </div>
     <input type="hidden" name="ticketId" value="@ViewBag.TicketId">
     <div>
-            <button type="submit" class="btn btn-primary">Send Response</button>
+        <button type="submit" class="btn btn-primary">Send Response</button>
     </div>
 
 </form>

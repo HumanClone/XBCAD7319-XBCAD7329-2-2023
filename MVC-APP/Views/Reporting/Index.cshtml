@@ -3,15 +3,15 @@
     ViewData["Title"] = "Report";
 }
 <head>
-   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
     window.onload = function () {
         var reportingData = @Html.Raw(Json.Serialize(Model.TicketStatuses));
         var dataSeries = [];
-    
+
         var colors = ["steelblue", "orange", "green", "red", "purple"]; // Add more colors as needed
-    
+
         reportingData.forEach(function (ticketStatus, index) {
             var dataPoints = ticketStatus.tickets.map(function (ticketData) {
                 var dateParts = ticketData.date.split('T')[0].split('-');
@@ -19,13 +19,13 @@
                 var month = parseInt(dateParts[1]) - 1;
                 var day = parseInt(dateParts[2]);
                 var date = new Date(year, month, day);
-    
+
                 return {
                     x: date,
                     y: ticketData.count
                 };
             });
-    
+
             var dataSeriesItem = {
                 type: "line",
                 name: ticketStatus.name,
@@ -33,16 +33,16 @@
                 legendText: ticketStatus.name,
                 showInLegend: true
             };
-    
+
             dataSeries.push(dataSeriesItem);
         });
-    
+
         var maxCount = Math.max.apply(Math, dataSeries.flatMap(function (series) {
             return series.dataPoints.map(function (point) {
                 return point.y + 2;
             });
         }));
-    
+
         var chart = new CanvasJS.Chart("chartContainer", {
             theme: "light2",
             animationEnabled: true,
@@ -53,8 +53,8 @@
                 padding: 20
             },
             legend: {
-                horizontalAlign: "right", 
-                verticalAlign: "center", 
+                horizontalAlign: "right",
+                verticalAlign: "center",
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: "normal",
                 fontSize: 15
@@ -78,72 +78,123 @@
             },
             data: dataSeries
         });
-    
+
         chart.render();
-    
+
         var statusCounts = @Html.Raw(Json.Serialize(Model.StatusCounts));
         var totalCount = Object.values(statusCounts).reduce((total, count) => total + count, 0);
         var dataPointsPie = [];
-        
+
         Object.entries(statusCounts).forEach(([status, count]) => {
           var percentage = ((count / totalCount) * 100).toFixed(1);
           dataPointsPie.push({
             y: parseFloat(percentage),
-            label: status
+            label: status,
+            count: count
           });
         });
 
-        var pieChart = new CanvasJS.Chart("piechartContainer", {
-            theme: "light2",
-            exportEnabled: true,
-            animationEnabled: true,
-            title: {
-                fontFamily: "Montserrat, sans-serif",
-                text: "Status Percetange",
-                padding: 20,
-                fontWeight: "normal"
-            },
-            legend: {
-                fontSize: 15,
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: "normal",
-                horizontalAlign: "right", 
-                verticalAlign: "center"
-            },
-            data: [{
-                type: "pie",
-                startAngle: 180,
-                fontFamily: "Montserrat, sans-serif",
-                toolTipContent: "<b>{label}</b>: {y}%",
-                showInLegend: "true",
-                legendText: "{label}",
-                indexLabel: "{label} - {y}%",
-                dataPoints: dataPointsPie
-            }]
+        var statusPieChart = new CanvasJS.Chart("piechartContainer", {
+          theme: "light2",
+          exportEnabled: true,
+          animationEnabled: true,
+          title: {
+            fontFamily: "Montserrat, sans-serif",
+            text: "Ticket Status Breakdown",
+            padding: 20,
+            fontWeight: "normal"
+          },
+          legend: {
+            fontSize: 15,
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: "normal",
+            horizontalAlign: "right",
+            verticalAlign: "center"
+          },
+          data: [{
+            type: "pie",
+            startAngle: 180,
+            fontFamily: "Montserrat, sans-serif",
+            toolTipContent: "<b>{label}</b>: {y}% ({count} ticket/s)",
+            showInLegend: "true",
+            legendText: "{label}",
+            indexLabel: "{label} - {y}% ({count} ticket/s)",
+            indexLabelFontSize: 16,
+            dataPoints: dataPointsPie
+          }]
         });
-        pieChart.render();
+        statusPieChart.render();
+
+        var priorityCounts = @Html.Raw(Json.Serialize(Model.PriorityCounts));
+        var totalCount = Object.values(priorityCounts).reduce((total, count) => total + count, 0);
+        var priorityDataPointsPie = [];
+
+        Object.entries(priorityCounts).forEach(([priority, count]) => {
+          var percentage = ((count / totalCount) * 100).toFixed(1);
+          priorityDataPointsPie.push({
+            y: parseFloat(percentage),
+            label: priority,
+            count: count
+          });
+        });
+
+        var priorityPieChart = new CanvasJS.Chart("priorityPiechartContainer", {
+          theme: "light2",
+          exportEnabled: true,
+          animationEnabled: true,
+          title: {
+            fontFamily: "Montserrat, sans-serif",
+            text: "Priority Breakdown",
+            padding: 20,
+            fontWeight: "normal"
+          },
+          legend: {
+            fontSize: 15,
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: "normal",
+            horizontalAlign: "right",
+            verticalAlign: "center"
+          },
+          data: [{
+            type: "pie",
+            startAngle: 180,
+            fontFamily: "Montserrat, sans-serif",
+            toolTipContent: "<b>{label}</b>: {y}% ({count} ticket/s)",
+            showInLegend: "true",
+            legendText: "{label}",
+            indexLabel: "{label} - {y}% ({count} ticket/s)",
+            indexLabelFontSize: 16,
+            dataPoints: priorityDataPointsPie
+          }]
+        });
+        priorityPieChart.render();
+
+
     }
-</script>
+    </script>
 </head>
 <body>
-    <div class="text-center" style="margin-top: 4rem;">
+    <div class="text-center" style="margin-top: 4rem;margin-bottom: 2rem;">
         <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
             @foreach (var status in Model.StatusCounts)
             {
-                <div class="col-md-2 mb-4">
-                    <div class="card status-count-card">
-                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                            <h4 class="card-title">@status.Value</h4>
-                            <p class="card-text"><strong>@status.Key</strong></p>
-                        </div>
+            <div class="col-md-2 mb-4">
+                <div class="card status-count-card">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <h4 class="card-title">@status.Value</h4>
+                        <p class="card-text"><strong>@status.Key</strong></p>
                     </div>
                 </div>
+            </div>
             }
         </div>
     </div>
 
-    <div id="chartContainer" style="height: 400px; width: 100%;"></div>
-    <div id="piechartContainer" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainer" style="height: 400px; width: 100%;margin-bottom: 5rem;"></div>
+    <div style="display: flex;">
+        <div id="piechartContainer" style="flex: 1;margin-right: 10rem;"></div>
+        <div id="priorityPiechartContainer" style="flex: 1;"></div>
+    </div>
     <script src="https://cdn.canvasjs.com/ga/canvasjs.min.js"></script>
 
 </body>

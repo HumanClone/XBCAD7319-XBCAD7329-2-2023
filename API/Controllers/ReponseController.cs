@@ -65,7 +65,7 @@ namespace api.Controllers
                 {
                     Console.WriteLine("Admin attachments");
                     string links=await mailService.StoreAttachments(request.Attachments);
-                    //tr.links=links;
+                    tr.Links=links;
                 }
 
 
@@ -99,7 +99,7 @@ namespace api.Controllers
                 {
                     Console.WriteLine("User attachments");
                     string links=await mailService.StoreAttachments(request.Attachments);
-                    //tr.links=links;
+                    tr.Links=links;
                 }
                 
 
