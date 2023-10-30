@@ -93,7 +93,7 @@ namespace api.Controllers
 
                 TicketResponse tr= new TicketResponse();
                 var ids=_context.TicketDetails.Select(S=>S.TicketId);
-                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(2):mailReceive.Subject;
+                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
                 bool posID=int.TryParse(pID,out int result);
                 bool exist=ids.Contains(result);
                 if(!posID && !exist)
@@ -114,7 +114,7 @@ namespace api.Controllers
                 else
                 {
                     
-                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))?result+"":mailReceive.Subject;
                 }
 
                 
@@ -154,13 +154,19 @@ namespace api.Controllers
                 string updatedBody = Regex.Replace(mailReceive.Body, "<.*?>", string.Empty);
                 updatedBody = updatedBody.Replace("\\r\\n", " ");
                 updatedBody = updatedBody.Replace(@"&nbsp;", " ");
+                
 
                 TicketResponse tr= new TicketResponse();
                 var ids=_context.TicketDetails.Select(S=>S.TicketId);
-                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(2):mailReceive.Subject;
+                string pID=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                pID=pID.Trim();
                 bool posID=int.TryParse(pID,out int result);
+                Console.WriteLine("TicketID"+pID);
+                Console.WriteLine(posID+"");
+                Console.WriteLine(result+"");
                 bool exist=ids.Contains(result);
-                if(!posID && !exist)
+                Console.WriteLine(exist+"");
+                if(!posID &&!exist)
                 {
                     TicketDetail td=new TicketDetail();
                     td.DateIssued=DateTime.UtcNow;
@@ -175,7 +181,7 @@ namespace api.Controllers
                 }
                 else
                 {
-                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))? mailReceive.Subject.Substring(3):mailReceive.Subject;
+                    tr.TicketId=(mailReceive.Subject.StartsWith("Re:"))?result+"":mailReceive.Subject;
                 }
 
                 

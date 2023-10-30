@@ -74,9 +74,17 @@ public class ResponseController : Controller
                         var email = await devEmail.Content.ReadAsStringAsync();
                         userResponse.sender = email;                      
                     }else if(userResponse.sender!=null){
-                        var userEmail = await sharedClient.GetAsync("users/user?userId="+userResponse.sender);
-                        var user = await userEmail.Content.ReadFromJsonAsync<UserInfo>();
-                        var email = user.Email;
+                        string email="";
+                        if(int.TryParse(userResponse.sender,out int result))
+                        {
+                           var userEmail = await sharedClient.GetAsync("users/user?userId="+userResponse.sender);
+                            var user = await userEmail.Content.ReadFromJsonAsync<UserInfo>();
+                            email = user.Email; 
+                        }
+                        else{
+                            email=userResponse.sender;
+                            userResponse.ResponseMessage=HtmlHelper.GetPlainTextFromHtml(userResponse.ResponseMessage);
+                        }
                         userResponse.sender = email;
                     }
                 }               
