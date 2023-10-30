@@ -4,6 +4,9 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using Azure.Storage.Blobs;
 
+
+//Code attribution
+//author mukesh
 //https://codewithmukesh.com/blog/send-emails-with-aspnet-core/
 namespace api.email;
 

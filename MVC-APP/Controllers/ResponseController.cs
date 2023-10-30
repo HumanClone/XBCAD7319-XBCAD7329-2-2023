@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing.Template;
+using MVCAPP.Templates;
 
 
 namespace mvc_app.Controllers;
@@ -23,12 +26,10 @@ public class ResponseController : Controller
     //      BaseAddress = new Uri("https://supportsystemapi.azurewebsites.net/api/"),
     //  };
 
-    private static HttpClient sharedClient = new()
-    {
-        BaseAddress = new Uri("http://localhost:5173/api/"),
-    };
-
-
+     private static HttpClient sharedClient = new()
+     {
+         BaseAddress = new Uri("http://localhost:5173/api/"),
+     };
 
     [HttpGet]
     public IActionResult Create(string? id)
@@ -40,8 +41,9 @@ public class ResponseController : Controller
 
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? id)
+    public async Task<IActionResult> Index(string? id, string? selectTemplate, string? notes, string? responseBody)
     {
+        Console.WriteLine(id);
         try
         {
             Console.WriteLine("Before Request");
@@ -57,15 +59,39 @@ public class ResponseController : Controller
                 var ticket = await sharedClient.GetAsync("ticket/ticket?ticketID="+id);
                 var viewTicket = await ticket.Content.ReadFromJsonAsync<TicketDetail>();
 
-                var priority = await sharedClient.GetAsync("ticket/getPriorityName?priority="+viewTicket.Priority);
-                var priorityName = await priority.Content.ReadAsStringAsync();
+                ResponseViewModel res = new ResponseViewModel();
+                res.Ticket = viewTicket;
+                res.Responses = responses;
 
-                ResponseViewModel res = new ResponseViewModel
-                {
-                    Ticket = viewTicket,
-                    Responses = responses,
-                    Priority = priorityName
-                };
+                if(viewTicket.Links!=null){
+                    res.Links = viewTicket.Links.Split(";").ToList();
+                }
+                
+
+
+                if(HttpContext.Session.GetInt32("DevId")!=null){
+                    var priority = await sharedClient.GetAsync("ticket/getPriorityName?priority="+viewTicket.Priority);
+                    var priorityName = await priority.Content.ReadAsStringAsync();
+                    res.Priority = priorityName;
+
+                    var templateService = new TemplateService();
+                    var templateNames = templateService.GetTemplateNames();
+
+                    ViewData["TemplateNames"] = templateNames;
+               
+                    ViewData["Template"] = selectTemplate;
+
+                    if(viewTicket.Notes == null){
+                        viewTicket.Notes = "";
+                    }else if(notes != null){
+                        viewTicket.Notes = notes;
+                    }
+
+                    if(responseBody != null){
+                        ViewData["Template"] = responseBody;
+                    }
+                }
+                
 
                 try
                 {
@@ -102,21 +128,47 @@ public class ResponseController : Controller
 
 
 
-    [HttpPost]
+    
+
+[HttpPost]
     //[Route("/Response/mail")]
-    //TODO:GET the Files
+
+    //author:Code maze
+
     //https://code-maze.com/aspnetcore-multipart-form-data-in-httpclient/
-    public async Task<IActionResult> SendResponse(string subject,string body,string toemail,List<IFormFile> files)
+    public async Task<IActionResult> SendResponseNew(string ticketId,string body,List<IFormFile> files)
     {
+        ViewBag.TicketID=ticketId;
         Mail model=new Mail();
-        model.Subject=subject;
+        model.Subject="Re:"+ticketId;
         model.Body=body;
-        model.Toemail=toemail;
+        
         if(HttpContext.Session.GetInt32("UserId")==null)
         {
+            var res= await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+            var ticket=await res.Content.ReadFromJsonAsync<TicketDetail>();
+            HttpResponseMessage respo = await sharedClient.GetAsync("response/ticket/?ticketID="+ticketId);
+            List<TicketResponse> resp = await respo.Content.ReadFromJsonAsync<List<TicketResponse>>();
+            var send=resp.Where(s=>s.sender!=null).Select(s=>s.sender).FirstOrDefault();
+
+            if(ticket.UserId==null)
+            {
+                Console.WriteLine("Not from system");
+                model.Toemail=send;
+            }
+            else
+            {
+                var re= await sharedClient.GetAsync("users/user?userId="+ticket.UserId);
+                var user=await re.Content.ReadFromJsonAsync<UserInfo>();
+                var email=user.Email;
+                Console.WriteLine("Email is "+ email);
+                model.Toemail=email;
+            }
+        
             Console.WriteLine("Dev");
             Console.WriteLine(HttpContext.Session.GetInt32("DevId"));
             Console.WriteLine(model.Subject);
+            Console.WriteLine(model.Toemail);
             Console.WriteLine(model.Body);
             Console.WriteLine(files.Count.ToString());
             var mr = new MailRequest
@@ -200,7 +252,6 @@ public class ResponseController : Controller
                 Attachments=files
             
             };
-            Console.WriteLine("object created");
             using MultipartFormDataContent multipartContent = new();
             multipartContent.Add(new StringContent(mr.Subject,Encoding.UTF8, MediaTypeNames.Text.Plain),"Subject");
             multipartContent.Add(new StringContent(mr.Body,Encoding.UTF8, MediaTypeNames.Text.Plain),"Body");
@@ -255,4 +306,37 @@ public class ResponseController : Controller
            
         }
     }
+
+
+    public async Task<IActionResult> LoadTemplate(string selectTemplate,string ticketId,string? notes)
+    {
+        var templateService = new TemplateService();
+        var chosenTemplate = templateService.GetTemplateContent(selectTemplate);;
+        return RedirectToAction("Index", "Response", new { id = ticketId, selectTemplate = chosenTemplate, notes = notes });
+    }
+
+    public async Task<IActionResult> AddNotes(string notes, string ticketId, string? response)
+    {
+        var ticket = await sharedClient.GetAsync("ticket/ticket?ticketID=" + ticketId);
+        var viewTicket = await ticket.Content.ReadFromJsonAsync<TicketDetail>();
+        viewTicket.Notes = notes;
+    
+        var jsonContent = JsonConvert.SerializeObject(viewTicket);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+    
+        var editResponse = await sharedClient.PostAsync("ticket/editTicket", content);
+    
+        if (editResponse.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Notes updated successfully");
+            return RedirectToAction("Index", "Response", new { id = ticketId, notes = notes, responseBody = response });
+        }
+        else
+        {
+            Console.WriteLine($"Request failed with status code: {editResponse.StatusCode}");
+            return RedirectToAction("MyTickets", "Dev");
+        }
+    }
+
+
 }

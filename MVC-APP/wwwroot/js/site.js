@@ -1,4 +1,27 @@
-﻿// Pagination
+﻿// Notes and templates
+
+var loadTemplateBtn = document.getElementById('loadTemplateBtn');
+
+loadTemplateBtn.addEventListener('click', function() {
+  const notesTextarea = document.getElementById('notesTextArea');  
+  const notesValue = notesTextarea.value;
+
+  // Set the notes value as the value of the hidden input field
+  const notesInput = document.getElementById('notesInput');
+  notesInput.value = notesValue;
+})
+
+var addNotesBtn = document.getElementById('addNotesBtn');
+addNotesBtn.addEventListener('click', function() {
+  const responseTextArea = document.getElementById('responseTextArea');
+  const responseValue = responseTextArea.value;
+
+  // Set the response value as the value of the hidden input field
+  const responseInput = document.getElementById('responseInput');
+  responseInput.value = responseValue;
+})
+
+// Pagination
 // Show 5 cards per page
 var cardsPerPage = 5;
 
@@ -74,3 +97,7 @@ function updatePagination() {
 // Show the cards for the first page initially
 showCards(currentPage);
 updatePagination();
+
+
+
+

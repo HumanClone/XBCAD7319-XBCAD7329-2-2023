@@ -1,27 +1,39 @@
 @{
     ViewData["Title"] = "Create";
+    var text=ViewData["Body"] as string;
+    var template=ViewData["temp"] as List<SelectListItem>;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <h2>Response</h2>
-<form asp-controller="Response" enctype="multipart/form-data" asp-action="SendResponse"  method="post">
-    <div class="form-group">
-        <label for="subject">Subject:</label>
-        <input type="text" class="form-control" id="subject" name="subject"  required value="Re:@ViewBag.TicketId">
-    </div>
-    @if(Context.Session.GetString("UserId") == null )
-    {
-        <div class="form-group">
-            <label for="toemail">Send To:</label>
-            <input type="text" class="form-control" id="toemail" name="toemail" value="@Context.Session.GetString("Send")">
+<form asp-controller="Response" asp-action="LoadTemplate">
+        <input type="hidden" name="ticketId" value="@ViewBag.TicketId">
+        <label for="choice" class="control-label">Assign to:</label>
+
+        <select class="form-control" id='emaillist' name='choice'>
+            <option value="">Pick a Template </option>
+            @foreach (var tem in template)
+                {
+                    <option value="@tem.Value" 
+                            >
+                        @tem.Text
+                    </option>
+                }
+
+        </select> 
+        <div class="col-md-1" style="margin-top: 25px; text-align: center">
+            <input type="submit" value="Load Template" class="submit-filter" />
         </div>
-    }
+    </form>
+<form asp-controller="Response" enctype="multipart/form-data" asp-action="SendResponseNew"  method="post">
+
 <input type="file" name="Files" class="multiple" multiple /> 
     <div class="form-group">
         <label for="body">Body:</label>
-        <textarea class="form-control" id="body" name="body" rows="8" required></textarea>
+        <textarea class="form-control" id="body" name="body" rows="8" required>@text</textarea>
     </div>
+    <input type="hidden" name="ticketId" value="@ViewBag.TicketId">
     <div>
             <button type="submit" class="btn btn-primary">Send Response</button>
     </div>

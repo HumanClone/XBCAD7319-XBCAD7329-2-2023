@@ -195,6 +195,37 @@ body {
   width: 70%;
 }
 
+.scroll-div {
+  flex: 1;
+  overflow-y: scroll;
+  text-align: justify;
+  height: 300px;
+}
+
+.dev-container{
+  display: flex;
+}
+
+.sidebar{
+  flex: 1;
+  margin-left: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.select-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+}
+
+.select-container select {
+  margin-right: 1rem;
+}
+
+
 .ticket-card-header{
   background-color: #5D7894;
   color: white;
