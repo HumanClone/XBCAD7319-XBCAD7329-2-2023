@@ -86,7 +86,7 @@ public class AdminController : Controller
                 Console.WriteLine("Admin Priority False Notify");
                 return true;
             }
-            Console.WriteLine("Admin Priority Screwed");
+            Console.WriteLine("Admin Priority");
             return false;
         }
 
