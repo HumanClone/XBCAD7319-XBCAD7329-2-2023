@@ -109,16 +109,14 @@
                            <label for ="priority" class="control-label"> priority:
                            </label>
                            <select class="form-control" name='priotity'>
-                            <option value=""> No Dev has been assigned yet
-                            </option>
-                            @foreach(var pri in priority)
-                            {
-                                <option value="@pri.value"
-                                selected="@(pri.Value == ticketDetail.
-                                Priority+"")">
-                                @pri.text
-                                </option>
-                            }
+                            <option value="">No Priority  has Been assigned </option>
+                                        @foreach (var pri in priority)
+                                            {
+                                                <option value="@pri.Value" 
+                                                        selected="@(pri.Value == ticketDetail.Priority+"")">
+                                                    @pri.Text
+                                                </option>
+                                            }
                              </select>
                              
                              <input type="hidden" id="ticketId" name="ticketId"
