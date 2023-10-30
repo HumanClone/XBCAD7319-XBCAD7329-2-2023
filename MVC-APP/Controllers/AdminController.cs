@@ -97,7 +97,7 @@ public class AdminController : Controller
             ViewData["Emails"]=emails;
 
             var priority=PopulatePri();
-            ViewData["Emails"]=emails; 
+            ViewData["Priority"]=priority; 
 
             string jsonTicketContent;
             List<TicketDetail> ticketList = new List<TicketDetail>();
