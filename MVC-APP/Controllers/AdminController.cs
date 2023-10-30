@@ -70,18 +70,21 @@ public class AdminController : Controller
             }
 
             // Calculate the time remaining before the ticket reaches the threshold
-            double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).Hours;
-
+            double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).TotalHours;
+            Console.WriteLine(ticket.TicketId+"");
+            Console.WriteLine((DateTime.Now - ticket.DateIssued).Hours+" Hours ");
+            Console.WriteLine(timeThreshold+"");
             Console.WriteLine(timeRemaining);
             if (timeRemaining < (0.1 * timeThreshold))
             {
+                
                 Console.WriteLine("Admin Priority Notify");
                 return true;
             }
             else if (timeRemaining < 0)
             {
                 Console.WriteLine("Admin Priority False Notify");
-                return false;
+                return true;
             }
             Console.WriteLine("Admin Priority Screwed");
             return false;
@@ -125,7 +128,7 @@ public class AdminController : Controller
                     {
                         bool isCloseToPriorityAllowance = checkPriority(ticket);
 
-                        if (isCloseToPriorityAllowance == true)
+                        if (isCloseToPriorityAllowance)
                         {
                             // Notify the dev that the ticket is close to its priority allowance
                             _notyf.Warning($"Ticket {ticket.TicketId} is close to its priority allowance.");
@@ -281,6 +284,9 @@ public class AdminController : Controller
 
              var priorities = await PopulatePriorityList();
              ViewData["PriorityList"] = priorities;
+             
+            var priority=PopulatePri();
+            ViewData["Priority"]=priority; 
 
             Console.WriteLine(ticketId);
             try
