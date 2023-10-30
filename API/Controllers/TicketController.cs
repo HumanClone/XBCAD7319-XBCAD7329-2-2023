@@ -154,7 +154,7 @@ namespace api.Controllers
         [HttpGet("devTickets")]
         public async Task<List<TicketDetail>> getDevTickets(string? DevId)
         {     
-            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DevId.Equals(DevId)).ToList();
+            List<TicketDetail> td = _context.TicketDetails.Where(s => s.DevId.Equals(DevId)).OrderByDescending(s => s.DateIssued).ToList();
             return td;
         }
 

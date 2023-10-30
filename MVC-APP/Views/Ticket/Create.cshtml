@@ -4,30 +4,30 @@
 
 <form action="Create" enctype="multipart/form-data" method="post" class="ticket-form">
     <h3 class="ticket-headings">Student Information</h3>
-    <hr/>
-     <div class="row">
-    <div class="col-md-6">
-        <div class="mb-3">
-            <label class="form-label">Category</label>
-            <input type="text" class="form-control ticket-category" asp-for="CategoryName" size="24" readonly/>
-        </div>
-        
-        <h4 class="ticket-headings">Query</h4>
-        <hr/>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control ticket-category" asp-for="CategoryName" size="24" readonly />
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Message</label>
-            <textarea maxlength="300" class="form-control ticket-content" asp-for="MessageContent" rows="4" cols="50" required></textarea>
-            <span asp-validation-for="MessageContent" class="text-danger"></span>
-        </div>
-    </div>
+            <h4 class="ticket-headings">Query</h4>
+            <hr />
 
-<input type="file" name="Files" class="multiple" multiple /> 
+            <div class="mb-3">
+                <label class="form-label">Message</label>
+                <textarea maxlength="300" class="form-control ticket-content" asp-for="MessageContent" rows="4" cols="50" required></textarea>
+                <span asp-validation-for="MessageContent" class="text-danger"></span>
+            </div>
+        </div>
+
+        <input type="file" name="Files" class="multiple" multiple />
         <div class="d-grid">
-            <input type="submit" class="ticket-submit-btn"/>
+            <input type="submit" class="ticket-submit-btn" />
         </div>
     </div>
-</div>
+    </div>
 
 </form>
 

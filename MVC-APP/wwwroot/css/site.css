@@ -1,278 +1,278 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-.nav-logo{
-  width: 200px;
-  height: 100px;
+.nav-logo {
+    width: 200px;
+    height: 100px;
 }
 
-.nav-item{
-  color: #000000;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
+.nav-item {
+    color: #000000;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
 }
 
 .nav-link:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-decoration-color: #4c63a3;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #4c63a3;
 }
 
 .border-bottom {
-  border-bottom: 1px solid #000000!important;
+    border-bottom: 1px solid #000000 !important;
 }
 
-.navbar{
-  padding-bottom: 0px;
+.navbar {
+    padding-bottom: 0px;
 }
 
 
 /* Landing Page  */
 
-.landing-heading{
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  margin: 4rem 0;
+.landing-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    margin: 4rem 0;
 }
 
-.card{
-  border: none;
+.card {
+    border: none;
 }
 
-.card-btn{
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 30px;
-  color: black;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  margin-top: 2rem;
-  padding: 5px;
-  width: 70%;
+.card-btn {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 30px;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    margin-top: 2rem;
+    padding: 5px;
+    width: 70%;
 }
 
-.card-btn:hover{
-  background-color: black;
-  color: white;
-}
+    .card-btn:hover {
+        background-color: black;
+        color: white;
+    }
 
 .card-img-top {
-  margin-top: 3rem;
-  width: 40%;
-  height: 40%;
-  align-self: center;
+    margin-top: 3rem;
+    width: 40%;
+    height: 40%;
+    align-self: center;
 }
 
-.user-types{
-  margin-top: 5rem;
+.user-types {
+    margin-top: 5rem;
 }
 
 /* Ticket Categories Grid */
-.category-btn{
-  background-color: #5D7894;
-  border-radius: 0px;
-  border: 1px solid white;
-  color: white;
-  font-weight: 500;
-  margin-top: 10px;
-  width: 30%;
+.category-btn {
+    background-color: #5D7894;
+    border-radius: 0px;
+    border: 1px solid white;
+    color: white;
+    font-weight: 500;
+    margin-top: 10px;
+    width: 30%;
 }
 
-.category-btn:hover{
-  background-color: white;
-  color:#5D7894;
+    .category-btn:hover {
+        background-color: white;
+        color: #5D7894;
+    }
+
+.category-headings {
+    color: #5D7894;
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    margin-top: 2rem;
+    text-align: center;
 }
 
-.category-headings{ 
-  color: #5D7894;
-  font-family: 'Montserrat', sans-serif;
-  font-style: italic;
-  margin-top: 2rem;
-  text-align: center;
+.category-grid {
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 2rem;
 }
 
-.category-grid{
-  font-family: 'Montserrat', sans-serif;
-  margin-top: 2rem;
+#category-cards {
+    background-color: #5D7894;
+    color: white;
+    padding: 2rem;
 }
 
-#category-cards{
-  background-color: #5D7894;
-  color: white;
-  padding: 2rem;
-}
-
-#categories-card-body{
-  padding: 1rem 0!important;
+#categories-card-body {
+    padding: 1rem 0 !important;
 }
 
 /* Log a Ticket Page */
 
-.ticket-headings{
-  font-weight: 700;
+.ticket-headings {
+    font-weight: 700;
 }
 
-.ticket-form{
-  background-color: #5D7894;
-  color: white;
-  font-family: 'Montserrat', sans-serif;
-  margin-top: 5rem;
-  padding: 2rem;
+.ticket-form {
+    background-color: #5D7894;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 5rem;
+    padding: 2rem;
 }
 
-.ticket-student-num{
- margin-bottom: 2rem;
+.ticket-student-num {
+    margin-bottom: 2rem;
 }
 
-.ticket-category{
-  margin-bottom: 2rem;
+.ticket-category {
+    margin-bottom: 2rem;
 }
 
-.ticket-submit-btn{
-  background-color: white;
-  border: none;
-  color: #5D7894;
-  font-weight: 500;
-  margin-top: 2rem;
-  padding: 5px 0;
-  width: 20%;
+.ticket-submit-btn {
+    background-color: white;
+    border: none;
+    color: #5D7894;
+    font-weight: 500;
+    margin-top: 2rem;
+    padding: 5px 0;
+    width: 20%;
 }
 
-.ticket-submit-btn:hover{
-  background-color: #5D7894;
-  border: 1px solid white;
-  color: white;
-}
+    .ticket-submit-btn:hover {
+        background-color: #5D7894;
+        border: 1px solid white;
+        color: white;
+    }
 
 /* View Tickets Page */
 
-.filter-frm{
-  font-family: 'Montserrat', sans-serif;
-  margin-bottom: 2rem;
+.filter-frm {
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 2rem;
 }
 
-.submit-filter{
-  background-color: #5D7894;
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 5px 15px;
+.submit-filter {
+    background-color: #5D7894;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 5px 15px;
 }
 
-.submit-filter:hover{
-  background-color: white;
-  border: 2px solid #5D7894;
-  color: #5D7894;
-}
+    .submit-filter:hover {
+        background-color: white;
+        border: 2px solid #5D7894;
+        color: #5D7894;
+    }
 
-.ticket-card{
-  border: 2px solid #5D7894;
-  font-family: 'Montserrat', sans-serif;
-  margin-bottom: 2rem;
-  padding: 0;
-  width: 70%;
+.ticket-card {
+    border: 2px solid #5D7894;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 2rem;
+    padding: 0;
+    width: 70%;
 }
 
 .scroll-div {
-  flex: 1;
-  overflow-y: scroll;
-  text-align: justify;
-  height: 300px;
+    flex: 1;
+    overflow-y: scroll;
+    text-align: justify;
+    height: 300px;
 }
 
-.dev-container{
-  display: flex;
+.dev-container {
+    display: flex;
 }
 
-.sidebar{
-  flex: 1;
-  margin-left: 5rem;
-  display: flex;
-  flex-direction: column;
+.sidebar {
+    flex: 1;
+    margin-left: 5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 
 .select-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    justify-content: space-between;
 }
 
-.select-container select {
-  margin-right: 1rem;
-}
+    .select-container select {
+        margin-right: 1rem;
+    }
 
 
-.ticket-card-header{
-  background-color: #5D7894;
-  color: white;
-  font-weight: 600;
+.ticket-card-header {
+    background-color: #5D7894;
+    color: white;
+    font-weight: 600;
 }
 
-.view-response-btn{
-  background-color: #5D7894;
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 5px 15px;
-  text-decoration: none!important;
+.view-response-btn {
+    background-color: #5D7894;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 5px 15px;
+    text-decoration: none !important;
 }
 
-.view-response-btn:hover{
-  background-color: white;
-  border: 2px solid #5D7894;
-  color: #5D7894;
-}
+    .view-response-btn:hover {
+        background-color: white;
+        border: 2px solid #5D7894;
+        color: #5D7894;
+    }
 
 /* Admin dashboard */
 
 
-.dashboard-cards{
-  background-color: #5D7894;
-  color: white;
+.dashboard-cards {
+    background-color: #5D7894;
+    color: white;
 }
 
 
 /* Reporting Page */
 
 .status-count-card {
-  background-color: #5D7894;
-  color: white;
-  font-family: 'Montserrat', sans-serif;
-  height: 200px;
+    background-color: #5D7894;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    height: 200px;
 }
 
 @media (max-width: 768px) {
-  .col-md-2 {
-    width: 20%;
-  }
+    .col-md-2 {
+        width: 20%;
+    }
 }
 
 @media (max-width: 425px) {
-  .row-cols-1>* {
-    width: 70%;
-}}
-
+    .row-cols-1 > * {
+        width: 70%;
+    }
+}

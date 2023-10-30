@@ -65,8 +65,21 @@ public class ResponseController : Controller
 
                 if(viewTicket.Links!=null){
                     res.Links = viewTicket.Links.Split(";").ToList();
-                }
-                
+                } 
+
+                foreach(var userResponse in responses)
+                {
+                    if(userResponse.DevId!=null){
+                        var devEmail = await sharedClient.GetAsync("users/devEmail?devId="+userResponse.DevId);
+                        var email = await devEmail.Content.ReadAsStringAsync();
+                        userResponse.sender = email;                      
+                    }else if(userResponse.sender!=null){
+                        var userEmail = await sharedClient.GetAsync("users/user?userId="+userResponse.sender);
+                        var user = await userEmail.Content.ReadFromJsonAsync<UserInfo>();
+                        var email = user.Email;
+                        userResponse.sender = email;
+                    }
+                }               
 
 
                 if(HttpContext.Session.GetInt32("DevId")!=null){
@@ -221,7 +234,7 @@ public class ResponseController : Controller
                     Console.WriteLine($": {response.RequestMessage.ToString()}");
 
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return RedirectToAction("ViewTicket","Ticket");
+                    return RedirectToAction("Index", "Response", new { id = ticketId});
                 }
                 else
                 {
@@ -234,7 +247,7 @@ public class ResponseController : Controller
             catch (System.Exception ex)
             {
                 Console.WriteLine(ex);
-                return RedirectToAction("ViewTicket","Ticket");
+                return RedirectToAction("MyTickets","Dev");
                 throw;
             }
         }
@@ -289,7 +302,7 @@ public class ResponseController : Controller
                 {
                     //var ticket = await response.Content.ReadFromJsonAsync<TicketResponse>();
                     Console.WriteLine($"Response sent {response.StatusCode}");
-                    return RedirectToAction("ViewTicket","Ticket");
+                    return RedirectToAction("Index", "Response", new { id = ticketId});
                 }
                 else
                 {

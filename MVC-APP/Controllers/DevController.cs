@@ -176,7 +176,7 @@ public class DevController : Controller
         }
     }
 
-    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category)
+    public async Task<IActionResult> Filter(string startDate, string endDate, string status, string category, string priority)
         {
             var statuses = await PopulateStatusList();
             ViewData["StatusList"] = statuses;
@@ -188,7 +188,7 @@ public class DevController : Controller
             ViewData["PriorityList"] = priorities;
 
             //check if all the fields have been left as default
-            if (startDate == null && endDate == null && status == "All" && category == "All")
+            if (startDate == null && endDate == null && status == "All" && category == "All" && priority == "All")
             {
                 return RedirectToAction("MyTickets", "Dev");
             }
@@ -196,7 +196,7 @@ public class DevController : Controller
 
             var role = "Staff";
             var devIdString = HttpContext.Session.GetInt32("DevId").ToString();
-            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&userId={devIdString}&userRole={role}").Result; 
+            var filteredTickets = sharedClient.GetFromJsonAsync<List<TicketDetail>>($"ticket/filter?startDate={startDate}&endDate={endDate}&status={status}&category={category}&priority={priority}&userId={devIdString}&userRole={role}").Result; 
             return View("MyTickets", filteredTickets);
         }
 

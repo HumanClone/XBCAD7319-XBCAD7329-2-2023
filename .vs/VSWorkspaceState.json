@@ -2,8 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\MVC-APP",
-    "\\MVC-APP\\Views\\Dev"
+    "\\MVC-APP\\Controllers",
+    "\\MVC-APP\\Views\\Home",
+    "\\MVC-APP\\Views\\Reporting",
+    "\\MVC-APP\\Views\\Response",
+    "\\MVC-APP\\Views\\Shared",
+    "\\MVC-APP\\Views\\Ticket",
+    "\\MVC-APP\\Views\\UserLogin",
+    "\\MVC-APP\\wwwroot\\js"
   ],
-  "SelectedNode": "\\MVC-APP\\mvc-app.sln",
+  "SelectedNode": "\\MVC-APP\\Controllers\\UserLoginController.cs",
   "PreviewInSolutionExplorer": false
 }

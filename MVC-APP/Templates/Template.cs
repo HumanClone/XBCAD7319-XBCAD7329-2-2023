@@ -1,18 +1,18 @@
 namespace MVCAPP.Templates
 {
-public class Template
-{
-    public string Name { get; set; }
-    public string Content { get; set; }
-}
-
-public class TemplateService
-{
-    private List<Template> templates;
-
-    public TemplateService()
+    public class Template
     {
-        templates = new List<Template>
+        public string Name { get; set; }
+        public string Content { get; set; }
+    }
+
+    public class TemplateService
+    {
+        private List<Template> templates;
+
+        public TemplateService()
+        {
+            templates = new List<Template>
         {
             new Template
             {
@@ -58,16 +58,17 @@ Best regards,
 [Title]"
             }
         };
-    }
+        }
 
-    public string GetTemplateContent(string templateName)
-    {
-        Template template = templates.FirstOrDefault(t => t.Name == templateName);
-        return template?.Content;
-    }
+        public string GetTemplateContent(string templateName)
+        {
+            Template template = templates.FirstOrDefault(t => t.Name == templateName);
+            return template?.Content;
+        }
 
-    public List<string> GetTemplateNames(){
-        return templates.Select(t => t.Name).ToList();      
+        public List<string> GetTemplateNames()
+        {
+            return templates.Select(t => t.Name).ToList();
+        }
     }
-}
 }
