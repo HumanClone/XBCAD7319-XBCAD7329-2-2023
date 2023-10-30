@@ -50,7 +50,7 @@ public class AdminController : Controller
             {
                 switch ((Priority)ticket.Priority)
                 {
-                    
+                     
                     case Priority.Very_High:
                         timeThreshold = 10;
                         break;
@@ -104,6 +104,9 @@ public class AdminController : Controller
             var priorities = await PopulatePriorityList();
              ViewData["PriorityList"] = priorities;
 
+            var priority=PopulatePri();
+            ViewData["Priority"]=priority; 
+
             string jsonTicketContent;
             List<TicketDetail> ticketList = new List<TicketDetail>();
            
@@ -150,6 +153,9 @@ public class AdminController : Controller
 
              var priorities = await PopulatePriorityList();
              ViewData["PriorityList"] = priorities;
+
+             var priorityAssign= PopulatePri();
+             ViewData["Priority"]=priorityAssign;
             
 
             //check if all the fields have been left as default
@@ -209,6 +215,18 @@ public class AdminController : Controller
 
 
         }
+
+        private List<SelectListItem> PopulatePri()
+         {
+
+            List<SelectListItem> selectListItems= new List<SelectListItem>();
+            selectListItems.Add(new SelectListItem(value: "0", text: "Low")); 
+            selectListItems.Add(new SelectListItem(value: "1", text:"Medium")); 
+            selectListItems.Add(new SelectListItem(value: "2", text: "High")); 
+            selectListItems.Add(new SelectListItem(value: "3", text: "Very High")); 
+            return selectListItems;
+
+         }
 
 
 
@@ -281,5 +299,24 @@ public class AdminController : Controller
 
         }
 
-        
+        public async Task<IActionResult> PriAs (string priority, string ticketId)
+        {
+           string JsonDevContent; 
+
+           Console.WriteLine(priority); 
+           Console.WriteLine(ticketId);
+
+           List<TeamDev> DevList = new List<TeamDev>();
+
+           var response = await sharedClient.GetAsync("ticket/ticket?ticketId="+ticketId);
+
+           var ticket = await response.Content.ReadFromJsonAsync<TicketDetail>();
+
+           ticket.Priority=int.Parse(priority); 
+
+           var res = await sharedClient.PostAsJsonAsync("ticket/editTicket", ticket); 
+           Console.WriteLine(res.StatusCode);
+
+           return RedirectToAction ("ViewAdminTicket", "Admin");
+        }
 }

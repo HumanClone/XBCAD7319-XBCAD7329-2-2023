@@ -1,43 +1,28 @@
 ﻿Request for more information Template: 
 
-Hello [Student's Name],
+Hello [Student's Name],\n\n
 
-This is [Name], and I'm here to help you with your issue. In order to assist you effectively, could you please provide me with the following information:
+This is [Name], and I'm here to help you with your issue. In order to assist you effectively, could you please provide me with the following information:\n\n
 
-1. A detailed description of the problem.
-2. Any error messages or codes you encountered.
-3. The steps you've already taken to resolve the issue.
+1. A detailed description of the problem.\n
+2. Any error messages or codes you encountered.\n
+3. The steps you've already taken to resolve the issue.\n\n
 
-Thank you for your cooperation, and we'll do our best to resolve this issue promptly.
+Thank you for your cooperation, and we'll do our best to resolve this issue promptly.\n\n
 
-Best regards,
-[Name]
-[Title]
+Best regards,\n
+[Name]\n
+[Title]\n
 
 
 Following up template: 
 
-Hello [Student's Name],
-
-I hope this message finds you well. We have been working on resolving your reported issue. I wanted to check in and ask if the problem has been fixed on your end. If it has, please let us know, and if not, provide any additional details or feedback on the progress.
-
-Your feedback is valuable, and we're committed to ensuring your satisfaction.
-
-Best regards,
-[Name]
-[Title]
+Hello [Student's Name],\n\n
+I hope this message finds you well. We have been working on resolving your reported issue. I wanted to check in and ask if the problem has been fixed on your end. If it has, please let us know, and if not, provide any additional details or feedback on the progress.\n\nYour feedback is valuable, and we're committed to ensuring your satisfaction.\n\nBest regards,\n[Name]\n[Title]
 
 
 Escalating the Ticket Template: 
 
-Hello [Student's Name],
-
-I hope you're well. We have reviewed your issue and have decided to escalate its priority due to its critical nature. Our team will be working diligently to resolve this issue as quickly as possible.
-
-We understand the urgency, and your satisfaction is our top priority. We'll keep you updated on our progress.
-
-Best regards,
-[Name]
-[Title]
+Hello [Student's Name],\n\nI hope you're well. We have reviewed your issue and have decided to escalate its priority due to its critical nature. Our team will be working diligently to resolve this issue as quickly as possible.\n\nWe understand the urgency, and your satisfaction is our top priority. We'll keep you updated on our progress.\n\nBest regards,\n[Name]\n[Title]
 
 
