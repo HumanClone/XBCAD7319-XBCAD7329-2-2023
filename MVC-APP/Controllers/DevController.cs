@@ -59,7 +59,7 @@ public class DevController : Controller
         }
 
         // Calculate the time remaining before the ticket reaches the threshold
-        double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).Hours;
+        double timeRemaining = timeThreshold - (DateTime.Now - ticket.DateIssued).TotalHours;
 
 
         Console.WriteLine(timeRemaining);
